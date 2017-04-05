@@ -55,8 +55,8 @@ public class MainController {
     	try {
     		CSVReader reader = new CSVReader(new FileReader(file.getAbsolutePath()));
     		while((nextLine = reader.readNext()) != null) {
-    			originPayData.add(new EmployeeOriginal(nextLine[0], Double.parseDouble(nextLine[1]),
-    					Double.parseDouble(nextLine[2]), Double.parseDouble(nextLine[3])));
+    			originPayData.add(new EmployeeOriginal(Integer.parseInt(nextLine[0]), nextLine[1], Double.parseDouble(nextLine[2]),
+    					Double.parseDouble(nextLine[3]), Double.parseDouble(nextLine[4])));
     		}
     	}catch(FileNotFoundException e) {
     		e.printStackTrace();

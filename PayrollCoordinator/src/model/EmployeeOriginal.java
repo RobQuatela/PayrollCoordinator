@@ -1,20 +1,27 @@
 package model;
 
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 public class EmployeeOriginal {
 
+	private SimpleIntegerProperty empID;
 	private SimpleStringProperty empName;
 	private SimpleDoubleProperty originHoursReg;
 	private SimpleDoubleProperty originHoursOT;
 	private SimpleDoubleProperty originRate;
 	
-	public EmployeeOriginal(String name, double reg, double ot, double rate) {
+	public EmployeeOriginal(int empID, String name, double reg, double ot, double rate) {
+		this.empID = new SimpleIntegerProperty(empID);
 		empName = new SimpleStringProperty(name);
 		originHoursReg = new SimpleDoubleProperty(reg);
 		originHoursOT = new SimpleDoubleProperty(ot);
 		originRate = new SimpleDoubleProperty(rate);
+	}
+	
+	public int getEmpID() {
+		return empID.get();
 	}
 	
 	public String getEmpName() {
