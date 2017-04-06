@@ -15,6 +15,7 @@ public class Main extends Application {
 			Parent root = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
 			Scene scene = new Scene(root);
 			primaryStage.setScene(scene);
+			primaryStage.setTitle("QDRIVE - Payroll Coordinator");
 			primaryStage.show();
 		} catch(Exception e) {
 			e.printStackTrace();

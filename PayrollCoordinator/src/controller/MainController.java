@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javax.swing.JOptionPane;
+
 import com.opencsv.CSVReader;
 
 import javafx.collections.FXCollections;
@@ -22,6 +24,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
+import model.Employee;
 import model.EmployeeOriginal;
 import model.OriginPayData;
 
@@ -32,9 +35,15 @@ public class MainController implements Initializable {
     @FXML
     private Button btnImportOriginData;
     @FXML
+    private Button btnSaveImport;
+    @FXML
     private TableView<EmployeeOriginal> tvOriginPayData;
     @FXML
-    private TextField txtFile;
+    private TextField txtYear;
+    @FXML
+    private TextField txtWeek;
+    @FXML
+    private TableColumn<EmployeeOriginal, String> tvOriginPayDataCOLid;
     @FXML
     private TableColumn<EmployeeOriginal, Double> tvOriginPayDataCOLrate;
     @FXML
@@ -49,18 +58,13 @@ public class MainController implements Initializable {
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-    	cbWeek = new ComboBox<>();
-/*    	cbWeek.getItems().addAll(
-    			1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
-    			13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
-    			23, 24, 25, 26
-    			);*/
-    	cbWeek.getItems().addAll(
-    			"test",
-    			"test1"
-    			);
+
 	}
     
+	public void btnSaveImport_Clicked(ActionEvent event) {
+		Employee.Insert(originPayData);
+		JOptionPane.showInputDialog("Insert successfulll...");
+	}
     
     public void btnImportOriginData_Clicked(ActionEvent event) {
     	FileChooser fileChooser = new FileChooser();
@@ -76,8 +80,9 @@ public class MainController implements Initializable {
     	try {
     		CSVReader reader = new CSVReader(new FileReader(file.getAbsolutePath()));
     		while((nextLine = reader.readNext()) != null) {
-    			originPayData.add(new EmployeeOriginal(nextLine[0], Double.parseDouble(nextLine[1]),
-    					Double.parseDouble(nextLine[2]), Double.parseDouble(nextLine[3])));
+    			originPayData.add(new EmployeeOriginal(nextLine[0], nextLine[1], 
+    					Double.parseDouble(nextLine[2]), Double.parseDouble(nextLine[3]), 
+    					Double.parseDouble(nextLine[4])));
     		}
     	}catch(FileNotFoundException e) {
     		e.printStackTrace();
@@ -89,6 +94,7 @@ public class MainController implements Initializable {
     }
     
     public void setValues(ObservableList<EmployeeOriginal> imports) {
+    	tvOriginPayDataCOLid.setCellValueFactory(new PropertyValueFactory<EmployeeOriginal, String>("empID"));
     	tvOriginPayDataCOLname.setCellValueFactory(new PropertyValueFactory<EmployeeOriginal, String>("empName"));
     	tvOriginPayDataCOLregHours.setCellValueFactory(new PropertyValueFactory<EmployeeOriginal, Double>("originHoursReg"));
     	tvOriginPayDataCOLotHours.setCellValueFactory(new PropertyValueFactory<EmployeeOriginal, Double>("originHoursOT"));
