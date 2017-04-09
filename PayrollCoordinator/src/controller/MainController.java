@@ -4,7 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javax.swing.JOptionPane;
@@ -17,12 +22,18 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.stage.FileChooser;
 import model.Employee;
 import model.EmployeeOriginal;
@@ -31,7 +42,7 @@ import model.OriginPayData;
 public class MainController implements Initializable {
 
     private ObservableList<EmployeeOriginal> originPayData = FXCollections.observableArrayList();
-	//test
+
     @FXML
     private Button btnImportOriginData;
     @FXML
@@ -63,7 +74,6 @@ public class MainController implements Initializable {
     
 	public void btnSaveImport_Clicked(ActionEvent event) {
 		Employee.Insert(originPayData);
-		JOptionPane.showInputDialog("Insert successfulll...");
 	}
     
     public void btnImportOriginData_Clicked(ActionEvent event) {
@@ -71,7 +81,6 @@ public class MainController implements Initializable {
     	File selectedFile = fileChooser.showOpenDialog(null);
     	if(selectedFile != null) {
     		setValues(importOriginData(selectedFile));
-    		//txtFile.setText(selectedFile.getAbsolutePath());
     	}
     }
     
