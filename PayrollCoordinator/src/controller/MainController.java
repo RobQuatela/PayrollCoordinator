@@ -27,6 +27,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -35,6 +36,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.FileChooser;
+import model.Company;
 import model.Employee;
 import model.EmployeeOriginal;
 import model.OriginPayData;
@@ -50,9 +52,7 @@ public class MainController implements Initializable {
     @FXML
     private TableView<EmployeeOriginal> tvOriginPayData;
     @FXML
-    private TextField txtYear;
-    @FXML
-    private TextField txtWeek;
+    private TableView<Company> tvCompany;
     @FXML
     private TableColumn<EmployeeOriginal, String> tvOriginPayDataCOLid;
     @FXML
@@ -64,16 +64,20 @@ public class MainController implements Initializable {
     @FXML
     private TableColumn<EmployeeOriginal, Double> tvOriginPayDataCOLotHours;
     @FXML
-    private ComboBox<String> cbWeek;
+    private ProgressBar progImport;
+    @FXML
+    private ComboBox<Company> cbImportCompanies;
     
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-
+		cbImportCompanies = new ComboBox<>();
+		cbImportCompanies.setItems(Company.fillCompanies());
 	}
     
 	public void btnSaveImport_Clicked(ActionEvent event) {
-		Employee.Insert(originPayData);
+		System.out.println(Company.selectCoName(1));
+		//Employee.Insert(originPayData);
 	}
     
     public void btnImportOriginData_Clicked(ActionEvent event) {

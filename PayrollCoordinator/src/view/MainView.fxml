@@ -11,14 +11,22 @@
         <tabs>
             <Tab text="Company">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="tvCompany" layoutX="35.0" layoutY="30.0" prefHeight="200.0" prefWidth="272.0">
+                          <columns>
+                            <TableColumn prefWidth="75.0" text="No." />
+                            <TableColumn prefWidth="192.0" text="Name" />
+                          </columns>
+                        </TableView>
+                     </children></AnchorPane>
               </content>
             </Tab>
           <Tab text="Import">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="tvOriginPayData" layoutX="17.0" layoutY="34.0" prefHeight="328.0" prefWidth="785.0">
+                        <TableView fx:id="tvOriginPayData" layoutX="17.0" layoutY="34.0" prefHeight="260.0" prefWidth="785.0">
                           <columns>
                           	<TableColumn fx:id="tvOriginPayDataCOLid" prefWidth="105.0" text="Emp ID" />
                             <TableColumn fx:id="tvOriginPayDataCOLname" prefWidth="297.0" text="Name" />
@@ -28,11 +36,21 @@
                           </columns>
                         </TableView>
                         <Button fx:id="btnImportOriginData" layoutX="827.0" layoutY="38.0" mnemonicParsing="false" onAction="#btnImportOriginData_Clicked" prefHeight="41.0" prefWidth="153.0" text="Import Data" />
-                        <TextField fx:id="txtYear" layoutX="877.0" layoutY="108.0" prefHeight="25.0" prefWidth="171.0" />
-                        <Button fx:id="btnSaveImport" layoutX="20.0" layoutY="367.0" mnemonicParsing="false" onAction="#btnSaveImport_Clicked" prefHeight="47.0" prefWidth="144.0" text="Save Import" />
-                        <TextField fx:id="txtWeek" layoutX="877.0" layoutY="154.0" />
-                        <Label layoutX="834.0" layoutY="113.0" text="Year:" />
-                        <Label layoutX="827.0" layoutY="157.0" text="Week:" />
+                        <Button fx:id="btnSaveImport" layoutX="822.0" layoutY="200.0" mnemonicParsing="false" onAction="#btnSaveImport_Clicked" prefHeight="47.0" prefWidth="144.0" text="Save Import" />
+                        <Label layoutX="822.0" layoutY="172.0" text="Date Ending:" />
+                        <TableView fx:id="tvOriginPayData1" layoutX="17.0" layoutY="363.0" prefHeight="260.0" prefWidth="785.0">
+                           <columns>
+                              <TableColumn fx:id="tvOriginPayDataCOLid1" prefWidth="105.0" text="Emp ID" />
+                              <TableColumn fx:id="tvOriginPayDataCOLname1" prefWidth="297.0" text="Name" />
+                              <TableColumn fx:id="tvOriginPayDataCOLregHours1" prefWidth="114.0" text="Reg Hours" />
+                              <TableColumn fx:id="tvOriginPayDataCOLotHours1" prefWidth="136.0" text="O/T Hours" />
+                              <TableColumn fx:id="tvOriginPayDataCOLrate1" prefWidth="119.0" text="Rate" />
+                           </columns>
+                        </TableView>
+                        <DatePicker layoutX="908.0" layoutY="166.0" />
+                        <ProgressBar fx:id="progImport" layoutX="808.0" layoutY="274.0" prefWidth="200.0" progress="0.0" visible="false" />
+                        <Label layoutX="836.0" layoutY="136.0" text="Company:" />
+                        <ComboBox fx:id="cbImportCompanies" layoutX="908.0" layoutY="131.0" prefHeight="25.0" prefWidth="174.0" />
                      </children></AnchorPane>
             </content>
           </Tab>
