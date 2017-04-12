@@ -27,6 +27,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -36,6 +37,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.FileChooser;
+import javafx.util.StringConverter;
 import model.Company;
 import model.Employee;
 import model.EmployeeOriginal;
@@ -50,7 +52,11 @@ public class MainController implements Initializable {
     @FXML
     private Button btnSaveImport;
     @FXML
+    private Button btnClearOriginPayData;
+    @FXML
     private TableView<EmployeeOriginal> tvOriginPayData;
+    @FXML
+    private TableView<Employee> tvEmployeeDetail;
     @FXML
     private TableView<Company> tvCompany;
     @FXML
@@ -66,18 +72,25 @@ public class MainController implements Initializable {
     @FXML
     private ProgressBar progImport;
     @FXML
-    private ComboBox<Company> cbImportCompanies;
+    private ComboBox<String> cbImportCompanies;
+    @FXML
+    private ComboBox<String> cbCompany;
+    @FXML
+    private ListView<String> lstEmployee;
+    @FXML
+    private ComboBox<String> cbEmployeeCompanies;
     
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		cbImportCompanies = new ComboBox<>();
-		cbImportCompanies.setItems(Company.fillCompanies());
+		cbCompanyFill(cbCompany);
+		//cbImportCompaniesFill(cbEmployeeCompanies);
+		lstEmployeeFill();
 	}
     
 	public void btnSaveImport_Clicked(ActionEvent event) {
-		System.out.println(Company.selectCoName(1));
-		//Employee.Insert(originPayData);
+		Employee.Insert(originPayData, Company.selectCompany(cbCompany.getValue()));
+		lstEmployeeFill();
 	}
     
     public void btnImportOriginData_Clicked(ActionEvent event) {
@@ -86,6 +99,16 @@ public class MainController implements Initializable {
     	if(selectedFile != null) {
     		setValues(importOriginData(selectedFile));
     	}
+    }
+    
+    public void btnClearOriginPayData_Clicked(ActionEvent event) {
+    	for(int i = 0; i < tvOriginPayData.getItems().size(); i++) {
+    		tvOriginPayData.getItems().clear();
+    	}
+    }
+    
+    public void cbCompany_ValueChanged(ActionEvent event) {
+    	lstEmployeeFill();
     }
     
     private ObservableList<EmployeeOriginal> importOriginData(File file) {
@@ -114,6 +137,17 @@ public class MainController implements Initializable {
     	tvOriginPayDataCOLrate.setCellValueFactory(new PropertyValueFactory<EmployeeOriginal, Double>("originRate"));
     	tvOriginPayData.setItems(imports);
     }
+    
+    public void cbCompanyFill(ComboBox<String> box) {
+		box.setItems(Company.fillCompanyName());
+		box.getSelectionModel().select(0);
+    }
+    
+    public void lstEmployeeFill() {
+    	lstEmployee.setItems(Employee.fillEmployeeName(Company.selectCompany(cbCompany.getValue())));
+    }
+    
+
 
 
 }

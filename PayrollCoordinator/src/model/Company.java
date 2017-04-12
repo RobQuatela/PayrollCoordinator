@@ -55,18 +55,39 @@ public class Company {
 		return name;
 	}
 	
-	public static ObservableList<Company> fillCompanies() {
+	public static Company selectCompany(String coName) {
 		Connection conn;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		ObservableList<Company> companies = FXCollections.observableArrayList();
+		Company company = null;
 		
 		try {
 			conn = DBConnect.connect();
-			stmt = conn.prepareStatement("SELECT * FROM tbCompany");
+			stmt = conn.prepareStatement("SELECT * FROM tbCompany WHERE co_name = ?");
+			stmt.setString(1, coName);
 			rs = stmt.executeQuery();
 			while(rs.next()) {
-				companies.add(new Company(rs.getInt(1), rs.getString(1)));
+				company = new Company(rs.getInt(1), rs.getString(2));
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return company;
+	}
+	
+	public static ObservableList<String> fillCompanyName() {
+		Connection conn;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		ObservableList<String> companies = FXCollections.observableArrayList();
+		
+		try {
+			conn = DBConnect.connect();
+			stmt = conn.prepareStatement("SELECT co_name FROM tbCompany");
+			rs = stmt.executeQuery();
+			while(rs.next()) {
+				companies.add(rs.getString("co_name"));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

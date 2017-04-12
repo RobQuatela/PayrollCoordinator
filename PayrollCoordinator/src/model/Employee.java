@@ -28,12 +28,22 @@ public class Employee {
 
 	private SimpleStringProperty empID;
 	private SimpleStringProperty empName;
+	private SimpleIntegerProperty coID;
 	
-	public Employee(String empID, String name) {
+	public Employee(String empID, String name, int coid) {
 		this.empID = new SimpleStringProperty(empID);
 		empName = new SimpleStringProperty(name);
+		coID = new SimpleIntegerProperty(coid);
 	}
 	
+	public int getCoID() {
+		return coID.get();
+	}
+
+	public void setCoID(int coID) {
+		this.coID.set(coID);
+	}
+
 	public String getEmpName() {
 		return empName.get();
 	}
@@ -46,10 +56,10 @@ public class Employee {
 		return empID.get();
 	}
 	
-	public static void Insert(ObservableList<EmployeeOriginal> list) {
+	public static void Insert(ObservableList<EmployeeOriginal> list, Company company) {
 		Connection con = null;
 		PreparedStatement ps = null;
-		ObservableList<Employee> employees = lookForDup(list);
+		ObservableList<Employee> employees = lookForDup(list, company);
 		
 		if (employees.size() > 0) {
 			StringWriter sw = new StringWriter();
@@ -82,13 +92,12 @@ public class Employee {
 			Optional<ButtonType> result = alert.showAndWait();
 			if (result.get() == yes) {
 				try {
-					Class.forName("com.mysql.jdbc.Driver");
-					con = DriverManager.getConnection(
-							"jdbc:mysql://localhost:3306/dbPayroll?autoReconnect=true&useSSL=false", "root", "P@ssG0!");
-					ps = con.prepareStatement("INSERT INTO tbEmployee (emp_id, emp_name) VALUES (?, ?)");
+					con = DBConnect.connect();
+					ps = con.prepareStatement("INSERT INTO tbEmployee (emp_id, emp_name, co_id) VALUES (?, ?, ?)");
 					for (Employee employee : employees) {
 						ps.setString(1, employee.getEmpID());
 						ps.setString(2, employee.getEmpName());
+						ps.setInt(3, company.getCoID());
 						ps.executeUpdate();
 					}
 					
@@ -97,9 +106,6 @@ public class Employee {
 					insertConfirm.setContentText("Employee Insert(s) successful!!");
 					insertConfirm.showAndWait();
 					
-				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -114,30 +120,24 @@ public class Employee {
 		}
 	}
 	
-	private static ObservableList<Employee> lookForDup(ObservableList<EmployeeOriginal> employees) {
+	private static ObservableList<Employee> lookForDup(ObservableList<EmployeeOriginal> employees, Company company) {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		ObservableList<Employee> emps = FXCollections.observableArrayList();
 		
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			con = DriverManager.getConnection(
-					"jdbc:mysql://localhost:3306/dbPayroll?autoReconnect=true&useSSL=false",
-					"root", "P@ssG0!");
+			con = DBConnect.connect();
 			for(EmployeeOriginal employee : employees) {
-				stmt = con.prepareStatement("SELECT COUNT(emp_id) AS total FROM tbEmployee WHERE emp_id = ?");
+				stmt = con.prepareStatement("SELECT COUNT(emp_id) AS total FROM tbEmployee WHERE emp_id = ? AND co_id = ?");
 				stmt.setString(1, employee.getEmpID());
+				stmt.setInt(2, company.getCoID());
 				rs = stmt.executeQuery();
 				while(rs.next()) {
 					if(rs.getInt("total") == 0)
-						emps.add(new Employee(employee.getEmpID(), employee.getEmpName()));
+						emps.add(new Employee(employee.getEmpID(), employee.getEmpName(), company.getCoID()));
 				}
 			}
-			
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -145,5 +145,27 @@ public class Employee {
 		
 		return emps;
 
+	}
+	
+	public static ObservableList<String> fillEmployeeName(Company company) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		ObservableList<String> empName = FXCollections.observableArrayList();
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("SELECT emp_name FROM tbEmployee WHERE co_id = ?");
+			ps.setInt(1, company.getCoID());
+			rs = ps.executeQuery();
+			while(rs.next()) {
+				empName.add(rs.getString("emp_name"));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return empName;
 	}
 }

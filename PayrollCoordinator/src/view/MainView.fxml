@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
@@ -9,24 +11,53 @@
    <center>
       <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
-            <Tab text="Company">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+          <Tab text="Employee">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="665.0" prefWidth="1129.0">
                      <children>
-                        <TableView fx:id="tvCompany" layoutX="35.0" layoutY="30.0" prefHeight="200.0" prefWidth="272.0">
-                          <columns>
-                            <TableColumn prefWidth="75.0" text="No." />
-                            <TableColumn prefWidth="192.0" text="Name" />
-                          </columns>
-                        </TableView>
+                        <BorderPane layoutX="7.0" layoutY="5.0" prefHeight="579.0" prefWidth="681.0">
+                           <center>
+                              <TableView fx:id="tvEmployeeDetail" prefHeight="593.0" prefWidth="413.0" BorderPane.alignment="CENTER">
+                                <columns>
+                                  <TableColumn fx:id="tvEmployeeCOLemployee" prefWidth="150.0" text="Employee" />
+                                  <TableColumn minWidth="0.0" prefWidth="194.0" text="C2" />
+                                </columns>
+                              </TableView>
+                           </center>
+                           <left>
+                              <TitledPane animated="false" collapsible="false" prefHeight="571.0" prefWidth="202.0" text="Employees" BorderPane.alignment="CENTER">
+                                 <content>
+                                    <ListView fx:id="lstEmployee" prefHeight="528.0" prefWidth="200.0" />
+                                 </content>
+                              </TitledPane>
+                           </left>
+                        </BorderPane>
                      </children></AnchorPane>
-              </content>
+            </content>
+          </Tab>
+            <Tab text="Modification Types">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TitledPane animated="false" collapsible="false" layoutX="16.0" layoutY="17.0" prefHeight="493.0" prefWidth="244.0" text="Modifications">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <ListView layoutX="6.0" layoutY="14.0" prefHeight="332.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                          </content>
+                        </TitledPane>
+                        <TitledPane animated="false" layoutX="622.0" layoutY="18.0" prefHeight="321.0" prefWidth="336.0" text="New Modification" />
+                        <TitledPane animated="false" layoutX="272.0" layoutY="19.0" prefHeight="321.0" prefWidth="336.0" text="Update Modification" />
+                     </children></AnchorPane>
+               </content>
             </Tab>
           <Tab text="Import">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="tvOriginPayData" layoutX="17.0" layoutY="34.0" prefHeight="260.0" prefWidth="785.0">
+                        <TableView fx:id="tvOriginPayData" layoutX="17.0" layoutY="34.0" prefHeight="564.0" prefWidth="785.0">
                           <columns>
                           	<TableColumn fx:id="tvOriginPayDataCOLid" prefWidth="105.0" text="Emp ID" />
                             <TableColumn fx:id="tvOriginPayDataCOLname" prefWidth="297.0" text="Name" />
@@ -36,41 +67,18 @@
                           </columns>
                         </TableView>
                         <Button fx:id="btnImportOriginData" layoutX="827.0" layoutY="38.0" mnemonicParsing="false" onAction="#btnImportOriginData_Clicked" prefHeight="41.0" prefWidth="153.0" text="Import Data" />
-                        <Button fx:id="btnSaveImport" layoutX="822.0" layoutY="200.0" mnemonicParsing="false" onAction="#btnSaveImport_Clicked" prefHeight="47.0" prefWidth="144.0" text="Save Import" />
-                        <Label layoutX="822.0" layoutY="172.0" text="Date Ending:" />
-                        <TableView fx:id="tvOriginPayData1" layoutX="17.0" layoutY="363.0" prefHeight="260.0" prefWidth="785.0">
-                           <columns>
-                              <TableColumn fx:id="tvOriginPayDataCOLid1" prefWidth="105.0" text="Emp ID" />
-                              <TableColumn fx:id="tvOriginPayDataCOLname1" prefWidth="297.0" text="Name" />
-                              <TableColumn fx:id="tvOriginPayDataCOLregHours1" prefWidth="114.0" text="Reg Hours" />
-                              <TableColumn fx:id="tvOriginPayDataCOLotHours1" prefWidth="136.0" text="O/T Hours" />
-                              <TableColumn fx:id="tvOriginPayDataCOLrate1" prefWidth="119.0" text="Rate" />
-                           </columns>
-                        </TableView>
-                        <DatePicker layoutX="908.0" layoutY="166.0" />
+                        <Button fx:id="btnSaveImport" layoutX="815.0" layoutY="542.0" mnemonicParsing="false" onAction="#btnSaveImport_Clicked" prefHeight="47.0" prefWidth="144.0" text="Save Import" />
+                        <Label layoutX="815.0" layoutY="514.0" text="Date Ending:" />
+                        <DatePicker layoutX="901.0" layoutY="508.0" />
                         <ProgressBar fx:id="progImport" layoutX="808.0" layoutY="274.0" prefWidth="200.0" progress="0.0" visible="false" />
-                        <Label layoutX="836.0" layoutY="136.0" text="Company:" />
-                        <ComboBox fx:id="cbImportCompanies" layoutX="908.0" layoutY="131.0" prefHeight="25.0" prefWidth="174.0" />
+                        <Button fx:id="btnClearOriginPayData" layoutX="827.0" layoutY="104.0" mnemonicParsing="false" onAction="#btnClearOriginPayData_Clicked" prefHeight="42.0" prefWidth="155.0" text="Clear Table" />
                      </children></AnchorPane>
             </content>
           </Tab>
-          <Tab text="Employee">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <TableView layoutX="62.0" layoutY="62.0" prefHeight="308.0" prefWidth="452.0">
-                          <columns>
-                            <TableColumn prefWidth="150.0" text="Employee" />
-                            <TableColumn minWidth="0.0" prefWidth="194.0" text="C2" />
-                          </columns>
-                        </TableView>
-                     </children></AnchorPane>
-            </content>
-          </Tab>
-            <Tab text="Payroll Mod">
-               <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-               </content>
+            <Tab text="Export">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
             </Tab>
             <Tab text="Reports">
               <content>
@@ -80,4 +88,23 @@
         </tabs>
       </TabPane>
    </center>
+   <top>
+      <VBox prefHeight="63.0" prefWidth="1129.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Company">
+               <font>
+                  <Font size="20.0" />
+               </font>
+               <VBox.margin>
+                  <Insets left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </Label>
+            <ComboBox fx:id="cbCompany" onAction="#cbCompany_ValueChanged" prefHeight="25.0" prefWidth="1190.0">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </ComboBox>
+         </children>
+      </VBox>
+   </top>
 </BorderPane>
