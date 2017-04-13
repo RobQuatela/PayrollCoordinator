@@ -43,12 +43,30 @@
                           <content>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                  <children>
-                                    <ListView layoutX="6.0" layoutY="14.0" prefHeight="332.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <ListView fx:id="lstModType" layoutX="6.0" layoutY="14.0" prefHeight="332.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                  </children>
                               </AnchorPane>
                           </content>
                         </TitledPane>
-                        <TitledPane animated="false" layoutX="622.0" layoutY="18.0" prefHeight="321.0" prefWidth="336.0" text="New Modification" />
+                        <TitledPane animated="false" layoutX="622.0" layoutY="18.0" prefHeight="181.0" prefWidth="336.0" text="New Modification">
+                           <content>
+                              <GridPane alignment="CENTER_RIGHT" prefHeight="259.0" prefWidth="334.0">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints maxHeight="110.0" minHeight="10.0" prefHeight="69.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="120.0" minHeight="0.0" prefHeight="57.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="182.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Label text="Modification Name:" />
+                                    <TextField fx:id="txtModInsert" GridPane.columnIndex="1" />
+                                    <Button fx:id="btnModInsert" mnemonicParsing="false" onAction="#btnModInsert_Clicked" text="Add Modification" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                 </children>
+                              </GridPane>
+                           </content></TitledPane>
                         <TitledPane animated="false" layoutX="272.0" layoutY="19.0" prefHeight="321.0" prefWidth="336.0" text="Update Modification" />
                      </children></AnchorPane>
                </content>

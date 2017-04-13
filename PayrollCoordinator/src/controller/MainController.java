@@ -36,11 +36,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 import model.Company;
 import model.Employee;
 import model.EmployeeOriginal;
+import model.ModType;
 import model.OriginPayData;
 
 public class MainController implements Initializable {
@@ -79,6 +81,12 @@ public class MainController implements Initializable {
     private ListView<String> lstEmployee;
     @FXML
     private ComboBox<String> cbEmployeeCompanies;
+    @FXML
+    private TextField txtModInsert;
+    @FXML
+    private Button btnModInsert;
+    @FXML
+    private ListView<ModType> lstModType;
     
 
 	@Override
@@ -86,6 +94,7 @@ public class MainController implements Initializable {
 		cbCompanyFill(cbCompany);
 		//cbImportCompaniesFill(cbEmployeeCompanies);
 		lstEmployeeFill();
+		lstModTypeFill();
 	}
     
 	public void btnSaveImport_Clicked(ActionEvent event) {
@@ -109,6 +118,13 @@ public class MainController implements Initializable {
     
     public void cbCompany_ValueChanged(ActionEvent event) {
     	lstEmployeeFill();
+    }
+    
+    public void btnModInsert_Clicked(ActionEvent event) {
+    	ModType mod = new ModType(txtModInsert.getText());
+    	ModType.insert(mod);
+    	lstModTypeFill();
+    	txtModInsert.clear();
     }
     
     private ObservableList<EmployeeOriginal> importOriginData(File file) {
@@ -145,6 +161,10 @@ public class MainController implements Initializable {
     
     public void lstEmployeeFill() {
     	lstEmployee.setItems(Employee.fillEmployeeName(Company.selectCompany(cbCompany.getValue())));
+    }
+    
+    public void lstModTypeFill() {
+    	lstModType.setItems(ModType.fill1());
     }
     
 
