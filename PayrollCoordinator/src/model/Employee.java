@@ -168,4 +168,26 @@ public class Employee {
 		
 		return empName;
 	}
+	
+	public static ObservableList<Employee> fillEmployee(Company company) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		ObservableList<Employee> employee = FXCollections.observableArrayList();
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("SELECT * FROM tbEmployee WHERE co_id = ?");
+			ps.setInt(1, company.getCoID());
+			rs = ps.executeQuery();
+			while(rs.next()) {
+				employee.add(new Employee(rs.getString(1), rs.getString(2), rs.getInt(3)));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return employee;
+	}
 }

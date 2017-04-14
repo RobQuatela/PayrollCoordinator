@@ -7,31 +7,74 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="707.0" prefWidth="1129.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="707.0" prefWidth="1187.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
    <center>
       <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
+          <Tab text="Import">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="tvOriginPayData" layoutX="17.0" layoutY="34.0" prefHeight="564.0" prefWidth="785.0">
+                          <columns>
+                          	<TableColumn fx:id="tvOriginPayDataCOLid" prefWidth="105.0" text="Emp ID" />
+                            <TableColumn fx:id="tvOriginPayDataCOLname" prefWidth="297.0" text="Name" />
+                            <TableColumn fx:id="tvOriginPayDataCOLregHours" prefWidth="114.0" text="Reg Hours" />
+                              <TableColumn fx:id="tvOriginPayDataCOLotHours" prefWidth="136.0" text="O/T Hours" />
+                              <TableColumn fx:id="tvOriginPayDataCOLrate" prefWidth="119.0" text="Rate" />
+                          </columns>
+                        </TableView>
+                        <Button fx:id="btnImportOriginData" layoutX="827.0" layoutY="38.0" mnemonicParsing="false" onAction="#btnImportOriginData_Clicked" prefHeight="41.0" prefWidth="153.0" text="Import Data" />
+                        <Button fx:id="btnSaveImport" layoutX="815.0" layoutY="542.0" mnemonicParsing="false" onAction="#btnSaveImport_Clicked" prefHeight="47.0" prefWidth="144.0" text="Save Import" />
+                        <Label layoutX="815.0" layoutY="514.0" text="Date Ending:" />
+                        <DatePicker layoutX="901.0" layoutY="508.0" />
+                        <ProgressBar fx:id="progImport" layoutX="808.0" layoutY="274.0" prefWidth="200.0" progress="0.0" visible="false" />
+                        <Button fx:id="btnClearOriginPayData" layoutX="827.0" layoutY="104.0" mnemonicParsing="false" onAction="#btnClearOriginPayData_Clicked" prefHeight="42.0" prefWidth="155.0" text="Clear Table" />
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+            <Tab text="Export">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
+            </Tab>
           <Tab text="Employee">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="665.0" prefWidth="1129.0">
                      <children>
-                        <BorderPane layoutX="7.0" layoutY="5.0" prefHeight="579.0" prefWidth="681.0">
+                        <BorderPane layoutX="7.0" layoutY="5.0" prefHeight="579.0" prefWidth="576.0">
+                           <left>
+                              <TitledPane animated="false" collapsible="false" prefHeight="571.0" prefWidth="202.0" text="Employees" BorderPane.alignment="CENTER">
+                                 <content>
+                                    <TableView fx:id="tvEmployee" prefHeight="545.0" prefWidth="340.0">
+                                      <columns>
+                                        <TableColumn fx:id="tvEmployeeID" prefWidth="70.0" text="ID" />
+                                        <TableColumn fx:id="tvEmployeeName" prefWidth="268.0" text="Name" />
+                                      </columns>
+                                    </TableView>
+                                 </content>
+                              </TitledPane>
+                           </left>
                            <center>
-                              <TableView fx:id="tvEmployeeDetail" prefHeight="593.0" prefWidth="413.0" BorderPane.alignment="CENTER">
+                              <TableView fx:id="tvEmployeeDetail" prefHeight="579.0" prefWidth="190.0" BorderPane.alignment="CENTER">
                                 <columns>
                                   <TableColumn fx:id="tvEmployeeCOLemployee" prefWidth="150.0" text="Employee" />
                                   <TableColumn minWidth="0.0" prefWidth="194.0" text="C2" />
                                 </columns>
                               </TableView>
                            </center>
-                           <left>
-                              <TitledPane animated="false" collapsible="false" prefHeight="571.0" prefWidth="202.0" text="Employees" BorderPane.alignment="CENTER">
-                                 <content>
-                                    <ListView fx:id="lstEmployee" prefHeight="528.0" prefWidth="200.0" />
-                                 </content>
-                              </TitledPane>
-                           </left>
                         </BorderPane>
+                        <TitledPane animated="false" collapsible="false" layoutX="589.0" layoutY="-1.0" prefHeight="127.0" prefWidth="467.0" text="Add Modification" />
+                        <TableView layoutX="637.0" layoutY="147.0" prefHeight="200.0" prefWidth="539.0">
+                          <columns>
+                            <TableColumn prefWidth="75.0" text="Type" />
+                            <TableColumn prefWidth="75.0" text="Date" />
+                              <TableColumn prefWidth="75.0" text="Amount" />
+                              <TableColumn prefWidth="312.0" text="Description" />
+                          </columns>
+                        </TableView>
+                        <Label fx:id="lblEmployeeAddName" layoutX="672.0" layoutY="418.0" text="Label" />
+                        <ListView fx:id="lstEmployee" layoutX="613.0" layoutY="451.0" prefHeight="77.0" prefWidth="200.0" />
                      </children></AnchorPane>
             </content>
           </Tab>
@@ -70,33 +113,6 @@
                         <TitledPane animated="false" layoutX="272.0" layoutY="19.0" prefHeight="321.0" prefWidth="336.0" text="Update Modification" />
                      </children></AnchorPane>
                </content>
-            </Tab>
-          <Tab text="Import">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <TableView fx:id="tvOriginPayData" layoutX="17.0" layoutY="34.0" prefHeight="564.0" prefWidth="785.0">
-                          <columns>
-                          	<TableColumn fx:id="tvOriginPayDataCOLid" prefWidth="105.0" text="Emp ID" />
-                            <TableColumn fx:id="tvOriginPayDataCOLname" prefWidth="297.0" text="Name" />
-                            <TableColumn fx:id="tvOriginPayDataCOLregHours" prefWidth="114.0" text="Reg Hours" />
-                              <TableColumn fx:id="tvOriginPayDataCOLotHours" prefWidth="136.0" text="O/T Hours" />
-                              <TableColumn fx:id="tvOriginPayDataCOLrate" prefWidth="119.0" text="Rate" />
-                          </columns>
-                        </TableView>
-                        <Button fx:id="btnImportOriginData" layoutX="827.0" layoutY="38.0" mnemonicParsing="false" onAction="#btnImportOriginData_Clicked" prefHeight="41.0" prefWidth="153.0" text="Import Data" />
-                        <Button fx:id="btnSaveImport" layoutX="815.0" layoutY="542.0" mnemonicParsing="false" onAction="#btnSaveImport_Clicked" prefHeight="47.0" prefWidth="144.0" text="Save Import" />
-                        <Label layoutX="815.0" layoutY="514.0" text="Date Ending:" />
-                        <DatePicker layoutX="901.0" layoutY="508.0" />
-                        <ProgressBar fx:id="progImport" layoutX="808.0" layoutY="274.0" prefWidth="200.0" progress="0.0" visible="false" />
-                        <Button fx:id="btnClearOriginPayData" layoutX="827.0" layoutY="104.0" mnemonicParsing="false" onAction="#btnClearOriginPayData_Clicked" prefHeight="42.0" prefWidth="155.0" text="Clear Table" />
-                     </children></AnchorPane>
-            </content>
-          </Tab>
-            <Tab text="Export">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-              </content>
             </Tab>
             <Tab text="Reports">
               <content>

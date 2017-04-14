@@ -25,6 +25,16 @@ public class OriginPayData {
 		originRate = new SimpleDoubleProperty(rate);
 	}
 	
+	public OriginPayData(int id, Date date, int eID, int cID, double regHours, double otHours, double rate) {
+		originID = new SimpleIntegerProperty(id);
+		originEndDate = date;
+		coID = new SimpleIntegerProperty(cID);
+		empID = new SimpleIntegerProperty(eID);
+		originHoursReg = new SimpleDoubleProperty(regHours);
+		originHoursOT = new SimpleDoubleProperty(otHours);
+		originRate = new SimpleDoubleProperty(rate);
+	}
+	
 	public int getOriginID() {
 		return originID.get();
 	}

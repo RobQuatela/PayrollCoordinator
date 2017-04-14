@@ -27,6 +27,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableColumn;
@@ -48,6 +49,7 @@ import model.OriginPayData;
 public class MainController implements Initializable {
 
     private ObservableList<EmployeeOriginal> originPayData = FXCollections.observableArrayList();
+    //private ObservableList<Employee> employees = FXCollections.observableArrayList();
 
     @FXML
     private Button btnImportOriginData;
@@ -87,6 +89,14 @@ public class MainController implements Initializable {
     private Button btnModInsert;
     @FXML
     private ListView<ModType> lstModType;
+    @FXML
+    private TableView<Employee> tvEmployee;
+    @FXML
+    private TableColumn<Employee, String> tvEmployeeID;
+    @FXML
+    private TableColumn<Employee, String> tvEmployeeName;
+    @FXML
+    private Label lblEmployeeAddName;
     
 
 	@Override
@@ -94,6 +104,7 @@ public class MainController implements Initializable {
 		cbCompanyFill(cbCompany);
 		//cbImportCompaniesFill(cbEmployeeCompanies);
 		lstEmployeeFill();
+		setTvEmployee(Employee.fillEmployee(Company.selectCompany(cbCompany.getValue())));
 		lstModTypeFill();
 	}
     
@@ -152,6 +163,13 @@ public class MainController implements Initializable {
     	tvOriginPayDataCOLotHours.setCellValueFactory(new PropertyValueFactory<EmployeeOriginal, Double>("originHoursOT"));
     	tvOriginPayDataCOLrate.setCellValueFactory(new PropertyValueFactory<EmployeeOriginal, Double>("originRate"));
     	tvOriginPayData.setItems(imports);
+    }
+    
+    public void setTvEmployee(ObservableList<Employee> employees) {
+    	tvEmployeeID.setCellValueFactory(new PropertyValueFactory<Employee, String>("empID"));
+    	tvEmployeeName.setCellValueFactory(new PropertyValueFactory<Employee, String>("empName"));
+    	tvEmployee.setItems(employees);
+    	lblEmployeeAddName.setText(tvEmployeeName.getText());
     }
     
     public void cbCompanyFill(ComboBox<String> box) {
