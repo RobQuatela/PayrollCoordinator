@@ -42,21 +42,21 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="665.0" prefWidth="1129.0">
                      <children>
-                        <BorderPane layoutX="7.0" layoutY="5.0" prefHeight="579.0" prefWidth="576.0">
+                        <BorderPane layoutX="7.0" layoutY="5.0" prefHeight="579.0" prefWidth="687.0">
                            <left>
                               <TitledPane animated="false" collapsible="false" prefHeight="571.0" prefWidth="202.0" text="Employees" BorderPane.alignment="CENTER">
                                  <content>
-                                    <TableView fx:id="tvEmployee" prefHeight="545.0" prefWidth="340.0">
+                                    <TableView fx:id="tvEmployee" prefHeight="545.0" prefWidth="422.0">
                                       <columns>
                                         <TableColumn fx:id="tvEmployeeID" prefWidth="70.0" text="ID" />
-                                        <TableColumn fx:id="tvEmployeeName" prefWidth="268.0" text="Name" />
+                                        <TableColumn fx:id="tvEmployeeName" prefWidth="312.0" text="Name" />
                                       </columns>
                                     </TableView>
                                  </content>
                               </TitledPane>
                            </left>
                            <center>
-                              <TableView fx:id="tvEmployeeDetail" prefHeight="579.0" prefWidth="190.0" BorderPane.alignment="CENTER">
+                              <TableView fx:id="tvEmployeeDetail" prefHeight="579.0" prefWidth="244.0" BorderPane.alignment="CENTER">
                                 <columns>
                                   <TableColumn fx:id="tvEmployeeCOLemployee" prefWidth="150.0" text="Employee" />
                                   <TableColumn minWidth="0.0" prefWidth="194.0" text="C2" />
@@ -64,17 +64,37 @@
                               </TableView>
                            </center>
                         </BorderPane>
-                        <TitledPane animated="false" collapsible="false" layoutX="589.0" layoutY="-1.0" prefHeight="127.0" prefWidth="467.0" text="Add Modification" />
-                        <TableView layoutX="637.0" layoutY="147.0" prefHeight="200.0" prefWidth="539.0">
-                          <columns>
-                            <TableColumn prefWidth="75.0" text="Type" />
-                            <TableColumn prefWidth="75.0" text="Date" />
-                              <TableColumn prefWidth="75.0" text="Amount" />
-                              <TableColumn prefWidth="312.0" text="Description" />
-                          </columns>
-                        </TableView>
-                        <Label fx:id="lblEmployeeAddName" layoutX="672.0" layoutY="418.0" text="Label" />
-                        <ListView fx:id="lstEmployee" layoutX="613.0" layoutY="451.0" prefHeight="77.0" prefWidth="200.0" />
+                        <TitledPane animated="false" collapsible="false" layoutX="717.0" layoutY="2.0" prefHeight="355.0" prefWidth="467.0" text="Add Modification">
+                           <content>
+                              <BorderPane prefHeight="161.0" prefWidth="465.0">
+                                 <center>
+                                    <TableView prefHeight="200.0" prefWidth="539.0" BorderPane.alignment="CENTER">
+                                      <columns>
+                                        <TableColumn prefWidth="75.0" text="Type" />
+                                        <TableColumn prefWidth="75.0" text="Date" />
+                                          <TableColumn prefWidth="75.0" text="Amount" />
+                                          <TableColumn prefWidth="312.0" text="Description" />
+                                      </columns>
+                                    </TableView>
+                                 </center>
+                                 <top>
+                                    <HBox prefHeight="26.0" prefWidth="445.0" BorderPane.alignment="CENTER">
+                                       <children>
+                                          <Label text="Employee:">
+                                             <HBox.margin>
+                                                <Insets right="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <Label fx:id="lblEmployeeAddName" />
+                                       </children>
+                                    </HBox>
+                                 </top>
+                                 <bottom>
+                                    <Button fx:id="btnAddMod" mnemonicParsing="false" onAction="#btnAddMod_Clicked" prefHeight="51.0" prefWidth="157.0" text="Add Modification(s)" BorderPane.alignment="CENTER" />
+                                 </bottom>
+                              </BorderPane>
+                           </content></TitledPane>
+                        <ListView fx:id="lstEmployee" layoutX="825.0" layoutY="444.0" prefHeight="77.0" prefWidth="200.0" />
                      </children></AnchorPane>
             </content>
           </Tab>

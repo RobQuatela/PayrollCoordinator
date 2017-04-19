@@ -20,6 +20,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -31,10 +32,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.Text;
@@ -102,10 +105,17 @@ public class MainController implements Initializable {
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		cbCompanyFill(cbCompany);
-		//cbImportCompaniesFill(cbEmployeeCompanies);
-		lstEmployeeFill();
 		setTvEmployee(Employee.fillEmployee(Company.selectCompany(cbCompany.getValue())));
 		lstModTypeFill();
+		tvEmployee.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent arg0) {
+				lblEmployeeAddName.setText(
+						tvEmployee.getSelectionModel().getSelectedItem().getEmpName().toString());
+			}
+			
+		});
 	}
     
 	public void btnSaveImport_Clicked(ActionEvent event) {
@@ -128,7 +138,7 @@ public class MainController implements Initializable {
     }
     
     public void cbCompany_ValueChanged(ActionEvent event) {
-    	lstEmployeeFill();
+    	tvEmployeeFill();
     }
     
     public void btnModInsert_Clicked(ActionEvent event) {
@@ -136,6 +146,10 @@ public class MainController implements Initializable {
     	ModType.insert(mod);
     	lstModTypeFill();
     	txtModInsert.clear();
+    }
+    
+    public void btnAddMod_Clicked(ActionEvent event) {
+    	lblEmployeeAddName.setText(tvEmployee.getSelectionModel().getSelectedItem().getEmpName().toString());
     }
     
     private ObservableList<EmployeeOriginal> importOriginData(File file) {
@@ -169,7 +183,8 @@ public class MainController implements Initializable {
     	tvEmployeeID.setCellValueFactory(new PropertyValueFactory<Employee, String>("empID"));
     	tvEmployeeName.setCellValueFactory(new PropertyValueFactory<Employee, String>("empName"));
     	tvEmployee.setItems(employees);
-    	lblEmployeeAddName.setText(tvEmployeeName.getText());
+    	//lblEmployeeAddName.setText(getCellValueEmployee(tvEmployee, 1, 0).toString());
+    	//lblEmployeeAddName.setText(tvEmployee.getSelectionModel().getSelectedItem().getEmpName().toString());
     }
     
     public void cbCompanyFill(ComboBox<String> box) {
@@ -179,6 +194,10 @@ public class MainController implements Initializable {
     
     public void lstEmployeeFill() {
     	lstEmployee.setItems(Employee.fillEmployeeName(Company.selectCompany(cbCompany.getValue())));
+    }
+    
+    public void tvEmployeeFill() {
+    	tvEmployee.setItems(Employee.fillEmployee(Company.selectCompany(cbCompany.getValue())));
     }
     
     public void lstModTypeFill() {
