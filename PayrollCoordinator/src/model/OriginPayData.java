@@ -11,6 +11,8 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
 public class OriginPayData {
 
@@ -85,6 +87,35 @@ public class OriginPayData {
 	}
 	public void setOriginRate(double rate) {
 		originRate.set(rate);
+	}
+	
+	public void insert(ObservableList<OriginPayData> payData) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("INSERT INTO tbOriginPayData (origin_end_date, co_id, emp_id, " +
+			"origin_hours_reg, origin_hours_ot, origin_rate) VALUES (?, ?, ?, ?, ?, ?)");
+			for(OriginPayData data : payData) {
+				ps.setDate(1, data.getOriginEndDate());
+				ps.setInt(2, data.getCoID());
+				ps.setInt(3, data.getEmpID());
+				ps.setDouble(4, data.getOriginHoursReg());
+				ps.setDouble(5, data.getOriginHoursOT());
+				ps.setDouble(6, data.getOriginRate());
+				ps.executeUpdate();
+			}
+			
+			Alert insertConfirm = new Alert(AlertType.CONFIRMATION);
+			insertConfirm.setTitle("QDRIVE - Payroll Coordinator");
+			insertConfirm.setContentText("Pay Data Insert successful!!");
+			insertConfirm.showAndWait();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private ObservableList<OriginPayData> searchForDup(ObservableList<OriginPayData> payData) {
