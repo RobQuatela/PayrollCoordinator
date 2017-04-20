@@ -63,6 +63,8 @@ public class MainController implements Initializable {
     @FXML
     private TableView<EmployeeOriginal> tvOriginPayData;
     @FXML
+    private TableView<OriginPayData> tvOriginPayDataPrev;
+    @FXML
     private TableView<Employee> tvEmployeeDetail;
     @FXML
     private TableView<Company> tvCompany;
@@ -91,7 +93,7 @@ public class MainController implements Initializable {
     @FXML
     private Button btnModInsert;
     @FXML
-    private ListView<ModType> lstModType;
+    private ListView<String> lstModType;
     @FXML
     private TableView<Employee> tvEmployee;
     @FXML
@@ -121,6 +123,7 @@ public class MainController implements Initializable {
 	public void btnSaveImport_Clicked(ActionEvent event) {
 		Employee.Insert(originPayData, Company.selectCompany(cbCompany.getValue()));
 		lstEmployeeFill();
+		clearTableData(tvOriginPayData);
 	}
     
     public void btnImportOriginData_Clicked(ActionEvent event) {
@@ -132,9 +135,7 @@ public class MainController implements Initializable {
     }
     
     public void btnClearOriginPayData_Clicked(ActionEvent event) {
-    	for(int i = 0; i < tvOriginPayData.getItems().size(); i++) {
-    		tvOriginPayData.getItems().clear();
-    	}
+    	clearTableData(tvOriginPayData);
     }
     
     public void cbCompany_ValueChanged(ActionEvent event) {
@@ -201,10 +202,13 @@ public class MainController implements Initializable {
     }
     
     public void lstModTypeFill() {
-    	lstModType.setItems(ModType.fill1());
+    	lstModType.setItems(ModType.fill());
     }
     
-
+    public void clearTableData(TableView tv) {
+    	for(int i = 0; i < tv.getItems().size(); i++)
+    		tv.getItems().clear();
+    }
 
 
 }

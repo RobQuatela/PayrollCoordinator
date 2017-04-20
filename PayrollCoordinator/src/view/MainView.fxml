@@ -15,21 +15,50 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="tvOriginPayData" layoutX="17.0" layoutY="34.0" prefHeight="564.0" prefWidth="785.0">
-                          <columns>
-                          	<TableColumn fx:id="tvOriginPayDataCOLid" prefWidth="105.0" text="Emp ID" />
-                            <TableColumn fx:id="tvOriginPayDataCOLname" prefWidth="297.0" text="Name" />
-                            <TableColumn fx:id="tvOriginPayDataCOLregHours" prefWidth="114.0" text="Reg Hours" />
-                              <TableColumn fx:id="tvOriginPayDataCOLotHours" prefWidth="136.0" text="O/T Hours" />
-                              <TableColumn fx:id="tvOriginPayDataCOLrate" prefWidth="119.0" text="Rate" />
-                          </columns>
-                        </TableView>
-                        <Button fx:id="btnImportOriginData" layoutX="827.0" layoutY="38.0" mnemonicParsing="false" onAction="#btnImportOriginData_Clicked" prefHeight="41.0" prefWidth="153.0" text="Import Data" />
-                        <Button fx:id="btnSaveImport" layoutX="815.0" layoutY="542.0" mnemonicParsing="false" onAction="#btnSaveImport_Clicked" prefHeight="47.0" prefWidth="144.0" text="Save Import" />
-                        <Label layoutX="815.0" layoutY="514.0" text="Date Ending:" />
-                        <DatePicker layoutX="901.0" layoutY="508.0" />
                         <ProgressBar fx:id="progImport" layoutX="808.0" layoutY="274.0" prefWidth="200.0" progress="0.0" visible="false" />
-                        <Button fx:id="btnClearOriginPayData" layoutX="827.0" layoutY="104.0" mnemonicParsing="false" onAction="#btnClearOriginPayData_Clicked" prefHeight="42.0" prefWidth="155.0" text="Clear Table" />
+                        <TabPane prefHeight="608.0" prefWidth="803.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <tabs>
+                            <Tab text="New Imports">
+                                 <content>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                       <children>
+                                          <TableView fx:id="tvOriginPayData" layoutX="6.0" layoutY="3.0" prefHeight="578.0" prefWidth="774.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                            <columns>
+                                            	<TableColumn fx:id="tvOriginPayDataCOLid" prefWidth="105.0" text="Emp ID" />
+                                              <TableColumn fx:id="tvOriginPayDataCOLname" prefWidth="297.0" text="Name" />
+                                              <TableColumn fx:id="tvOriginPayDataCOLregHours" prefWidth="114.0" text="Reg Hours" />
+                                                <TableColumn fx:id="tvOriginPayDataCOLotHours" prefWidth="136.0" text="O/T Hours" />
+                                                <TableColumn fx:id="tvOriginPayDataCOLrate" prefWidth="119.0" text="Rate" />
+                                            </columns>
+                                          </TableView>
+                                          <Button fx:id="btnImportOriginData" layoutX="810.0" layoutY="16.0" mnemonicParsing="false" onAction="#btnImportOriginData_Clicked" prefHeight="41.0" prefWidth="153.0" text="Import Data" />
+                                          <Button fx:id="btnClearOriginPayData" layoutX="810.0" layoutY="61.0" mnemonicParsing="false" onAction="#btnClearOriginPayData_Clicked" prefHeight="42.0" prefWidth="155.0" text="Clear Table" />
+                                          <Button fx:id="btnSaveImport" layoutX="817.0" layoutY="250.0" mnemonicParsing="false" onAction="#btnSaveImport_Clicked" prefHeight="47.0" prefWidth="144.0" text="Save Import" />
+                                          <Label layoutX="818.0" layoutY="224.0" text="Date Ending:" />
+                                          <DatePicker layoutX="904.0" layoutY="218.0" />
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </Tab>
+                            <Tab text="Previous Imports">
+                                 <content>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                       <children>
+                                          <TableView fx:id="tvOriginPayDataPrev" prefHeight="578.0" prefWidth="774.0">
+                                             <columns>
+                                                <TableColumn fx:id="tvOriginPayDataCOLid1" prefWidth="105.0" text="Emp ID" />
+                                                <TableColumn fx:id="tvOriginPayDataCOLname1" prefWidth="297.0" text="Name" />
+                                                <TableColumn fx:id="tvOriginPayDataCOLregHours1" prefWidth="114.0" text="Reg Hours" />
+                                                <TableColumn fx:id="tvOriginPayDataCOLotHours1" prefWidth="136.0" text="O/T Hours" />
+                                                <TableColumn fx:id="tvOriginPayDataCOLrate1" prefWidth="119.0" text="Rate" />
+                                             </columns>
+                                          </TableView>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </Tab>
+                          </tabs>
+                        </TabPane>
                      </children></AnchorPane>
             </content>
           </Tab>

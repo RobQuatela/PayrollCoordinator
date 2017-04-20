@@ -1,10 +1,16 @@
 package model;
 
-import java.util.Date;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Date;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class OriginPayData {
 
@@ -81,7 +87,33 @@ public class OriginPayData {
 		originRate.set(rate);
 	}
 	
-	private boolean searchForDup() {
-		return true;
+	private ObservableList<OriginPayData> searchForDup(ObservableList<OriginPayData> payData) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		ObservableList<OriginPayData> payDataDup = FXCollections.observableArrayList();
+		
+		try {
+			con = DBConnect.connect();
+			for(OriginPayData data : payData) {
+				ps = con.prepareStatement("SELECT COUNT(origin_id) AS total FROM tbOriginPayData" +
+			" WHERE origin_end_date = ? AND co_id = ? AND emp_id = ?");
+				ps.setDate(1, data.getOriginEndDate());
+				ps.setInt(2, data.getCoID());
+				ps.setInt(3, data.getEmpID());
+				rs = ps.executeQuery();
+				while(rs.next()) {
+					if(rs.getInt("total") > 0) {
+						payDataDup.add(new OriginPayData(data.getOriginEndDate(), data.getCoID(), data.getEmpID(),
+								data.getOriginHoursReg(), data.getOriginHoursOT(), data.getOriginRate()));
+					}
+				}
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return payDataDup;
 	}
 }
