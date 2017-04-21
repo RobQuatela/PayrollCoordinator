@@ -35,7 +35,7 @@
                                           <Button fx:id="btnClearOriginPayData" layoutX="810.0" layoutY="61.0" mnemonicParsing="false" onAction="#btnClearOriginPayData_Clicked" prefHeight="42.0" prefWidth="155.0" text="Clear Table" />
                                           <Button fx:id="btnSaveImport" layoutX="817.0" layoutY="250.0" mnemonicParsing="false" onAction="#btnSaveImport_Clicked" prefHeight="47.0" prefWidth="144.0" text="Save Import" />
                                           <Label layoutX="818.0" layoutY="224.0" text="Date Ending:" />
-                                          <DatePicker layoutX="904.0" layoutY="218.0" />
+                                          <DatePicker fx:id="dpOriginDateEnding" layoutX="904.0" layoutY="218.0" />
                                        </children>
                                     </AnchorPane>
                                  </content>

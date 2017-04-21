@@ -19,25 +19,25 @@ public class OriginPayData {
 	private SimpleIntegerProperty originID;
 	private Date originEndDate;
 	private SimpleIntegerProperty coID;
-	private SimpleIntegerProperty empID;
+	private SimpleStringProperty empID;
 	private SimpleDoubleProperty originHoursReg;
 	private SimpleDoubleProperty originHoursOT;
 	private SimpleDoubleProperty originRate;
 	
-	public OriginPayData(Date date, int eID, int cID, double regHours, double otHours, double rate) {
+	public OriginPayData(Date date, int cID, String eID, double regHours, double otHours, double rate) {
 		originEndDate = date;
 		coID = new SimpleIntegerProperty(cID);
-		empID = new SimpleIntegerProperty(eID);
+		empID = new SimpleStringProperty(eID);
 		originHoursReg = new SimpleDoubleProperty(regHours);
 		originHoursOT = new SimpleDoubleProperty(otHours);
 		originRate = new SimpleDoubleProperty(rate);
 	}
 	
-	public OriginPayData(int id, Date date, int eID, int cID, double regHours, double otHours, double rate) {
+	public OriginPayData(int id, Date date, String eID, int cID, double regHours, double otHours, double rate) {
 		originID = new SimpleIntegerProperty(id);
 		originEndDate = date;
 		coID = new SimpleIntegerProperty(cID);
-		empID = new SimpleIntegerProperty(eID);
+		empID = new SimpleStringProperty(eID);
 		originHoursReg = new SimpleDoubleProperty(regHours);
 		originHoursOT = new SimpleDoubleProperty(otHours);
 		originRate = new SimpleDoubleProperty(rate);
@@ -61,10 +61,10 @@ public class OriginPayData {
 		coID.set(cID);
 	}
 
-	public int getEmpID() {
+	public String getEmpID() {
 		return empID.get();
 	}
-	public void setEmpID(int id) {
+	public void setEmpID(String id) {
 		empID.set(id);
 	}
 	
@@ -89,18 +89,18 @@ public class OriginPayData {
 		originRate.set(rate);
 	}
 	
-	public void insert(ObservableList<OriginPayData> payData) {
+	public static void insert(ObservableList<OriginPayData> payData) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		
 		try {
 			con = DBConnect.connect();
 			ps = con.prepareStatement("INSERT INTO tbOriginPayData (origin_end_date, co_id, emp_id, " +
-			"origin_hours_reg, origin_hours_ot, origin_rate) VALUES (?, ?, ?, ?, ?, ?)");
+			"origin_hours_reg, origin_hours_ot, origin_hours_rate) VALUES (?, ?, ?, ?, ?, ?)");
 			for(OriginPayData data : payData) {
 				ps.setDate(1, data.getOriginEndDate());
 				ps.setInt(2, data.getCoID());
-				ps.setInt(3, data.getEmpID());
+				ps.setString(3, data.getEmpID());
 				ps.setDouble(4, data.getOriginHoursReg());
 				ps.setDouble(5, data.getOriginHoursOT());
 				ps.setDouble(6, data.getOriginRate());
@@ -131,11 +131,11 @@ public class OriginPayData {
 			" WHERE origin_end_date = ? AND co_id = ? AND emp_id = ?");
 				ps.setDate(1, data.getOriginEndDate());
 				ps.setInt(2, data.getCoID());
-				ps.setInt(3, data.getEmpID());
+				ps.setString(3, data.getEmpID());
 				rs = ps.executeQuery();
 				while(rs.next()) {
 					if(rs.getInt("total") > 0) {
-						payDataDup.add(new OriginPayData(data.getOriginEndDate(), data.getCoID(), data.getEmpID(),
+						payDataDup.add(new OriginPayData(data.getOriginEndDate(),data.getCoID(), data.getEmpID(), 
 								data.getOriginHoursReg(), data.getOriginHoursOT(), data.getOriginRate()));
 					}
 				}

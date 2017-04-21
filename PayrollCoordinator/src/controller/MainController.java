@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
+import java.sql.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
@@ -28,6 +29,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
@@ -102,6 +104,8 @@ public class MainController implements Initializable {
     private TableColumn<Employee, String> tvEmployeeName;
     @FXML
     private Label lblEmployeeAddName;
+    @FXML
+    private DatePicker dpOriginDateEnding;
     
 
 	@Override
@@ -123,6 +127,18 @@ public class MainController implements Initializable {
 	public void btnSaveImport_Clicked(ActionEvent event) {
 		Employee.Insert(originPayData, Company.selectCompany(cbCompany.getValue()));
 		lstEmployeeFill();
+		ObservableList<OriginPayData> payData = FXCollections.observableArrayList();
+		for(int i = 0; i < tvOriginPayData.getItems().size(); i++) {
+			payData.add(new OriginPayData(
+					Date.valueOf(dpOriginDateEnding.getValue()),
+					1, //place holder for getCoInt method
+					tvOriginPayData.getItems().get(i).getEmpID(),
+					tvOriginPayData.getItems().get(i).getOriginHoursReg(),
+					tvOriginPayData.getItems().get(i).getOriginHoursOT(),
+					tvOriginPayData.getItems().get(i).getOriginRate()
+					));
+		}
+		OriginPayData.insert(payData);
 		clearTableData(tvOriginPayData);
 	}
     
