@@ -62,7 +62,7 @@ public class Employee {
 		ObservableList<Employee> employees = lookForDup(list, company);
 		
 		if (employees.size() > 0) {
-			StringWriter sw = new StringWriter();
+			/*StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 
 			for (Employee employee : employees) {
@@ -87,9 +87,12 @@ public class Employee {
 			alert.getDialogPane().setContent(expContent);
 			ButtonType yes = new ButtonType("Yes");
 			ButtonType no = new ButtonType("No");
-			alert.getButtonTypes().setAll(yes, no);
-
+			alert.getButtonTypes().setAll(yes, no);*/
+			AlertMessage alert = new AlertMessage(AlertType.INFORMATION);
+			alert = alert.employeeInfo(employees);
+			ButtonType yes = alert.getButtonTypes().get(1);
 			Optional<ButtonType> result = alert.showAndWait();
+			
 			if (result.get() == yes) {
 				try {
 					con = DBConnect.connect();
@@ -129,9 +132,8 @@ public class Employee {
 		try {
 			con = DBConnect.connect();
 			for(EmployeeOriginal employee : employees) {
-				stmt = con.prepareStatement("SELECT COUNT(emp_id) AS total FROM tbEmployee WHERE emp_id = ? AND co_id = ?");
+				stmt = con.prepareStatement("SELECT COUNT(emp_id) AS total FROM tbEmployee WHERE emp_id = ?");
 				stmt.setString(1, employee.getEmpID());
-				stmt.setInt(2, company.getCoID());
 				rs = stmt.executeQuery();
 				while(rs.next()) {
 					if(rs.getInt("total") == 0)

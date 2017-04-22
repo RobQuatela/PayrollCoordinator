@@ -33,7 +33,7 @@ public class OriginPayData {
 		originRate = new SimpleDoubleProperty(rate);
 	}
 	
-	public OriginPayData(int id, Date date, String eID, int cID, double regHours, double otHours, double rate) {
+	public OriginPayData(int id, Date date, int cID, String eID, double regHours, double otHours, double rate) {
 		originID = new SimpleIntegerProperty(id);
 		originEndDate = date;
 		coID = new SimpleIntegerProperty(cID);
@@ -89,14 +89,14 @@ public class OriginPayData {
 		originRate.set(rate);
 	}
 	
-	public static void insert(ObservableList<OriginPayData> payData) {
+	private static void insert(ObservableList<OriginPayData> payData) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		
 		try {
 			con = DBConnect.connect();
 			ps = con.prepareStatement("INSERT INTO tbOriginPayData (origin_end_date, co_id, emp_id, " +
-			"origin_hours_reg, origin_hours_ot, origin_hours_rate) VALUES (?, ?, ?, ?, ?, ?)");
+			"origin_hours_reg, origin_hours_ot, origin_rate) VALUES (?, ?, ?, ?, ?, ?)");
 			for(OriginPayData data : payData) {
 				ps.setDate(1, data.getOriginEndDate());
 				ps.setInt(2, data.getCoID());
@@ -118,7 +118,7 @@ public class OriginPayData {
 		}
 	}
 	
-	private ObservableList<OriginPayData> searchForDup(ObservableList<OriginPayData> payData) {
+	private static ObservableList<OriginPayData> searchForDup(ObservableList<OriginPayData> payData) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -127,15 +127,14 @@ public class OriginPayData {
 		try {
 			con = DBConnect.connect();
 			for(OriginPayData data : payData) {
-				ps = con.prepareStatement("SELECT COUNT(origin_id) AS total FROM tbOriginPayData" +
-			" WHERE origin_end_date = ? AND co_id = ? AND emp_id = ?");
+				ps = con.prepareStatement("SELECT COUNT(origin_id) AS total FROM tbOriginPayData " +
+			"WHERE origin_end_date = ? AND emp_id = ?");
 				ps.setDate(1, data.getOriginEndDate());
-				ps.setInt(2, data.getCoID());
-				ps.setString(3, data.getEmpID());
+				ps.setString(2, data.getEmpID());
 				rs = ps.executeQuery();
 				while(rs.next()) {
 					if(rs.getInt("total") > 0) {
-						payDataDup.add(new OriginPayData(data.getOriginEndDate(),data.getCoID(), data.getEmpID(), 
+						payDataDup.add(new OriginPayData(data.getOriginID(), data.getOriginEndDate(),data.getCoID(), data.getEmpID(), 
 								data.getOriginHoursReg(), data.getOriginHoursOT(), data.getOriginRate()));
 					}
 				}
@@ -146,5 +145,47 @@ public class OriginPayData {
 		}
 		
 		return payDataDup;
+	}
+	
+	private static void update(ObservableList<OriginPayData> payData) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("UPDATE tbOriginPayData SET " +
+					"origin_hours_reg = ?, origin_hours_ot = ?, origin_rate = ? " +
+					"WHERE origin_id = ?");
+			for(OriginPayData data : payData) {
+				ps.setDouble(1, data.getOriginHoursReg());
+				ps.setDouble(2, data.getOriginHoursOT());
+				ps.setDouble(3, data.getOriginRate());
+				ps.setInt(4, data.getOriginID());
+				ps.executeUpdate();
+			}
+			
+			Alert alert = new Alert(AlertType.CONFIRMATION);
+			alert.setTitle("QDRIVE - Payroll Coordinator");
+			alert.setContentText("Sucessfully updated employee files!");
+			alert.showAndWait();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static void insertOrUpdate(ObservableList<OriginPayData> payData) {
+		ObservableList<OriginPayData> dup = searchForDup(payData);
+		if(dup.isEmpty())
+			insert(payData);
+		else {
+			//StringWriter sw = new StringWriter();
+			//PrintWriter pw = new PrintWriter();
+			for(OriginPayData data : payData) {
+				
+			}
+			update(payData);
+		}
 	}
 }

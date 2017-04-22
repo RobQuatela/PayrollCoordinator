@@ -138,7 +138,7 @@ public class MainController implements Initializable {
 					tvOriginPayData.getItems().get(i).getOriginRate()
 					));
 		}
-		OriginPayData.insert(payData);
+		//OriginPayData.insert(payData);
 		clearTableData(tvOriginPayData);
 	}
     
