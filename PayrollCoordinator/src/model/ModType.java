@@ -42,7 +42,7 @@ public class ModType {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("INSERT INTO tbModType (type_name) VALUES(?)");
+			ps = con.prepareStatement("INSERT INTO tbModType (mod_name) VALUES(?)");
 			ps.setString(1, mod.getModName());
 			ps.executeUpdate();
 		} catch (SQLException e) {
@@ -60,10 +60,10 @@ public class ModType {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("SELECT type_name FROM tbModType");
+			ps = con.prepareStatement("SELECT mod_name FROM tbModType");
 			rs = ps.executeQuery();
 			while(rs.next()) {
-				mods.add(rs.getString("type_name"));
+				mods.add(rs.getString("mod_name"));
 			}
 			
 		} catch (SQLException e) {

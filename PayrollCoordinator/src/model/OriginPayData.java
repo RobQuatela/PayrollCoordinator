@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 import java.sql.Date;
 
 import javafx.beans.property.SimpleDoubleProperty;
@@ -13,6 +14,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 
 public class OriginPayData {
 
@@ -107,10 +109,11 @@ public class OriginPayData {
 				ps.executeUpdate();
 			}
 			
-			Alert insertConfirm = new Alert(AlertType.CONFIRMATION);
-			insertConfirm.setTitle("QDRIVE - Payroll Coordinator");
-			insertConfirm.setContentText("Pay Data Insert successful!!");
-			insertConfirm.showAndWait();
+			AlertMessage newData = new AlertMessage(AlertType.CONFIRMATION, "The following new data has been inserted!");
+			newData = newData.originPayDataInfo(payData);
+			newData.getButtonTypes().remove(0,2);
+			newData.getButtonTypes().add(ButtonType.OK);
+			newData.showAndWait();
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -127,14 +130,14 @@ public class OriginPayData {
 		try {
 			con = DBConnect.connect();
 			for(OriginPayData data : payData) {
-				ps = con.prepareStatement("SELECT COUNT(origin_id) AS total FROM tbOriginPayData " +
-			"WHERE origin_end_date = ? AND emp_id = ?");
+				ps = con.prepareStatement("SELECT COUNT(origin_id) AS total, origin_id FROM tbOriginPayData " +
+			"WHERE origin_end_date = ? AND emp_id = ? GROUP BY origin_id");
 				ps.setDate(1, data.getOriginEndDate());
 				ps.setString(2, data.getEmpID());
 				rs = ps.executeQuery();
 				while(rs.next()) {
 					if(rs.getInt("total") > 0) {
-						payDataDup.add(new OriginPayData(data.getOriginID(), data.getOriginEndDate(),data.getCoID(), data.getEmpID(), 
+						payDataDup.add(new OriginPayData(rs.getInt(2), data.getOriginEndDate(),data.getCoID(), data.getEmpID(), 
 								data.getOriginHoursReg(), data.getOriginHoursOT(), data.getOriginRate()));
 					}
 				}
@@ -145,6 +148,39 @@ public class OriginPayData {
 		}
 		
 		return payDataDup;
+	}
+	
+	private static ObservableList<OriginPayData> searchForUpdates(ObservableList<OriginPayData> payData) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		ObservableList<OriginPayData> payDataUpdate = FXCollections.observableArrayList();
+		
+		try {
+			con = DBConnect.connect();
+			for(OriginPayData data : payData) {
+				ps = con.prepareStatement("SELECT COUNT(origin_id) AS total, origin_id FROM tbOriginPayData " +
+			"WHERE origin_end_date = ? AND emp_id = ? AND (origin_hours_reg != ? OR origin_hours_ot != ? " +
+						"OR origin_rate != ?) GROUP BY origin_id");
+				ps.setDate(1, data.getOriginEndDate());
+				ps.setString(2, data.getEmpID());
+				ps.setDouble(3, data.getOriginHoursReg());
+				ps.setDouble(4, data.getOriginHoursOT());
+				ps.setDouble(5, data.getOriginRate());
+				rs = ps.executeQuery();
+				while(rs.next()) {
+					if(rs.getInt("total") == 0) {
+						payDataUpdate.add(new OriginPayData(rs.getInt(2), data.getOriginEndDate(),data.getCoID(), data.getEmpID(), 
+								data.getOriginHoursReg(), data.getOriginHoursOT(), data.getOriginRate()));
+					}
+				}
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return payDataUpdate;
 	}
 	
 	private static void update(ObservableList<OriginPayData> payData) {
@@ -164,9 +200,7 @@ public class OriginPayData {
 				ps.executeUpdate();
 			}
 			
-			Alert alert = new Alert(AlertType.CONFIRMATION);
-			alert.setTitle("QDRIVE - Payroll Coordinator");
-			alert.setContentText("Sucessfully updated employee files!");
+			AlertMessage alert = new AlertMessage(AlertType.CONFIRMATION, "Sucessfully updated employee files!");
 			alert.showAndWait();
 			
 		} catch (SQLException e) {
@@ -177,15 +211,35 @@ public class OriginPayData {
 	
 	public static void insertOrUpdate(ObservableList<OriginPayData> payData) {
 		ObservableList<OriginPayData> dup = searchForDup(payData);
-		if(dup.isEmpty())
+		ObservableList<OriginPayData> update = searchForUpdates(dup);
+		if(dup.isEmpty()) {
 			insert(payData);
+		}
 		else {
-			//StringWriter sw = new StringWriter();
-			//PrintWriter pw = new PrintWriter();
-			for(OriginPayData data : payData) {
-				
+			for(int i = 0; i < dup.size(); i++) {
+				for(int t = 0; t < payData.size(); t++) {
+					if(payData.get(t).getEmpID() == dup.get(i).getEmpID())
+						payData.remove(t);
+				}
 			}
-			update(payData);
+			
+			AlertMessage alert = 
+					new AlertMessage(AlertType.INFORMATION, "The following employee(s) data has already been created for " 
+			+ dup.get(0).getOriginEndDate() + ". Would you like to update these values with the new values below?");
+			alert = alert.originPayDataInfo(update);
+			Optional<ButtonType> result = alert.showAndWait();
+			
+			if(result.get() == alert.getButtonTypes().get(0)) {
+				update(update);
+				if(!payData.isEmpty())
+					insert(payData);
+			}
+			else {
+				AlertMessage test = new AlertMessage(AlertType.INFORMATION, "Duplicate data has been discarded...");
+				test.showAndWait();
+				
+				insert(payData);
+			}
 		}
 	}
 }

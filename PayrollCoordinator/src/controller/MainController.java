@@ -138,8 +138,9 @@ public class MainController implements Initializable {
 					tvOriginPayData.getItems().get(i).getOriginRate()
 					));
 		}
-		//OriginPayData.insert(payData);
+		OriginPayData.insertOrUpdate(payData);
 		clearTableData(tvOriginPayData);
+		dpOriginDateEnding.setValue(null);
 	}
     
     public void btnImportOriginData_Clicked(ActionEvent event) {
@@ -200,8 +201,6 @@ public class MainController implements Initializable {
     	tvEmployeeID.setCellValueFactory(new PropertyValueFactory<Employee, String>("empID"));
     	tvEmployeeName.setCellValueFactory(new PropertyValueFactory<Employee, String>("empName"));
     	tvEmployee.setItems(employees);
-    	//lblEmployeeAddName.setText(getCellValueEmployee(tvEmployee, 1, 0).toString());
-    	//lblEmployeeAddName.setText(tvEmployee.getSelectionModel().getSelectedItem().getEmpName().toString());
     }
     
     public void cbCompanyFill(ComboBox<String> box) {

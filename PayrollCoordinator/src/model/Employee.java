@@ -62,38 +62,11 @@ public class Employee {
 		ObservableList<Employee> employees = lookForDup(list, company);
 		
 		if (employees.size() > 0) {
-			/*StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-
-			for (Employee employee : employees) {
-				pw.println("Employee ID: " + employee.getEmpID());
-				pw.println("Employee Name: " + employee.getEmpName());
-				pw.println();
-			}
-
-			TextArea textArea = new TextArea(sw.toString());
-			textArea.setWrapText(true);
-			textArea.setEditable(false);
-			textArea.setMaxWidth(Double.MAX_VALUE);
-			textArea.setMaxHeight(Double.MAX_VALUE);
-
-			GridPane.setVgrow(textArea, Priority.ALWAYS);
-			GridPane.setHgrow(textArea, Priority.ALWAYS);
-			GridPane expContent = new GridPane();
-			expContent.add(textArea, 0, 0);
-			Alert alert = new Alert(AlertType.INFORMATION);
-			alert.setTitle("QDRIVE - Payroll Coordinator");
-			alert.setHeaderText("Would you like to add Employee(s) below?");
-			alert.getDialogPane().setContent(expContent);
-			ButtonType yes = new ButtonType("Yes");
-			ButtonType no = new ButtonType("No");
-			alert.getButtonTypes().setAll(yes, no);*/
 			AlertMessage alert = new AlertMessage(AlertType.INFORMATION);
 			alert = alert.employeeInfo(employees);
-			ButtonType yes = alert.getButtonTypes().get(1);
 			Optional<ButtonType> result = alert.showAndWait();
 			
-			if (result.get() == yes) {
+			if (result.get() == alert.getButtonTypes().get(0)) {
 				try {
 					con = DBConnect.connect();
 					ps = con.prepareStatement("INSERT INTO tbEmployee (emp_id, emp_name, co_id) VALUES (?, ?, ?)");
@@ -104,9 +77,7 @@ public class Employee {
 						ps.executeUpdate();
 					}
 					
-					Alert insertConfirm = new Alert(AlertType.CONFIRMATION);
-					insertConfirm.setTitle("QDRIVE - Payroll Coordinator");
-					insertConfirm.setContentText("Employee Insert(s) successful!!");
+					AlertMessage insertConfirm = new AlertMessage(AlertType.CONFIRMATION, "Employee insert(s) sucessfull!!");
 					insertConfirm.showAndWait();
 					
 				} catch (SQLException e) {
@@ -114,12 +85,15 @@ public class Employee {
 					e.printStackTrace();
 				}
 			}
+			else {
+				AlertMessage selectNo = new AlertMessage(AlertType.CONFIRMATION, "You have selected no...");
+				selectNo.showAndWait();
+			}
 		}
 		else {
-			Alert alertNothing = new Alert(AlertType.INFORMATION);
-			alertNothing.setTitle("QDRIVE - Payroll Coordinator");
-			alertNothing.setContentText("No additional Employees created...");
+			AlertMessage alertNothing = new AlertMessage(AlertType.INFORMATION, "No additional employees created...");
 			alertNothing.showAndWait();
+
 		}
 	}
 	
@@ -162,6 +136,28 @@ public class Employee {
 			rs = ps.executeQuery();
 			while(rs.next()) {
 				empName.add(rs.getString("emp_name"));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return empName;
+	}
+	
+	public static String searchEmployeeName(String empID) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		String empName = "";
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("SELECT emp_name FROM tbEmployee WHERE emp_id = ?");
+			ps.setString(1, empID);
+			rs = ps.executeQuery();
+			while(rs.next()) {
+				empName = rs.getString(1);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
