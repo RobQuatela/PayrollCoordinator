@@ -169,7 +169,7 @@ public class OriginPayData {
 				ps.setDouble(5, data.getOriginRate());
 				rs = ps.executeQuery();
 				while(rs.next()) {
-					if(rs.getInt("total") == 0) {
+					if(rs.getInt("total") > 0) {
 						payDataUpdate.add(new OriginPayData(rs.getInt(2), data.getOriginEndDate(),data.getCoID(), data.getEmpID(), 
 								data.getOriginHoursReg(), data.getOriginHoursOT(), data.getOriginRate()));
 					}
@@ -222,23 +222,24 @@ public class OriginPayData {
 						payData.remove(t);
 				}
 			}
-			
-			AlertMessage alert = 
-					new AlertMessage(AlertType.INFORMATION, "The following employee(s) data has already been created for " 
-			+ dup.get(0).getOriginEndDate() + ". Would you like to update these values with the new values below?");
-			alert = alert.originPayDataInfo(update);
-			Optional<ButtonType> result = alert.showAndWait();
-			
-			if(result.get() == alert.getButtonTypes().get(0)) {
-				update(update);
-				if(!payData.isEmpty())
+			if(!update.isEmpty()) {
+				AlertMessage alert = new AlertMessage(AlertType.INFORMATION,
+						"The following employee(s) data has already been created for "
+								+ update.get(0).getOriginEndDate()
+								+ ". Would you like to update these values with the new values below?");
+				alert = alert.originPayDataInfo(update);
+				Optional<ButtonType> result = alert.showAndWait();
+
+				if (result.get() == alert.getButtonTypes().get(0)) {
+					update(update);
+					if (!payData.isEmpty())
+						insert(payData);
+				} else {
+					AlertMessage test = new AlertMessage(AlertType.INFORMATION, "Duplicate data has been discarded...");
+					test.showAndWait();
+
 					insert(payData);
-			}
-			else {
-				AlertMessage test = new AlertMessage(AlertType.INFORMATION, "Duplicate data has been discarded...");
-				test.showAndWait();
-				
-				insert(payData);
+				}
 			}
 		}
 	}
