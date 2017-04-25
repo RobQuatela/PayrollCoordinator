@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
@@ -54,7 +55,7 @@ import model.OriginPayData;
 public class MainController implements Initializable {
 
     private ObservableList<EmployeeOriginal> originPayData = FXCollections.observableArrayList();
-    //private ObservableList<Employee> employees = FXCollections.observableArrayList();
+    private ObservableList<String> payrollTypes = FXCollections.observableArrayList();
 
     @FXML
     private Button btnImportOriginData;
@@ -106,13 +107,16 @@ public class MainController implements Initializable {
     private Label lblEmployeeAddName;
     @FXML
     private DatePicker dpOriginDateEnding;
+    @FXML
+    private ComboBox<String> cbPayrollType;
     
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		cbCompanyFill(cbCompany);
+		comboBoxFill(cbCompany, Company.fillCompanyName());
 		setTvEmployee(Employee.fillEmployee(Company.selectCompany(cbCompany.getValue())));
-		lstModTypeFill();
+		//lstModTypeFill();
+		listViewFill(lstModType, ModType.fill());
 		tvEmployee.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
@@ -122,11 +126,16 @@ public class MainController implements Initializable {
 			}
 			
 		});
+		
+		payrollTypes.add("Original");
+		payrollTypes.add("Modified");
+		comboBoxFill(cbPayrollType, payrollTypes);
 	}
     
 	public void btnSaveImport_Clicked(ActionEvent event) {
 		Employee.Insert(originPayData, Company.selectCompany(cbCompany.getValue()));
-		lstEmployeeFill();
+		//lstEmployeeFill();
+		listViewFill(lstEmployee, Employee.fillEmployeeName(Company.selectCompany(cbCompany.getValue())));
 		ObservableList<OriginPayData> payData = FXCollections.observableArrayList();
 		for(int i = 0; i < tvOriginPayData.getItems().size(); i++) {
 			payData.add(new OriginPayData(
@@ -203,13 +212,18 @@ public class MainController implements Initializable {
     	tvEmployee.setItems(employees);
     }
     
-    public void cbCompanyFill(ComboBox<String> box) {
-		box.setItems(Company.fillCompanyName());
-		box.getSelectionModel().select(0);
+    public void comboBoxFill(ComboBox<String> box, ObservableList list) {
+    	box.setItems(list);
+    	box.getSelectionModel().clearAndSelect(0);
+    }
+    
+    public void listViewFill(ListView lv, ObservableList list) {
+    	lv.setItems(list);
     }
     
     public void lstEmployeeFill() {
     	lstEmployee.setItems(Employee.fillEmployeeName(Company.selectCompany(cbCompany.getValue())));
+    	listViewFill(lstEmployee, Employee.fillEmployeeName(Company.selectCompany(cbCompany.getValue())));
     }
     
     public void tvEmployeeFill() {
@@ -218,6 +232,7 @@ public class MainController implements Initializable {
     
     public void lstModTypeFill() {
     	lstModType.setItems(ModType.fill());
+    	listViewFill(lstModType, ModType.fill());
     }
     
     public void clearTableData(TableView tv) {
