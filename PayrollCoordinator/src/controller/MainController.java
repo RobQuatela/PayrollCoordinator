@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -68,6 +69,18 @@ public class MainController implements Initializable {
     @FXML
     private TableView<OriginPayData> tvOriginPayDataPrev;
     @FXML
+    private TableColumn<OriginPayData, String> tvOriginPayDataPrevId;
+    @FXML
+    private TableColumn<OriginPayData, String> tvOriginPayDataPrevName;
+    @FXML
+    private TableColumn<OriginPayData, Double> tvOriginPayDataPrevRegHours;
+    @FXML
+    private TableColumn<OriginPayData, Double> tvOriginPayDataPrevOtHours;
+    @FXML
+    private TableColumn<OriginPayData, Double> tvOriginPayDataPrevRate;
+    @FXML
+    private TableColumn<OriginPayData, Integer> tvOriginPayDataPrevOrg;
+    @FXML
     private TableView<Employee> tvEmployeeDetail;
     @FXML
     private TableView<Company> tvCompany;
@@ -109,13 +122,16 @@ public class MainController implements Initializable {
     private DatePicker dpOriginDateEnding;
     @FXML
     private ComboBox<String> cbPayrollType;
+    @FXML
+    private DatePicker dpDateEndingPrev;
     
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		comboBoxFill(cbCompany, Company.fillCompanyName());
 		setTvEmployee(Employee.fillEmployee(Company.selectCompany(cbCompany.getValue())));
-		//lstModTypeFill();
+		dpDateEndingPrev.setValue(LocalDate.of(2017, 4, 22));
+		setTvOriginPayDataPrev(OriginPayData.fillOriginPayData(Company.selectCompany(cbCompany.getValue()), dpDateEndingPrev.getValue()));
 		listViewFill(lstModType, ModType.fill());
 		tvEmployee.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
@@ -204,6 +220,17 @@ public class MainController implements Initializable {
     	tvOriginPayDataCOLotHours.setCellValueFactory(new PropertyValueFactory<EmployeeOriginal, Double>("originHoursOT"));
     	tvOriginPayDataCOLrate.setCellValueFactory(new PropertyValueFactory<EmployeeOriginal, Double>("originRate"));
     	tvOriginPayData.setItems(imports);
+    }
+    
+    public void setTvOriginPayDataPrev(ObservableList<OriginPayData> payData) {
+    	tvOriginPayDataPrevOrg.setCellValueFactory(new PropertyValueFactory<OriginPayData, Integer>("originID"));
+    	tvOriginPayDataPrevId.setCellValueFactory(new PropertyValueFactory<OriginPayData, String>("empID"));
+    	tvOriginPayDataPrevName.setCellValueFactory(new PropertyValueFactory<OriginPayData, String>("empName"));
+    	tvOriginPayDataPrevRegHours.setCellValueFactory(new PropertyValueFactory<OriginPayData, Double>("originHoursReg"));
+    	tvOriginPayDataPrevOtHours.setCellValueFactory(new PropertyValueFactory<OriginPayData, Double>("originHoursOT"));
+    	tvOriginPayDataPrevRate.setCellValueFactory(new PropertyValueFactory<OriginPayData, Double>("originRate"));
+    	
+    	tvOriginPayDataPrev.setItems(payData);
     }
     
     public void setTvEmployee(ObservableList<Employee> employees) {

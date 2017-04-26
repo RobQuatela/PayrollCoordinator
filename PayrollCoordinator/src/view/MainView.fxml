@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
@@ -22,7 +27,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="707.0" prefWidth="1187.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="707.0" prefWidth="1187.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
    <center>
       <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
@@ -59,17 +64,18 @@
                                  <content>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0">
                                        <children>
-                                          <TableView fx:id="tvOriginPayDataPrev" prefHeight="578.0" prefWidth="774.0">
+                                          <TableView fx:id="tvOriginPayDataPrev" prefHeight="578.0" prefWidth="742.0">
                                              <columns>
-                                                <TableColumn fx:id="tvOriginPayDataCOLid1" prefWidth="105.0" text="Emp ID" />
-                                                <TableColumn fx:id="tvOriginPayDataCOLname1" prefWidth="297.0" text="Name" />
-                                                <TableColumn fx:id="tvOriginPayDataCOLregHours1" prefWidth="114.0" text="Reg Hours" />
-                                                <TableColumn fx:id="tvOriginPayDataCOLotHours1" prefWidth="136.0" text="O/T Hours" />
-                                                <TableColumn fx:id="tvOriginPayDataCOLrate1" prefWidth="119.0" text="Rate" />
+                                                <TableColumn fx:id="tvOriginPayDataPrevId" prefWidth="105.0" text="Emp ID" />
+                                                <TableColumn fx:id="tvOriginPayDataPrevName" prefWidth="297.0" text="Name" />
+                                                <TableColumn fx:id="tvOriginPayDataPrevRegHours" prefWidth="114.0" text="Reg Hours" />
+                                                <TableColumn fx:id="tvOriginPayDataPrevOtHours" prefWidth="134.0" text="O/T Hours" />
+                                                <TableColumn fx:id="tvOriginPayDataPrevRate" prefWidth="81.0" text="Rate" />
+                                                <TableColumn fx:id="tvOriginPayDataPrevOrg" prefWidth="115.0" text="" visible="false" />
                                              </columns>
                                           </TableView>
                                           <Label layoutX="788.0" layoutY="82.0" text="Date Ending:" />
-                                          <DatePicker fx:id="dpOriginDateEnding1" layoutX="873.0" layoutY="78.0" />
+                                          <DatePicker fx:id="dpDateEndingPrev" layoutX="873.0" layoutY="78.0" showWeekNumbers="true" />
                                           <ComboBox fx:id="cbPayrollType" layoutX="873.0" layoutY="27.0" prefHeight="26.0" prefWidth="199.0" />
                                           <Label layoutX="829.0" layoutY="33.0" text="Type:" />
                                        </children>

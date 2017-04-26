@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.sql.Date;
 
@@ -22,6 +23,7 @@ public class OriginPayData {
 	private Date originEndDate;
 	private SimpleIntegerProperty coID;
 	private SimpleStringProperty empID;
+	private SimpleStringProperty empName;
 	private SimpleDoubleProperty originHoursReg;
 	private SimpleDoubleProperty originHoursOT;
 	private SimpleDoubleProperty originRate;
@@ -30,6 +32,15 @@ public class OriginPayData {
 		originEndDate = date;
 		coID = new SimpleIntegerProperty(cID);
 		empID = new SimpleStringProperty(eID);
+		originHoursReg = new SimpleDoubleProperty(regHours);
+		originHoursOT = new SimpleDoubleProperty(otHours);
+		originRate = new SimpleDoubleProperty(rate);
+	}
+	
+	public OriginPayData(int id, String eID,String empName, double regHours, double otHours, double rate) {
+		originID = new SimpleIntegerProperty(id);
+		empID = new SimpleStringProperty(eID);
+		this.empName = new SimpleStringProperty(empName);
 		originHoursReg = new SimpleDoubleProperty(regHours);
 		originHoursOT = new SimpleDoubleProperty(otHours);
 		originRate = new SimpleDoubleProperty(rate);
@@ -89,6 +100,31 @@ public class OriginPayData {
 	}
 	public void setOriginRate(double rate) {
 		originRate.set(rate);
+	}
+	
+	public static ObservableList<OriginPayData> fillOriginPayData(Company company, LocalDate date) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		ObservableList<OriginPayData> payData = FXCollections.observableArrayList();
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("SELECT origin_id, emp_id, origin_hours_reg, origin_hours_ot, origin_rate " +
+			"FROM tbOriginPayData WHERE co_id = ? AND origin_end_date = ?");
+			ps.setInt(1, company.getCoID());
+			ps.setDate(2, Date.valueOf(date));
+			rs = ps.executeQuery();
+			while(rs.next()) {
+				payData.add(new OriginPayData(rs.getInt(1), rs.getString(2), Employee.searchEmployeeName(rs.getString(2)), 
+						rs.getDouble(3), rs.getDouble(4), rs.getDouble(5)));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return payData;
 	}
 	
 	private static void insert(ObservableList<OriginPayData> payData) {
