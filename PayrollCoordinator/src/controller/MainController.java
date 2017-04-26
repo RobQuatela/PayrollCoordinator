@@ -213,6 +213,11 @@ public class MainController implements Initializable {
     	return originPayData;
     }
     
+    public void dpDateEndingPrev_ValueChanged(ActionEvent event) {
+    	setTvOriginPayDataPrev(OriginPayData.fillOriginPayData(Company.selectCompany(cbCompany.getValue()), 
+    			dpDateEndingPrev.getValue()));
+    }
+    
     public void setValues(ObservableList<EmployeeOriginal> imports) {
     	tvOriginPayDataCOLid.setCellValueFactory(new PropertyValueFactory<EmployeeOriginal, String>("empID"));
     	tvOriginPayDataCOLname.setCellValueFactory(new PropertyValueFactory<EmployeeOriginal, String>("empName"));

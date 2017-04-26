@@ -102,6 +102,14 @@ public class OriginPayData {
 		originRate.set(rate);
 	}
 	
+	public String getEmpName() {
+		return empName.get();
+	}
+
+	public void setEmpName(String empName) {
+		this.empName.set(empName);
+	}
+	
 	public static ObservableList<OriginPayData> fillOriginPayData(Company company, LocalDate date) {
 		Connection con = null;
 		PreparedStatement ps = null;
@@ -127,6 +135,8 @@ public class OriginPayData {
 		return payData;
 	}
 	
+
+
 	private static void insert(ObservableList<OriginPayData> payData) {
 		Connection con = null;
 		PreparedStatement ps = null;
