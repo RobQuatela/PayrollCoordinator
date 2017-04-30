@@ -93,22 +93,24 @@
                      <children>
                         <BorderPane layoutX="7.0" layoutY="5.0" prefHeight="579.0" prefWidth="687.0">
                            <left>
-                              <TitledPane animated="false" collapsible="false" prefHeight="571.0" prefWidth="202.0" text="Employees" BorderPane.alignment="CENTER">
+                              <TitledPane animated="false" collapsible="false" prefHeight="571.0" prefWidth="206.0" text="Employees" BorderPane.alignment="CENTER">
                                  <content>
-                                    <TableView fx:id="tvEmployee" prefHeight="545.0" prefWidth="422.0">
+                                    <TableView fx:id="tvEmployee" prefHeight="544.0" prefWidth="190.0">
                                       <columns>
-                                        <TableColumn fx:id="tvEmployeeID" prefWidth="70.0" text="ID" />
-                                        <TableColumn fx:id="tvEmployeeName" prefWidth="312.0" text="Name" />
+                                        <TableColumn fx:id="tvEmployeeID" prefWidth="70.0" text="ID" visible="false" />
+                                        <TableColumn fx:id="tvEmployeeName" maxWidth="500.0" prefWidth="204.0" text="Name" />
                                       </columns>
                                     </TableView>
                                  </content>
                               </TitledPane>
                            </left>
                            <center>
-                              <TableView fx:id="tvEmployeeDetail" prefHeight="579.0" prefWidth="244.0" BorderPane.alignment="CENTER">
+                              <TableView fx:id="tvEmployeeModDetail" prefHeight="579.0" prefWidth="244.0" BorderPane.alignment="CENTER">
                                 <columns>
-                                  <TableColumn fx:id="tvEmployeeCOLemployee" prefWidth="150.0" text="Employee" />
-                                  <TableColumn minWidth="0.0" prefWidth="194.0" text="C2" />
+                                  <TableColumn fx:id="tvEmployeeCOLemployee" prefWidth="72.0" text="Date" />
+                                  <TableColumn minWidth="0.0" prefWidth="146.0" text="Modification" />
+                                    <TableColumn prefWidth="121.0" text="Amount" />
+                                    <TableColumn prefWidth="145.0" text="Description" />
                                 </columns>
                               </TableView>
                            </center>
@@ -117,12 +119,12 @@
                            <content>
                               <BorderPane prefHeight="161.0" prefWidth="465.0">
                                  <center>
-                                    <TableView prefHeight="200.0" prefWidth="539.0" BorderPane.alignment="CENTER">
+                                    <TableView fx:id="tvEmpModAdd" editable="true" prefHeight="200.0" prefWidth="539.0" BorderPane.alignment="CENTER">
                                       <columns>
-                                        <TableColumn prefWidth="75.0" text="Type" />
-                                        <TableColumn prefWidth="75.0" text="Date" />
-                                          <TableColumn prefWidth="75.0" text="Amount" />
-                                          <TableColumn prefWidth="312.0" text="Description" />
+                                        <TableColumn fx:id="tvEmpModAddType" prefWidth="75.0" text="Type" />
+                                        <TableColumn fx:id="tvEmpModAddDate" prefWidth="75.0" text="Date" />
+                                          <TableColumn fx:id="tvEmpModAddAmount" prefWidth="75.0" text="Amount" />
+                                          <TableColumn fx:id="tvEmpModAddDescrip" prefWidth="312.0" text="Description" />
                                       </columns>
                                     </TableView>
                                  </center>

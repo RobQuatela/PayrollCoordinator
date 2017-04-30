@@ -75,7 +75,7 @@ public class ModType {
 
 	}
 	
-	public static ObservableList<ModType> fill1() {
+	public static ObservableList<ModType> fillModTypes() {
 		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;

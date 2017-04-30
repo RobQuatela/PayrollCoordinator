@@ -40,7 +40,9 @@ import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -50,6 +52,7 @@ import javafx.util.StringConverter;
 import model.Company;
 import model.Employee;
 import model.EmployeeOriginal;
+import model.ModEmp;
 import model.ModType;
 import model.OriginPayData;
 
@@ -124,6 +127,17 @@ public class MainController implements Initializable {
     private ComboBox<String> cbPayrollType;
     @FXML
     private DatePicker dpDateEndingPrev;
+    @FXML
+    private TableView<ModEmp> tvEmpModAdd;
+    @FXML
+    private TableColumn<ModEmp, String> tvEmpModAddType;
+    @FXML
+    private TableColumn<ModEmp, String> tvEmpModAddDate;
+    @FXML
+    private TableColumn<ModEmp, String> tvEmpModAddAmount;
+    @FXML
+    private TableColumn<ModEmp, String> tvEmpModAddDescrip;
+    
     
 
 	@Override
@@ -146,6 +160,7 @@ public class MainController implements Initializable {
 		payrollTypes.add("Original");
 		payrollTypes.add("Modified");
 		comboBoxFill(cbPayrollType, payrollTypes);
+		setTvEmpModAdd();
 	}
     
 	public void btnSaveImport_Clicked(ActionEvent event) {
@@ -242,6 +257,24 @@ public class MainController implements Initializable {
     	tvEmployeeID.setCellValueFactory(new PropertyValueFactory<Employee, String>("empID"));
     	tvEmployeeName.setCellValueFactory(new PropertyValueFactory<Employee, String>("empName"));
     	tvEmployee.setItems(employees);
+    }
+    
+    public void setTvEmpModAdd() {
+    	ObservableList<String> modTypes = FXCollections.observableArrayList();
+    	modTypes = ModType.fill();
+    	tvEmpModAddType.setCellFactory(ComboBoxTableCell.forTableColumn(modTypes));
+    	tvEmpModAddDate.setCellFactory(TextFieldTableCell.forTableColumn());
+/*    	tvEmpModAddDate.onEditCommit(new EventHandler<CellEditEvent<ModEmp, String>>() {
+
+			@Override
+			public void handle(CellEditEvent<ModEmp, String> arg0) {
+				// TODO Auto-generated method stub
+				((ModEmp) t)
+			}
+    		
+    	})*/
+    	tvEmpModAddAmount.setCellFactory(TextFieldTableCell.forTableColumn());
+    	tvEmpModAddDescrip.setCellFactory(TextFieldTableCell.forTableColumn());
     }
     
     public void comboBoxFill(ComboBox<String> box, ObservableList list) {
