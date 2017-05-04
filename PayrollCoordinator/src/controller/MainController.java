@@ -131,11 +131,11 @@ public class MainController implements Initializable {
     @FXML
     private TableView<ModEmp> tvEmpModAdd;
     @FXML
-    private TableColumn<ModEmp, Integer> tvEmpModAddType;
+    private TableColumn<ModEmp, String> tvEmpModAddType;
     @FXML
-    private TableColumn<ModEmp, LocalDate> tvEmpModAddDate;
+    private TableColumn<ModEmp, String> tvEmpModAddDate;
     @FXML
-    private TableColumn<ModEmp, Double> tvEmpModAddAmount;
+    private TableColumn<ModEmp, String> tvEmpModAddAmount;
     @FXML
     private TableColumn<ModEmp, String> tvEmpModAddDescrip;
     
@@ -266,37 +266,38 @@ public class MainController implements Initializable {
     	ObservableList<ModEmp> modEmp = FXCollections.observableArrayList(new ModEmp(1, 2, "N4646", LocalDate.of(2017, 4, 22),
     			100.00, "test"));
 
-    	tvEmpModAddType.setCellValueFactory(new PropertyValueFactory<ModEmp, Integer>("modID"));
-    	//tvEmpModAddType.setCellFactory(ComboBoxTableCell.forTableColumn(modTypes));
-    	tvEmpModAddType.setOnEditCommit(new EventHandler<CellEditEvent<ModEmp, Integer>>() {
+    	//tvEmpModAddType.setCellValueFactory(new PropertyValueFactory<ModEmp, Integer>("modID"));
+    	tvEmpModAddType.setCellFactory(ComboBoxTableCell.forTableColumn(modTypes));
+    	tvEmpModAddType.setOnEditCommit(new EventHandler<CellEditEvent<ModEmp, String>>() {
 
 			@Override
-			public void handle(CellEditEvent<ModEmp, Integer> t) {
+			public void handle(CellEditEvent<ModEmp, String> t) {
 				//((ModEmp) t.getTableView().getItems().get(
 						//t.getTablePosition().getRow())).setModID(ModType.searchModTypeID(t.getValue()));	
 			}
     	});
-    	tvEmpModAddDate.setCellValueFactory(new PropertyValueFactory<ModEmp, LocalDate>("modEmpDate"));
+    	//tvEmpModAddDate.setCellValueFactory(new PropertyValueFactory<ModEmp, String>("modEmpDate"));
+    	tvEmpModAddDate.setCellFactory(TextFieldTableCell.forTableColumn());
     	//tvEmpModAddDate.setCellFactory(TextFieldTableCell.forTableColumn());
-    	tvEmpModAddDate.setOnEditCommit(new EventHandler<CellEditEvent<ModEmp, LocalDate>>() {
+    	tvEmpModAddDate.setOnEditCommit(new EventHandler<CellEditEvent<ModEmp, String>>() {
 
 			@Override
-			public void handle(CellEditEvent<ModEmp, LocalDate> t) {
-				((ModEmp) t.getTableView().getItems().get(
-						t.getTablePosition().getRow())).setModEmpDate(LocalDate.now());	
+			public void handle(CellEditEvent<ModEmp, String> t) {
+				//((ModEmp) t.getTableView().getItems().get(
+						//t.getTablePosition().getRow())).setModEmpDate(LocalDate.now());	
 			}
     	});
-    	tvEmpModAddAmount.setCellValueFactory(new PropertyValueFactory<ModEmp, Double>("modEmpAmount"));
-    	//tvEmpModAddAmount.setCellFactory(TextFieldTableCell.forTableColumn());
-    	tvEmpModAddAmount.setOnEditCommit(new EventHandler<CellEditEvent<ModEmp, Double>>() {
+    	//tvEmpModAddAmount.setCellValueFactory(new PropertyValueFactory<ModEmp, Double>("modEmpAmount"));
+    	tvEmpModAddAmount.setCellFactory(TextFieldTableCell.forTableColumn());
+    	tvEmpModAddAmount.setOnEditCommit(new EventHandler<CellEditEvent<ModEmp, String>>() {
 
 			@Override
-			public void handle(CellEditEvent<ModEmp, Double> t) {
+			public void handle(CellEditEvent<ModEmp, String> t) {
 				((ModEmp) t.getTableView().getItems().get(
-						t.getTablePosition().getRow())).setModEmpAmount(t.getNewValue());	
+						t.getTablePosition().getRow())).setModEmpAmount(Double.parseDouble(t.getNewValue()));
 			}
     	});
-    	tvEmpModAddDescrip.setCellValueFactory(new PropertyValueFactory<ModEmp, String>("modEmpDescrip"));
+    	//tvEmpModAddDescrip.setCellValueFactory(new PropertyValueFactory<ModEmp, String>("modEmpDescrip"));
     	tvEmpModAddDescrip.setCellFactory(TextFieldTableCell.forTableColumn());
     	tvEmpModAddDescrip.setOnEditCommit(new EventHandler<CellEditEvent<ModEmp, String>>() {
 
