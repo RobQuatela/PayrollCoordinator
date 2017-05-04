@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -20,19 +21,19 @@ public class ModEmp {
 	private SimpleDoubleProperty modEmpAmount;
 	private SimpleStringProperty modEmpDescrip;
 	
-	public ModEmp(int id, int mod, String emp, Date date, double amount, String descrip) {
+	public ModEmp(int id, int mod, String emp, LocalDate date, double amount, String descrip) {
 		modEmpID = new SimpleIntegerProperty(id);
 		modID = new SimpleIntegerProperty(mod);
 		empID = new SimpleStringProperty(emp);
-		modEmpDate = date;
+		modEmpDate = Date.valueOf(date);
 		modEmpAmount = new SimpleDoubleProperty(amount);
 		modEmpDescrip = new SimpleStringProperty(descrip);
 	}
 	
-	public ModEmp(int mod, String emp, Date date, double amount, String descrip) {
+	public ModEmp(int mod, String emp, LocalDate date, double amount, String descrip) {
 		modID = new SimpleIntegerProperty(mod);
 		empID = new SimpleStringProperty(emp);
-		modEmpDate = date;
+		modEmpDate = Date.valueOf(date);
 		modEmpAmount = new SimpleDoubleProperty(amount);
 		modEmpDescrip = new SimpleStringProperty(descrip);
 	}
@@ -57,8 +58,8 @@ public class ModEmp {
 		return modEmpDate;
 	}
 
-	public void setModEmpDate(Date modEmpDate) {
-		this.modEmpDate = modEmpDate;
+	public void setModEmpDate(LocalDate modEmpDate) {
+		this.modEmpDate = Date.valueOf(modEmpDate);
 	}
 
 	public double getModEmpAmount() {

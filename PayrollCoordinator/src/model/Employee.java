@@ -69,7 +69,7 @@ public class Employee {
 			if (result.get() == alert.getButtonTypes().get(0)) {
 				try {
 					con = DBConnect.connect();
-					ps = con.prepareStatement("INSERT INTO tbEmployee (emp_id, emp_name, co_id) VALUES (?, ?, ?)");
+					ps = con.prepareStatement("INSERT INTO tbemployee (emp_id, emp_name, co_id) VALUES (?, ?, ?)");
 					for (Employee employee : employees) {
 						ps.setString(1, employee.getEmpID());
 						ps.setString(2, employee.getEmpName());
@@ -106,7 +106,7 @@ public class Employee {
 		try {
 			con = DBConnect.connect();
 			for(EmployeeOriginal employee : employees) {
-				stmt = con.prepareStatement("SELECT COUNT(emp_id) AS total FROM tbEmployee WHERE emp_id = ?");
+				stmt = con.prepareStatement("SELECT COUNT(emp_id) AS total FROM tbemployee WHERE emp_id = ?");
 				stmt.setString(1, employee.getEmpID());
 				rs = stmt.executeQuery();
 				while(rs.next()) {
@@ -131,7 +131,7 @@ public class Employee {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("SELECT emp_name FROM tbEmployee WHERE co_id = ?");
+			ps = con.prepareStatement("SELECT emp_name FROM tbemployee WHERE co_id = ?");
 			ps.setInt(1, company.getCoID());
 			rs = ps.executeQuery();
 			while(rs.next()) {
@@ -153,7 +153,7 @@ public class Employee {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("SELECT emp_name FROM tbEmployee WHERE emp_id = ?");
+			ps = con.prepareStatement("SELECT emp_name FROM tbemployee WHERE emp_id = ?");
 			ps.setString(1, empID);
 			rs = ps.executeQuery();
 			while(rs.next()) {
@@ -175,7 +175,7 @@ public class Employee {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("SELECT * FROM tbEmployee WHERE co_id = ?");
+			ps = con.prepareStatement("SELECT * FROM tbemployee WHERE co_id = ?");
 			ps.setInt(1, company.getCoID());
 			rs = ps.executeQuery();
 			while(rs.next()) {

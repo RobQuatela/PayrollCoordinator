@@ -119,7 +119,7 @@ public class OriginPayData {
 		try {
 			con = DBConnect.connect();
 			ps = con.prepareStatement("SELECT origin_id, emp_id, origin_hours_reg, origin_hours_ot, origin_rate " +
-			"FROM tbOriginPayData WHERE co_id = ? AND origin_end_date = ?");
+			"FROM tboriginpaydata WHERE co_id = ? AND origin_end_date = ?");
 			ps.setInt(1, company.getCoID());
 			ps.setDate(2, Date.valueOf(date));
 			rs = ps.executeQuery();
@@ -143,7 +143,7 @@ public class OriginPayData {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("INSERT INTO tbOriginPayData (origin_end_date, co_id, emp_id, " +
+			ps = con.prepareStatement("INSERT INTO tboriginpaydata (origin_end_date, co_id, emp_id, " +
 			"origin_hours_reg, origin_hours_ot, origin_rate) VALUES (?, ?, ?, ?, ?, ?)");
 			for(OriginPayData data : payData) {
 				ps.setDate(1, data.getOriginEndDate());
@@ -176,7 +176,7 @@ public class OriginPayData {
 		try {
 			con = DBConnect.connect();
 			for(OriginPayData data : payData) {
-				ps = con.prepareStatement("SELECT COUNT(origin_id) AS total, origin_id FROM tbOriginPayData " +
+				ps = con.prepareStatement("SELECT COUNT(origin_id) AS total, origin_id FROM tboriginpaydata " +
 			"WHERE origin_end_date = ? AND emp_id = ? GROUP BY origin_id");
 				ps.setDate(1, data.getOriginEndDate());
 				ps.setString(2, data.getEmpID());
@@ -205,7 +205,7 @@ public class OriginPayData {
 		try {
 			con = DBConnect.connect();
 			for(OriginPayData data : payData) {
-				ps = con.prepareStatement("SELECT COUNT(origin_id) AS total, origin_id FROM tbOriginPayData " +
+				ps = con.prepareStatement("SELECT COUNT(origin_id) AS total, origin_id FROM tboriginpaydata " +
 			"WHERE origin_end_date = ? AND emp_id = ? AND (origin_hours_reg != ? OR origin_hours_ot != ? " +
 						"OR origin_rate != ?) GROUP BY origin_id");
 				ps.setDate(1, data.getOriginEndDate());
@@ -235,7 +235,7 @@ public class OriginPayData {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("UPDATE tbOriginPayData SET " +
+			ps = con.prepareStatement("UPDATE tboriginpaydata SET " +
 					"origin_hours_reg = ?, origin_hours_ot = ?, origin_rate = ? " +
 					"WHERE origin_id = ?");
 			for(OriginPayData data : payData) {

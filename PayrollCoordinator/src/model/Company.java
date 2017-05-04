@@ -43,7 +43,7 @@ public class Company {
 		
 		try {
 			conn = DBConnect.connect();
-			stmt = conn.prepareStatement("SELECT co_name FROM tbCompany WHERE co_id = ?");
+			stmt = conn.prepareStatement("SELECT co_name FROM tbcompany WHERE co_id = ?");
 			stmt.setInt(1, coID);
 			rs = stmt.executeQuery();
 			while(rs.next())
@@ -63,7 +63,7 @@ public class Company {
 		
 		try {
 			conn = DBConnect.connect();
-			stmt = conn.prepareStatement("SELECT * FROM tbCompany WHERE co_name = ?");
+			stmt = conn.prepareStatement("SELECT * FROM tbcompany WHERE co_name = ?");
 			stmt.setString(1, coName);
 			rs = stmt.executeQuery();
 			while(rs.next()) {
@@ -84,7 +84,7 @@ public class Company {
 		
 		try {
 			conn = DBConnect.connect();
-			stmt = conn.prepareStatement("SELECT co_name FROM tbCompany");
+			stmt = conn.prepareStatement("SELECT co_name FROM tbcompany");
 			rs = stmt.executeQuery();
 			while(rs.next()) {
 				companies.add(rs.getString("co_name"));

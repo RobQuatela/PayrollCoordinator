@@ -42,7 +42,7 @@ public class ModType {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("INSERT INTO tbModType (mod_name) VALUES(?)");
+			ps = con.prepareStatement("INSERT INTO tbmodtype (mod_name) VALUES(?)");
 			ps.setString(1, mod.getModName());
 			ps.executeUpdate();
 		} catch (SQLException e) {
@@ -60,7 +60,7 @@ public class ModType {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("SELECT mod_name FROM tbModType");
+			ps = con.prepareStatement("SELECT mod_name FROM tbmodtype");
 			rs = ps.executeQuery();
 			while(rs.next()) {
 				mods.add(rs.getString("mod_name"));
@@ -75,6 +75,30 @@ public class ModType {
 
 	}
 	
+	public static int searchModTypeID(String modName) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		int modID = 0;
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("SELECT mod_id FROM tbmodtype WHERE mod_name = ?");
+			ps.setString(1, modName);
+			rs = ps.executeQuery();
+			while(rs.next()) {
+				modID = rs.getInt("mod_id");
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return modID;
+
+	}
+	
 	public static ObservableList<ModType> fillModTypes() {
 		Connection con = null;
 		PreparedStatement ps = null;
@@ -83,7 +107,7 @@ public class ModType {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("SELECT * FROM tbModType");
+			ps = con.prepareStatement("SELECT * FROM tbmodtype");
 			rs = ps.executeQuery();
 			while(rs.next()) {
 				mods.add(new ModType(rs.getInt(1), rs.getString(2)));

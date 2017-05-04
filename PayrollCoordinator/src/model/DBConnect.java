@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class DBConnect {
 
 	private static Connection conn;
-	private static String connString = "jdbc:mysql://localhost:3306/dbPayroll?autoReconnect=true&useSSL=false";
+	private static String connString = "jdbc:mysql://localhost:3306/dbpayroll?autoReconnect=true&useSSL=false";
 	private static String user = "root";
 	private static String pass = "P@ssG0!";
 	private static String driver = "com.mysql.jdbc.Driver";
