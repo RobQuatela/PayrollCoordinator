@@ -11,6 +11,7 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -115,37 +116,80 @@
                               </TableView>
                            </center>
                         </BorderPane>
-                        <TitledPane animated="false" collapsible="false" layoutX="717.0" layoutY="2.0" prefHeight="355.0" prefWidth="467.0" text="Add Modification">
+                        <TitledPane fx:id="tpAddModification" animated="false" layoutX="717.0" layoutY="2.0" prefHeight="267.0" prefWidth="467.0" text="Add Modification">
                            <content>
-                              <BorderPane prefHeight="161.0" prefWidth="465.0">
+                              <BorderPane prefHeight="305.0" prefWidth="465.0">
+                                 <bottom>
+                                    <Button fx:id="btnAddMod" mnemonicParsing="false" onAction="#btnAddMod_Clicked" prefHeight="33.0" prefWidth="157.0" text="Add Modification" BorderPane.alignment="CENTER">
+                                       <BorderPane.margin>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </BorderPane.margin></Button>
+                                 </bottom>
                                  <center>
-                                    <TableView fx:id="tvEmpModAdd" editable="true" prefHeight="200.0" prefWidth="539.0" BorderPane.alignment="CENTER">
-                                      <columns>
-                                        <TableColumn fx:id="tvEmpModAddType" prefWidth="75.0" text="Type" />
-                                        <TableColumn fx:id="tvEmpModAddDate" prefWidth="75.0" text="Date" />
-                                          <TableColumn fx:id="tvEmpModAddAmount" prefWidth="75.0" text="Amount" />
-                                          <TableColumn fx:id="tvEmpModAddDescrip" prefWidth="312.0" text="Description" />
-                                      </columns>
-                                    </TableView>
+                                    <GridPane alignment="CENTER" prefHeight="171.0" prefWidth="446.0" BorderPane.alignment="CENTER">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="157.0" minWidth="10.0" prefWidth="142.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="183.0" minWidth="10.0" prefWidth="145.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="196.0" minWidth="10.0" prefWidth="147.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints maxHeight="84.0" minHeight="10.0" prefHeight="27.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                        <RowConstraints maxHeight="200.0" minHeight="10.0" prefHeight="89.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <Label contentDisplay="CENTER" text="Type" />
+                                          <Label contentDisplay="CENTER" text="Amount" GridPane.columnIndex="1" />
+                                          <Label contentDisplay="CENTER" text="Description" GridPane.columnIndex="2" />
+                                          <ComboBox fx:id="cbAddModType" prefWidth="150.0" GridPane.rowIndex="1">
+                                             <GridPane.margin>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                             </GridPane.margin>
+                                          </ComboBox>
+                                          <TextField fx:id="txtAddModAmount" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                             <GridPane.margin>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                             </GridPane.margin>
+                                          </TextField>
+                                          <TextArea fx:id="taAddModDescrip" prefHeight="101.0" prefWidth="181.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                             <GridPane.margin>
+                                                <Insets top="5.0" />
+                                             </GridPane.margin>
+                                          </TextArea>
+                                       </children>
+                                       <BorderPane.margin>
+                                          <Insets bottom="10.0" top="10.0" />
+                                       </BorderPane.margin>
+                                    </GridPane>
                                  </center>
                                  <top>
-                                    <HBox prefHeight="26.0" prefWidth="445.0" BorderPane.alignment="CENTER">
+                                    <VBox prefHeight="35.0" prefWidth="446.0" BorderPane.alignment="CENTER">
                                        <children>
-                                          <Label text="Employee:">
-                                             <HBox.margin>
-                                                <Insets right="10.0" />
-                                             </HBox.margin>
-                                          </Label>
-                                          <Label fx:id="lblEmployeeAddName" />
+                                          <HBox prefHeight="100.0" prefWidth="200.0">
+                                             <children>
+                                                <Label contentDisplay="RIGHT" text="Date:" />
+                                                <DatePicker fx:id="dpAddModDate">
+                                                   <HBox.margin>
+                                                      <Insets left="10.0" />
+                                                   </HBox.margin>
+                                                </DatePicker>
+                                             </children>
+                                          </HBox>
                                        </children>
-                                    </HBox>
+                                    </VBox>
                                  </top>
-                                 <bottom>
-                                    <Button fx:id="btnAddMod" mnemonicParsing="false" onAction="#btnAddMod_Clicked" prefHeight="51.0" prefWidth="157.0" text="Add Modification(s)" BorderPane.alignment="CENTER" />
-                                 </bottom>
                               </BorderPane>
-                           </content></TitledPane>
-                        <ListView fx:id="lstEmployee" layoutX="825.0" layoutY="444.0" prefHeight="77.0" prefWidth="200.0" />
+                           </content>
+                           <font>
+                              <Font size="14.0" />
+                           </font></TitledPane>
+                        <TableView fx:id="tvEmpModAdd" accessibleRole="IMAGE_VIEW" editable="true" layoutX="707.0" layoutY="314.0" prefHeight="233.0" prefWidth="459.0">
+                          <columns>
+                            <TableColumn fx:id="tvEmpModAddType" prefWidth="87.0" text="Type" />
+                            <TableColumn fx:id="tvEmpModAddDate" prefWidth="76.0" text="Date" />
+                              <TableColumn fx:id="tvEmpModAddAmount" prefWidth="95.0" text="Amount" />
+                              <TableColumn fx:id="tvEmpModAddDescrip" prefWidth="197.0" text="Description" />
+                          </columns>
+                        </TableView>
                      </children></AnchorPane>
             </content>
           </Tab>

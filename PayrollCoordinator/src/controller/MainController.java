@@ -35,12 +35,16 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
+import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -121,8 +125,6 @@ public class MainController implements Initializable {
     @FXML
     private TableColumn<Employee, String> tvEmployeeName;
     @FXML
-    private Label lblEmployeeAddName;
-    @FXML
     private DatePicker dpOriginDateEnding;
     @FXML
     private ComboBox<String> cbPayrollType;
@@ -138,6 +140,16 @@ public class MainController implements Initializable {
     private TableColumn<ModEmp, String> tvEmpModAddAmount;
     @FXML
     private TableColumn<ModEmp, String> tvEmpModAddDescrip;
+    @FXML
+    private TitledPane tpAddModification;
+    @FXML
+    private DatePicker dpAddModDate;
+    @FXML
+    private ComboBox<String> cbAddModType;
+    @FXML
+    private TextField txtAddModAmount;
+    @FXML
+    private TextArea taAddModDescrip;
     
     
 
@@ -152,8 +164,8 @@ public class MainController implements Initializable {
 
 			@Override
 			public void handle(MouseEvent arg0) {
-				lblEmployeeAddName.setText(
-						tvEmployee.getSelectionModel().getSelectedItem().getEmpName().toString());
+				tpAddModification.setText(
+						"Add Modification (" + tvEmployee.getSelectionModel().getSelectedItem().getEmpName().toString() + ")");
 			}
 			
 		});
@@ -161,6 +173,7 @@ public class MainController implements Initializable {
 		payrollTypes.add("Original");
 		payrollTypes.add("Modified");
 		comboBoxFill(cbPayrollType, payrollTypes);
+		comboBoxFill(cbAddModType, ModType.fill());
 		setTvEmpModAdd();
 	}
     
@@ -208,7 +221,14 @@ public class MainController implements Initializable {
     }
     
     public void btnAddMod_Clicked(ActionEvent event) {
-    	lblEmployeeAddName.setText(tvEmployee.getSelectionModel().getSelectedItem().getEmpName().toString());
+    	//lblEmployeeAddName.setText(tvEmployee.getSelectionModel().getSelectedItem().getEmpName().toString());
+    	ModEmp.insert(new ModEmp(
+    			ModType.searchModTypeID(cbAddModType.getSelectionModel().getSelectedItem().toString()),
+    			tvEmployee.getItems().get(tvEmployee.getSelectionModel().getSelectedIndex()).getEmpID(),
+    			dpAddModDate.getValue(),
+    			Double.parseDouble(txtAddModAmount.getText()),
+    			taAddModDescrip.getText()
+    			));
     }
     
     private ObservableList<EmployeeOriginal> importOriginData(File file) {
@@ -308,9 +328,10 @@ public class MainController implements Initializable {
 			}
     	});
     	tvEmpModAdd.setItems(modEmp);
+    	tvEmpModAddDescrip.setEditable(true);
     }
     
-    public void comboBoxFill(ComboBox<String> box, ObservableList list) {
+    public void comboBoxFill(ComboBox box, ObservableList list) {
     	box.setItems(list);
     	box.getSelectionModel().clearAndSelect(0);
     }
