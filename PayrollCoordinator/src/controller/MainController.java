@@ -58,6 +58,7 @@ import model.Company;
 import model.Employee;
 import model.EmployeeOriginal;
 import model.ModEmp;
+import model.ModPayData;
 import model.ModType;
 import model.OriginPayData;
 
@@ -149,7 +150,43 @@ public class MainController implements Initializable {
     @FXML
     private TextField txtAddModAmount;
     @FXML
+    private TextField txtAddModHours;
+    @FXML
     private TextArea taAddModDescrip;
+    @FXML
+    private TableView<ModEmp> tvEmployeeModDetail;
+    @FXML
+    private TableColumn<ModEmp, Date> tvEmployeeModDetailDate;
+    @FXML
+    private TableColumn<ModEmp, String> tvEmployeeModDetailMod;
+    @FXML
+    private TableColumn<ModEmp, Double> tvEmployeeModDetailAmount;
+    @FXML
+    private TableColumn<ModEmp, Double> tvEmployeeModDetailHours;
+    @FXML
+    private TableColumn<ModEmp, String> tvEmployeeModDetailDescrip;
+    @FXML
+    private TableView<ModPayData> tvExportPayData;
+    @FXML
+    private TableColumn<ModPayData, String> tvExportPayDataEmpID;
+    @FXML
+    private TableColumn<ModPayData, String> tvExportPayDataName;
+    @FXML
+    private TableColumn<ModPayData, Double> tvExportPayDataRegHours;
+    @FXML
+    private TableColumn<ModPayData, Double> tvExportPayDataOTHours;
+    @FXML
+    private TableColumn<ModPayData, Double> tvExportPayDataRate;
+    @FXML
+    private DatePicker dpExportDateEnding;
+    @FXML
+    private DatePicker dpExportStartDate;
+    @FXML
+    private DatePicker dpExportEndDate;
+    @FXML
+    private Button btnExportUpdatePayroll;
+    @FXML
+    private Button btnExportPayroll;
     
     
 
@@ -166,6 +203,9 @@ public class MainController implements Initializable {
 			public void handle(MouseEvent arg0) {
 				tpAddModification.setText(
 						"Add Modification (" + tvEmployee.getSelectionModel().getSelectedItem().getEmpName().toString() + ")");
+				setTvEmployeeModDetail(ModEmp.fillByEmployee(tvEmployee.getSelectionModel().getSelectedItem().getEmpID().toString()));
+				tpAddModification.setDisable(false);
+				tpAddModification.setExpanded(true);
 			}
 			
 		});
@@ -174,7 +214,8 @@ public class MainController implements Initializable {
 		payrollTypes.add("Modified");
 		comboBoxFill(cbPayrollType, payrollTypes);
 		comboBoxFill(cbAddModType, ModType.fill());
-		setTvEmpModAdd();
+		//setTvEmpModAdd();
+		//setTvEmployeeModDetail(ModEmp.fillByEmployee(tvEmployee.getSelectionModel().getSelectedItem().getEmpName().toString()));
 	}
     
 	public void btnSaveImport_Clicked(ActionEvent event) {
@@ -182,6 +223,7 @@ public class MainController implements Initializable {
 		//lstEmployeeFill();
 		listViewFill(lstEmployee, Employee.fillEmployeeName(Company.selectCompany(cbCompany.getValue())));
 		ObservableList<OriginPayData> payData = FXCollections.observableArrayList();
+		ObservableList<ModPayData> modData = FXCollections.observableArrayList();
 		for(int i = 0; i < tvOriginPayData.getItems().size(); i++) {
 			payData.add(new OriginPayData(
 					Date.valueOf(dpOriginDateEnding.getValue()),
@@ -191,6 +233,10 @@ public class MainController implements Initializable {
 					tvOriginPayData.getItems().get(i).getOriginHoursOT(),
 					tvOriginPayData.getItems().get(i).getOriginRate()
 					));
+			modData.add(new ModPayData(OriginPayData.searchLastID(), 
+					tvOriginPayData.getItems().get(i).getOriginHoursReg(),
+					tvOriginPayData.getItems().get(i).getOriginHoursOT(),
+					tvOriginPayData.getItems().get(i).getOriginRate()));
 		}
 		OriginPayData.insertOrUpdate(payData);
 		clearTableData(tvOriginPayData);
@@ -217,18 +263,24 @@ public class MainController implements Initializable {
     	ModType mod = new ModType(txtModInsert.getText());
     	ModType.insert(mod);
     	lstModTypeFill();
+    	comboBoxFill(cbAddModType, ModType.fill());
     	txtModInsert.clear();
     }
     
     public void btnAddMod_Clicked(ActionEvent event) {
-    	//lblEmployeeAddName.setText(tvEmployee.getSelectionModel().getSelectedItem().getEmpName().toString());
     	ModEmp.insert(new ModEmp(
     			ModType.searchModTypeID(cbAddModType.getSelectionModel().getSelectedItem().toString()),
     			tvEmployee.getItems().get(tvEmployee.getSelectionModel().getSelectedIndex()).getEmpID(),
     			dpAddModDate.getValue(),
-    			Double.parseDouble(txtAddModAmount.getText()),
+    			Double.parseDouble(txtAddModAmount.getText()), Double.parseDouble(txtAddModHours.getText()),
     			taAddModDescrip.getText()
     			));
+    	
+    	setTvEmployeeModDetail(ModEmp.fillByEmployee(tvEmployee.getSelectionModel().getSelectedItem().getEmpID().toString()));
+    	txtAddModAmount.clear();
+    	txtAddModHours.clear();
+    	taAddModDescrip.clear();
+    	
     }
     
     private ObservableList<EmployeeOriginal> importOriginData(File file) {
@@ -280,14 +332,23 @@ public class MainController implements Initializable {
     	tvEmployee.setItems(employees);
     }
     
+    public void setTvEmployeeModDetail(ObservableList<ModEmp> modEmps) {
+    	tvEmployeeModDetailDate.setCellValueFactory(new PropertyValueFactory<ModEmp, Date>("modEmpDate"));
+    	tvEmployeeModDetailMod.setCellValueFactory(new PropertyValueFactory<ModEmp, String>("modTypeName"));
+    	tvEmployeeModDetailAmount.setCellValueFactory(new PropertyValueFactory<ModEmp, Double>("modEmpAmount"));
+    	tvEmployeeModDetailHours.setCellValueFactory(new PropertyValueFactory<ModEmp, Double>("modEmpHours"));
+    	tvEmployeeModDetailDescrip.setCellValueFactory(new PropertyValueFactory<ModEmp, String>("modEmpDescrip"));
+    	tvEmployeeModDetail.setItems(modEmps);
+    }
+    
     public void setTvEmpModAdd() {
-    	ObservableList<String> modTypes = FXCollections.observableArrayList();
+/*    	ObservableList<String> modTypes = FXCollections.observableArrayList();
     	modTypes = ModType.fill();
     	ObservableList<ModEmp> modEmp = FXCollections.observableArrayList(new ModEmp(1, 2, "N4646", LocalDate.of(2017, 4, 22),
     			100.00, "test"));
 
     	//tvEmpModAddType.setCellValueFactory(new PropertyValueFactory<ModEmp, Integer>("modID"));
-    	tvEmpModAddType.setCellFactory(ComboBoxTableCell.forTableColumn(modTypes));
+    	//tvEmpModAddType.setCellFactory(ComboBoxTableCell.forTableColumn(modTypes));
     	tvEmpModAddType.setOnEditCommit(new EventHandler<CellEditEvent<ModEmp, String>>() {
 
 			@Override
@@ -328,7 +389,7 @@ public class MainController implements Initializable {
 			}
     	});
     	tvEmpModAdd.setItems(modEmp);
-    	tvEmpModAddDescrip.setEditable(true);
+    	tvEmpModAddDescrip.setEditable(true);*/
     }
     
     public void comboBoxFill(ComboBox box, ObservableList list) {

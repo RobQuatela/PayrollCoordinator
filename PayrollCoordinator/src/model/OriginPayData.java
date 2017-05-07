@@ -135,9 +135,28 @@ public class OriginPayData {
 		return payData;
 	}
 	
+	public static int searchLastID() {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		int id = 0;
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("SELECT MAX(origin_id) FROM tboriginpaydata");
+			rs = ps.executeQuery();
+			while(rs.next()) {
+				id = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return id;
+	}
 
-
-	private static void insert(ObservableList<OriginPayData> payData) {
+	protected static void insert(ObservableList<OriginPayData> payData) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		
@@ -167,7 +186,7 @@ public class OriginPayData {
 		}
 	}
 	
-	private static ObservableList<OriginPayData> searchForDup(ObservableList<OriginPayData> payData) {
+	protected static ObservableList<OriginPayData> searchForDup(ObservableList<OriginPayData> payData) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -196,7 +215,7 @@ public class OriginPayData {
 		return payDataDup;
 	}
 	
-	private static ObservableList<OriginPayData> searchForUpdates(ObservableList<OriginPayData> payData) {
+	protected static ObservableList<OriginPayData> searchForUpdates(ObservableList<OriginPayData> payData) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -229,7 +248,7 @@ public class OriginPayData {
 		return payDataUpdate;
 	}
 	
-	private static void update(ObservableList<OriginPayData> payData) {
+	protected static void update(ObservableList<OriginPayData> payData) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		
