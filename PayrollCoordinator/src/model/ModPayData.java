@@ -31,6 +31,12 @@ public class ModPayData {
 		modHoursOT = new SimpleDoubleProperty(ot);
 		modRate = new SimpleDoubleProperty(rate);
 	}
+	
+	public ModPayData(double reg, double ot, double rate) {
+		modHoursReg = new SimpleDoubleProperty(reg);
+		modHoursOT = new SimpleDoubleProperty(ot);
+		modRate = new SimpleDoubleProperty(rate);
+	}
 
 	public int getOriginID() {
 		return originID.get();
@@ -74,7 +80,7 @@ public class ModPayData {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("INSERT INTO tbmodpaydata (origin_id, mod_hours_reg, mod_hours_ot, mod_rate), "
+			ps = con.prepareStatement("INSERT INTO tbmodpaydata (origin_id, mod_hours_reg, mod_hours_ot, mod_rate) "
 					+ "VALUES (?, ?, ?, ?)");
 			for (ModPayData data : modPayData) {
 				ps.setInt(1, data.getOriginID());
@@ -83,6 +89,26 @@ public class ModPayData {
 				ps.setDouble(4, data.getModRate());
 				ps.executeUpdate();
 			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
+	protected static void insert(ModPayData modPayData) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("INSERT INTO tbmodpaydata (origin_id, mod_hours_reg, mod_hours_ot, mod_rate) "
+					+ "VALUES (?, ?, ?, ?)");
+			ps.setInt(1, modPayData.getOriginID());
+			ps.setDouble(2, modPayData.getModHoursReg());
+			ps.setDouble(3, modPayData.getModHoursOT());
+			ps.setDouble(4, modPayData.getModRate());
+			ps.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

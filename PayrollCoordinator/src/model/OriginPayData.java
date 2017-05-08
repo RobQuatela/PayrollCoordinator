@@ -186,6 +186,34 @@ public class OriginPayData implements PayData {
 		}
 	}
 	
+	protected static void insert(OriginPayData payData) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("INSERT INTO tboriginpaydata (origin_end_date, co_id, emp_id, " +
+			"origin_hours_reg, origin_hours_ot, origin_rate) VALUES (?, ?, ?, ?, ?, ?)");
+			ps.setDate(1, payData.getOriginEndDate());
+			ps.setInt(2, payData.getCoID());
+			ps.setString(3, payData.getEmpID());
+			ps.setDouble(4, payData.getOriginHoursReg());
+			ps.setDouble(5, payData.getOriginHoursOT());
+			ps.setDouble(6, payData.getOriginRate());
+			ps.executeUpdate();
+			
+			AlertMessage newData = new AlertMessage(AlertType.CONFIRMATION, "The following new data has been inserted!");
+			newData = newData.originPayDataInfo(payData);
+			newData.getButtonTypes().remove(0,2);
+			newData.getButtonTypes().add(ButtonType.OK);
+			newData.showAndWait();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	protected static ObservableList<OriginPayData> searchForDup(ObservableList<OriginPayData> payData) {
 		Connection con = null;
 		PreparedStatement ps = null;

@@ -61,6 +61,7 @@ import model.ModEmp;
 import model.ModPayData;
 import model.ModType;
 import model.OriginPayData;
+import model.PayData;
 
 public class MainController implements Initializable {
 
@@ -221,9 +222,10 @@ public class MainController implements Initializable {
 	public void btnSaveImport_Clicked(ActionEvent event) {
 		Employee.Insert(originPayData, Company.selectCompany(cbCompany.getValue()));
 		//lstEmployeeFill();
-		listViewFill(lstEmployee, Employee.fillEmployeeName(Company.selectCompany(cbCompany.getValue())));
+		setTvEmployee(Employee.fillEmployee(Company.selectCompany(cbCompany.getValue())));
 		ObservableList<OriginPayData> payData = FXCollections.observableArrayList();
 		ObservableList<ModPayData> modData = FXCollections.observableArrayList();
+		
 		for(int i = 0; i < tvOriginPayData.getItems().size(); i++) {
 			payData.add(new OriginPayData(
 					Date.valueOf(dpOriginDateEnding.getValue()),
@@ -233,12 +235,13 @@ public class MainController implements Initializable {
 					tvOriginPayData.getItems().get(i).getOriginHoursOT(),
 					tvOriginPayData.getItems().get(i).getOriginRate()
 					));
-			modData.add(new ModPayData(OriginPayData.searchLastID(), 
+			modData.add(new ModPayData( 
 					tvOriginPayData.getItems().get(i).getOriginHoursReg(),
 					tvOriginPayData.getItems().get(i).getOriginHoursOT(),
 					tvOriginPayData.getItems().get(i).getOriginRate()));
+			//need to create modpaydata objects in model class instead of main controller
 		}
-		OriginPayData.insertOrUpdate(payData);
+		PayData.insertOrUpdate(payData, modData);
 		clearTableData(tvOriginPayData);
 		dpOriginDateEnding.setValue(null);
 	}

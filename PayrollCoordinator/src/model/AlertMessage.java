@@ -80,5 +80,25 @@ public class AlertMessage extends Alert {
 		
 		return this;
 	}
+	
+	public AlertMessage originPayDataInfo(OriginPayData payData) {
+		GridPane gp = new GridPane();
+		gp.add(new Text("Employee"), 0, 0);
+		gp.add(new Text("Regular Hours"), 1, 0);
+		gp.add(new Text("OT Hours"), 2, 0);
+		gp.add(new Text("Rate"), 3, 0);
+		
+		gp.add(new Text(Employee.searchEmployeeName(payData.getEmpID())), 0, 1);
+		gp.add(new Text(String.valueOf(payData.getOriginHoursReg())), 1, 2);
+		gp.add(new Text(String.valueOf(payData.getOriginHoursOT())), 2, 3);
+		gp.add(new Text(String.valueOf(payData.getOriginRate())), 3, 4);
+
+		this.getDialogPane().setContent(gp);
+		ButtonType yes = new ButtonType("Yes");
+		ButtonType no = new ButtonType("No");
+		this.getButtonTypes().setAll(yes, no);
+		
+		return this;
+	}
 
 }

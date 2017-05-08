@@ -16,6 +16,11 @@ public interface PayData {
 		ObservableList<ModPayData> modUpdate = FXCollections.observableArrayList();
 
 		if(dup.isEmpty()) {
+			for(int i = 0; i < payData.size(); i++) {
+				OriginPayData.insert(payData.get(i));
+				//need to create modpaydata objects here instead of the main controller
+				ModPayData.insert(modData.get(i));
+			}
 			OriginPayData.insert(payData);
 			ModPayData.insert(modData);
 		}
@@ -59,5 +64,9 @@ public interface PayData {
 				}
 			}
 		}
+	}
+	
+	public static void insert(ObservableList<OriginPayData> payData, ObservableList<ModPayData> modData) {
+		
 	}
 }
