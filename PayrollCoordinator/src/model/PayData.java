@@ -1,5 +1,6 @@
 package model;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import javafx.collections.FXCollections;
@@ -7,8 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
 
-public class PayData {
-
+public interface PayData {
 	
 	public static void insertOrUpdate(ObservableList<OriginPayData> payData, ObservableList<ModPayData> modData) {
 		ObservableList<OriginPayData> dup = OriginPayData.searchForDup(payData);

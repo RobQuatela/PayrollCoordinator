@@ -17,7 +17,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 
-public class OriginPayData {
+public class OriginPayData implements PayData {
 
 	private SimpleIntegerProperty originID;
 	private Date originEndDate;
@@ -308,4 +308,5 @@ public class OriginPayData {
 			}
 		}
 	}
+
 }
