@@ -155,6 +155,30 @@ public class OriginPayData implements PayData {
 		
 		return id;
 	}
+	
+	public static OriginPayData getOriginPayData(int id) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		OriginPayData data = null;
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("SELECT * FROM tboriginpaydata WHERE origin_id = ?");
+			ps.setInt(1, id);
+			rs = ps.executeQuery();
+			while(rs.next()) {
+				data = new OriginPayData(rs.getInt("origin_id"), rs.getDate("origin_end_date"), 
+						rs.getInt("co_id"), rs.getString("emp_id"), rs.getDouble("origin_hours_reg"),
+						rs.getDouble("origin_hours_ot"), rs.getDouble("origin_rate"));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return data;
+	}
 
 	protected static void insert(ObservableList<OriginPayData> payData) {
 		Connection con = null;

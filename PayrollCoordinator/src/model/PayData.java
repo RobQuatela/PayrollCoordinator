@@ -17,9 +17,12 @@ public interface PayData {
 
 		if(dup.isEmpty()) {
 			for(int i = 0; i < payData.size(); i++) {
+				
 				OriginPayData.insert(payData.get(i));
+				OriginPayData data = OriginPayData.getOriginPayData(OriginPayData.searchLastID());
 				//need to create modpaydata objects here instead of the main controller
-				ModPayData.insert(modData.get(i));
+				ModPayData.insert(new ModPayData(data.getOriginID(), data.getOriginHoursReg(),
+						data.getOriginHoursOT(), data.getOriginRate()));
 			}
 			OriginPayData.insert(payData);
 			ModPayData.insert(modData);
