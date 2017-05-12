@@ -24,15 +24,13 @@ public interface PayData {
 				ModPayData.insert(new ModPayData(data.getOriginID(), data.getOriginHoursReg(),
 						data.getOriginHoursOT(), data.getOriginRate()));
 			}
-			OriginPayData.insert(payData);
-			ModPayData.insert(modData);
 		}
 		else {
 			for(int i = 0; i < dup.size(); i++) {
 				for(int t = 0; t < payData.size(); t++) {
 					if(payData.get(t).getEmpID() == dup.get(i).getEmpID()) {
 						payData.remove(t);
-						modData.remove(t);
+						//modData.remove(t);
 					}
 				}
 			}
@@ -44,26 +42,44 @@ public interface PayData {
 				alert = alert.originPayDataInfo(originUpdate);
 				Optional<ButtonType> result = alert.showAndWait();
 
+				//NEED TO CREATE AN UPDATE FOR INDIVIDUAL ORIGINPAYDATA OBJECT
 				if (result.get() == alert.getButtonTypes().get(0)) {
 					OriginPayData.update(originUpdate);
-					
-					for(OriginPayData data : originUpdate) {
+					for(OriginPayData update : originUpdate) {
+						OriginPayData.insert(update);
+						OriginPayData data = OriginPayData.getOriginPayData(OriginPayData.searchLastID());
+						ModPayData.insert(new ModPayData(data.getOriginID(), data.getOriginHoursReg(),
+								data.getOriginHoursOT(), data.getOriginRate()));
+					}
+/*					for(OriginPayData data : originUpdate) {
 						modUpdate.add(new ModPayData(data.getOriginID(), 
 								data.getOriginHoursReg(), data.getOriginHoursOT(),
 								data.getOriginRate()));
 					}
-					ModPayData.update(modUpdate);
+					ModPayData.update(modUpdate);*/
 					
 					if (!payData.isEmpty()) {
-						OriginPayData.insert(payData);
-						ModPayData.insert(modData);
+						for(OriginPayData data : payData) {
+							OriginPayData.insert(data);
+							OriginPayData insert = OriginPayData.getOriginPayData(OriginPayData.searchLastID());
+							ModPayData.insert(new ModPayData(insert.getOriginID(), insert.getOriginHoursReg(),
+									insert.getOriginHoursOT(), insert.getOriginRate()));
+						}
+/*						OriginPayData.insert(payData);
+						ModPayData.insert(modData);*/
 					}
 				} else {
 					AlertMessage test = new AlertMessage(AlertType.INFORMATION, "Duplicate data has been discarded...");
 					test.showAndWait();
 
-					OriginPayData.insert(payData);
-					ModPayData.insert(modData);
+					for(OriginPayData data : payData) {
+						OriginPayData.insert(data);
+						OriginPayData insert = OriginPayData.getOriginPayData(OriginPayData.searchLastID());
+						ModPayData.insert(new ModPayData(insert.getOriginID(), insert.getOriginHoursReg(),
+								insert.getOriginHoursOT(), insert.getOriginRate()));
+					}
+/*					OriginPayData.insert(payData);
+					ModPayData.insert(modData);*/
 				}
 			}
 		}

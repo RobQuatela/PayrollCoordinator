@@ -197,6 +197,7 @@ public class MainController implements Initializable {
 		setTvEmployee(Employee.fillEmployee(Company.selectCompany(cbCompany.getValue())));
 		dpDateEndingPrev.setValue(LocalDate.of(2017, 4, 22));
 		setTvOriginPayDataPrev(OriginPayData.fillOriginPayData(Company.selectCompany(cbCompany.getValue()), dpDateEndingPrev.getValue()));
+		
 		listViewFill(lstModType, ModType.fill());
 		tvEmployee.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
@@ -344,55 +345,13 @@ public class MainController implements Initializable {
     	tvEmployeeModDetail.setItems(modEmps);
     }
     
-    public void setTvEmpModAdd() {
-/*    	ObservableList<String> modTypes = FXCollections.observableArrayList();
-    	modTypes = ModType.fill();
-    	ObservableList<ModEmp> modEmp = FXCollections.observableArrayList(new ModEmp(1, 2, "N4646", LocalDate.of(2017, 4, 22),
-    			100.00, "test"));
-
-    	//tvEmpModAddType.setCellValueFactory(new PropertyValueFactory<ModEmp, Integer>("modID"));
-    	//tvEmpModAddType.setCellFactory(ComboBoxTableCell.forTableColumn(modTypes));
-    	tvEmpModAddType.setOnEditCommit(new EventHandler<CellEditEvent<ModEmp, String>>() {
-
-			@Override
-			public void handle(CellEditEvent<ModEmp, String> t) {
-				//((ModEmp) t.getTableView().getItems().get(
-						//t.getTablePosition().getRow())).setModID(ModType.searchModTypeID(t.getValue()));	
-			}
-    	});
-    	//tvEmpModAddDate.setCellValueFactory(new PropertyValueFactory<ModEmp, String>("modEmpDate"));
-    	tvEmpModAddDate.setCellFactory(TextFieldTableCell.forTableColumn());
-    	//tvEmpModAddDate.setCellFactory(TextFieldTableCell.forTableColumn());
-    	tvEmpModAddDate.setOnEditCommit(new EventHandler<CellEditEvent<ModEmp, String>>() {
-
-			@Override
-			public void handle(CellEditEvent<ModEmp, String> t) {
-				//((ModEmp) t.getTableView().getItems().get(
-						//t.getTablePosition().getRow())).setModEmpDate(LocalDate.now());	
-			}
-    	});
-    	//tvEmpModAddAmount.setCellValueFactory(new PropertyValueFactory<ModEmp, Double>("modEmpAmount"));
-    	tvEmpModAddAmount.setCellFactory(TextFieldTableCell.forTableColumn());
-    	tvEmpModAddAmount.setOnEditCommit(new EventHandler<CellEditEvent<ModEmp, String>>() {
-
-			@Override
-			public void handle(CellEditEvent<ModEmp, String> t) {
-				((ModEmp) t.getTableView().getItems().get(
-						t.getTablePosition().getRow())).setModEmpAmount(Double.parseDouble(t.getNewValue()));
-			}
-    	});
-    	//tvEmpModAddDescrip.setCellValueFactory(new PropertyValueFactory<ModEmp, String>("modEmpDescrip"));
-    	tvEmpModAddDescrip.setCellFactory(TextFieldTableCell.forTableColumn());
-    	tvEmpModAddDescrip.setOnEditCommit(new EventHandler<CellEditEvent<ModEmp, String>>() {
-
-			@Override
-			public void handle(CellEditEvent<ModEmp, String> t) {
-				((ModEmp) t.getTableView().getItems().get(
-						t.getTablePosition().getRow())).setModEmpDescrip(t.getNewValue());	
-			}
-    	});
-    	tvEmpModAdd.setItems(modEmp);
-    	tvEmpModAddDescrip.setEditable(true);*/
+    public void setTvExportPayData(ObservableList<ModPayData> modData) {
+    	tvExportPayDataEmpID.setCellValueFactory(new PropertyValueFactory<ModPayData, String>("empID"));
+    	tvExportPayDataName.setCellValueFactory(new PropertyValueFactory<ModPayData, String>("empName"));
+    	tvExportPayDataRegHours.setCellValueFactory(new PropertyValueFactory<ModPayData, Double>("modHoursReg"));
+    	tvExportPayDataOTHours.setCellValueFactory(new PropertyValueFactory<ModPayData, Double>("modHoursOT"));
+    	tvExportPayDataRate.setCellValueFactory(new PropertyValueFactory<ModPayData, Double>("modRate"));
+    	tvExportPayData.setItems(modData);
     }
     
     public void comboBoxFill(ComboBox box, ObservableList list) {

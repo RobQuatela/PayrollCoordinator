@@ -7,12 +7,15 @@ import java.sql.SQLException;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 
 public class ModPayData {
 
 	private SimpleIntegerProperty modID;
 	private SimpleIntegerProperty originID;
+	private SimpleStringProperty empID;
+	private SimpleStringProperty empName;
 	private SimpleDoubleProperty modHoursReg;
 	private SimpleDoubleProperty modHoursOT;
 	private SimpleDoubleProperty modRate;
@@ -32,6 +35,14 @@ public class ModPayData {
 		modRate = new SimpleDoubleProperty(rate);
 	}
 	
+	public ModPayData(String empID, String name, double reg, double ot, double rate) {
+		this.empID = new SimpleStringProperty(empID);
+		empName = new SimpleStringProperty(name);
+		modHoursReg = new SimpleDoubleProperty(reg);
+		modHoursOT = new SimpleDoubleProperty(ot);
+		modRate = new SimpleDoubleProperty(rate);
+	}
+	
 	public ModPayData(double reg, double ot, double rate) {
 		modHoursReg = new SimpleDoubleProperty(reg);
 		modHoursOT = new SimpleDoubleProperty(ot);
@@ -44,6 +55,14 @@ public class ModPayData {
 
 	public void setOriginID(int originID) {
 		this.originID.set(originID);
+	}
+	
+	public String getEmpID() {
+		return empID.get();
+	}
+	
+	public String getEmpName() {
+		return empName.get();
 	}
 
 	public double getModHoursReg() {
@@ -137,5 +156,9 @@ public class ModPayData {
 		}
 	}
 	
+	public static ObservableList<ModPayData> getModPayData(Company company, LocalDate date) {
+		
 	}
+	
+}
 
