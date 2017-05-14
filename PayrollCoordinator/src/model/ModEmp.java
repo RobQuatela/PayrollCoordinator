@@ -25,11 +25,11 @@ public class ModEmp {
 	private SimpleDoubleProperty modEmpHours;
 	private SimpleStringProperty modEmpDescrip;
 	
-	public ModEmp(int id, int mod, String emp, LocalDate date, double amount, double hours, String descrip) {
+	public ModEmp(int id, int mod, String emp, Date date, double amount, double hours, String descrip) {
 		modEmpID = new SimpleIntegerProperty(id);
 		modTypeID = new SimpleIntegerProperty(mod);
 		empID = new SimpleStringProperty(emp);
-		modEmpDate = Date.valueOf(date);
+		modEmpDate = date;
 		modEmpAmount = new SimpleDoubleProperty(amount);
 		modEmpHours = new SimpleDoubleProperty(hours);
 		modEmpDescrip = new SimpleStringProperty(descrip);
@@ -121,7 +121,7 @@ public class ModEmp {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("INSERT INTO tbModEmp (modtype_id, emp_id, modemp_date, modemp_amount, modemp_descrip) " +
+			ps = con.prepareStatement("INSERT INTO tbmodemp (modtype_id, emp_id, modemp_date, modemp_amount, modemp_descrip) " +
 			"VALUES (?, ?, ?, ?, ?)");
 			for(ModEmp modEmp : modEmps) {
 				ps.setInt(1, modEmp.getModTypeID());
@@ -146,7 +146,7 @@ public class ModEmp {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("INSERT INTO tbModEmp (modtype_id, emp_id, modemp_date, modemp_amount, modemp_descrip) " +
+			ps = con.prepareStatement("INSERT INTO tbmodemp (modtype_id, emp_id, modemp_date, modemp_amount, modemp_descrip) " +
 			"VALUES (?, ?, ?, ?, ?)");
 			ps.setInt(1, modEmp.getModTypeID());
 			ps.setString(2, modEmp.getEmpID());
@@ -171,7 +171,7 @@ public class ModEmp {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("SELECT * FROM tbmodemp WHERE emp_id = ?");
+			ps = con.prepareStatement("SELECT * FROM tbmodemp WHERE emp_id = ? ORDER BY modemp_date DESC");
 			ps.setString(1, empID);
 			rs = ps.executeQuery();
 			while(rs.next()) {
@@ -186,5 +186,32 @@ public class ModEmp {
 		}
 		
 		return modEmps;
+	}
+	
+	public static ObservableList<ModEmp> getModEmp(String empID, LocalDate start, LocalDate end) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		ObservableList<ModEmp> modEmp = FXCollections.observableArrayList();
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("SELECT * FROM tbmodemp WHERE emp_id = ? " +
+					"AND modemp_date >= ? AND modemp_date <= ?");
+			ps.setString(1, empID);
+			ps.setDate(2, Date.valueOf(start));
+			ps.setDate(3, Date.valueOf(end));
+			rs = ps.executeQuery();
+			while(rs.next()) {
+				modEmp.add(new ModEmp(rs.getInt(1), rs.getInt(2), rs.getString(3),
+						rs.getDate(4), rs.getDouble(5),
+						rs.getDouble(6), rs.getString(7)));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return modEmp;
 	}
 }

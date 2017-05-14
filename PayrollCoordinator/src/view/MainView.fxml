@@ -117,8 +117,8 @@
                                                 <Insets right="5.0" />
                                              </GridPane.margin>
                                           </Label>
-                                          <DatePicker fx:id="dpExportEndDate" onAction="#dpDateEndingPrev_ValueChanged" showWeekNumbers="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                          <Button fx:id="btnExportUpdatePayroll" mnemonicParsing="false" prefHeight="38.0" prefWidth="125.0" text="Update Payroll" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <DatePicker fx:id="dpExportEndDate" editable="false" showWeekNumbers="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <Button fx:id="btnExportUpdatePayroll" mnemonicParsing="false" onAction="#btnExportUpdatePayroll_Clicked" prefHeight="38.0" prefWidth="125.0" text="Update Payroll" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                           <Button fx:id="btnExportPayroll" mnemonicParsing="false" prefHeight="38.0" prefWidth="125.0" text="Export Payroll" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                        </children>
                                     </GridPane>
@@ -146,7 +146,7 @@
                                           <Insets right="5.0" />
                                        </HBox.margin>
                                     </Label>
-                                    <DatePicker fx:id="dpExportDateEnding" onAction="#dpDateEndingPrev_ValueChanged" showWeekNumbers="true" />
+                                    <DatePicker fx:id="dpExportDateEnding" onAction="#dpExportDateEnding_ValueChanged" showWeekNumbers="true" />
                                  </children>
                                  <BorderPane.margin>
                                     <Insets />

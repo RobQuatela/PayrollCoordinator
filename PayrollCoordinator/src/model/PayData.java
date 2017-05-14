@@ -10,7 +10,7 @@ import javafx.scene.control.Alert.AlertType;
 
 public interface PayData {
 	
-	public static void insertOrUpdate(ObservableList<OriginPayData> payData, ObservableList<ModPayData> modData) {
+	public static void insertOrUpdate(ObservableList<OriginPayData> payData) {
 		ObservableList<OriginPayData> dup = OriginPayData.searchForDup(payData);
 		ObservableList<OriginPayData> originUpdate = OriginPayData.searchForUpdates(dup);
 		ObservableList<ModPayData> modUpdate = FXCollections.observableArrayList();

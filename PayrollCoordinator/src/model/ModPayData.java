@@ -1,14 +1,18 @@
 package model;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-
+import java.time.LocalDate;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert.AlertType;
 
 public class ModPayData {
 
@@ -35,7 +39,8 @@ public class ModPayData {
 		modRate = new SimpleDoubleProperty(rate);
 	}
 	
-	public ModPayData(String empID, String name, double reg, double ot, double rate) {
+	public ModPayData(int id, String empID, String name, double reg, double ot, double rate) {
+		modID = new SimpleIntegerProperty(id);
 		this.empID = new SimpleStringProperty(empID);
 		empName = new SimpleStringProperty(name);
 		modHoursReg = new SimpleDoubleProperty(reg);
@@ -156,8 +161,53 @@ public class ModPayData {
 		}
 	}
 	
-	public static ObservableList<ModPayData> getModPayData(Company company, LocalDate date) {
+	protected static void update(ModPayData modData) {
+		Connection con = null;
+		PreparedStatement ps = null;
 		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("UPDATE tbmodpaydata SET mod_hours_reg = ?, mod_hours_ot = ? " +
+					"mod_rate = ? WHERE origin_id = ?");
+			ps.setDouble(1, modData.getModHoursReg());
+			ps.setDouble(2, modData.getModHoursOT());
+			ps.setDouble(3, modData.getModRate());
+			ps.setInt(4, modData.getOriginID());
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static ObservableList<ModPayData> getModPayData(Company company, LocalDate date) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		ObservableList<ModPayData> modData = FXCollections.observableArrayList();
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("SELECT tbmodpaydata.mod_id, tboriginpaydata.emp_id, tbemployee.emp_name, tbmodpaydata.mod_hours_reg, " +
+					"tbmodpaydata.mod_hours_ot, tbmodpaydata.mod_rate FROM tbmodpaydata INNER JOIN tboriginpaydata ON tbmodpaydata.origin_id = " +
+					"tboriginpaydata.origin_id INNER JOIN tbemployee ON tboriginpaydata.emp_id = tbemployee.emp_id WHERE tboriginpaydata.co_id = ? " +
+					"AND tboriginpaydata.origin_end_date = ? ORDER BY tbemployee.emp_name");
+			ps.setInt(1, company.getCoID());
+			ps.setDate(2, Date.valueOf(date));
+			rs = ps.executeQuery();
+			while(rs.next()) {
+				modData.add(
+						new ModPayData(rs.getInt(1), rs.getString(2), rs.getString(3), 
+								rs.getDouble(4), rs.getDouble(5), rs.getDouble(6)));
+			}
+			
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return modData;
 	}
 	
 }

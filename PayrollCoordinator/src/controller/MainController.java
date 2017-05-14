@@ -58,6 +58,7 @@ import model.Company;
 import model.Employee;
 import model.EmployeeOriginal;
 import model.ModEmp;
+import model.ModHistory;
 import model.ModPayData;
 import model.ModType;
 import model.OriginPayData;
@@ -196,8 +197,11 @@ public class MainController implements Initializable {
 		comboBoxFill(cbCompany, Company.fillCompanyName());
 		setTvEmployee(Employee.fillEmployee(Company.selectCompany(cbCompany.getValue())));
 		dpDateEndingPrev.setValue(LocalDate.of(2017, 4, 22));
+		dpExportDateEnding.setValue(LocalDate.of(2017, 4, 22));
 		setTvOriginPayDataPrev(OriginPayData.fillOriginPayData(Company.selectCompany(cbCompany.getValue()), dpDateEndingPrev.getValue()));
-		
+		setTvExportPayData(ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue()), dpExportDateEnding.getValue()));
+    	dpExportEndDate.setValue(dpExportDateEnding.getValue());
+    	dpExportStartDate.setValue(dpExportDateEnding.getValue().minusDays(6));
 		listViewFill(lstModType, ModType.fill());
 		tvEmployee.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
@@ -225,7 +229,6 @@ public class MainController implements Initializable {
 		//lstEmployeeFill();
 		setTvEmployee(Employee.fillEmployee(Company.selectCompany(cbCompany.getValue())));
 		ObservableList<OriginPayData> payData = FXCollections.observableArrayList();
-		ObservableList<ModPayData> modData = FXCollections.observableArrayList();
 		
 		for(int i = 0; i < tvOriginPayData.getItems().size(); i++) {
 			payData.add(new OriginPayData(
@@ -236,13 +239,8 @@ public class MainController implements Initializable {
 					tvOriginPayData.getItems().get(i).getOriginHoursOT(),
 					tvOriginPayData.getItems().get(i).getOriginRate()
 					));
-			modData.add(new ModPayData( 
-					tvOriginPayData.getItems().get(i).getOriginHoursReg(),
-					tvOriginPayData.getItems().get(i).getOriginHoursOT(),
-					tvOriginPayData.getItems().get(i).getOriginRate()));
-			//need to create modpaydata objects in model class instead of main controller
 		}
-		PayData.insertOrUpdate(payData, modData);
+		PayData.insertOrUpdate(payData);
 		clearTableData(tvOriginPayData);
 		dpOriginDateEnding.setValue(null);
 	}
@@ -287,6 +285,11 @@ public class MainController implements Initializable {
     	
     }
     
+    public void btnExportUpdatePayroll_Clicked(ActionEvent event) {
+    	ObservableList<ModPayData> modData = ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue()), dpExportDateEnding.getValue());
+    	ModHistory.insert(modData, dpExportStartDate.getValue(), dpExportEndDate.getValue());
+    }
+    
     private ObservableList<EmployeeOriginal> importOriginData(File file) {
     	String[] nextLine;
     	try {
@@ -308,6 +311,13 @@ public class MainController implements Initializable {
     public void dpDateEndingPrev_ValueChanged(ActionEvent event) {
     	setTvOriginPayDataPrev(OriginPayData.fillOriginPayData(Company.selectCompany(cbCompany.getValue()), 
     			dpDateEndingPrev.getValue()));
+    }
+    
+    public void dpExportDateEnding_ValueChanged(ActionEvent event) {
+    	setTvExportPayData(ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue()),
+    			dpExportDateEnding.getValue()));		
+    	dpExportEndDate.setValue(dpExportDateEnding.getValue());
+    	dpExportStartDate.setValue(dpExportDateEnding.getValue().minusDays(6));
     }
     
     public void setValues(ObservableList<EmployeeOriginal> imports) {
