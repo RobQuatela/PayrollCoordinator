@@ -51,19 +51,13 @@ public class ModHistory {
 			ps = con.prepareStatement("INSERT INTO tbmodhistory (mod_id, modemp_id) VALUES(?, ?)");
 			for(ModPayData data : modData) {
 				modEmps = ModEmp.getModEmp(data.getEmpID(), start, end);
-				if(modEmps.isEmpty()) {
-					AlertMessage quit = new AlertMessage(AlertType.INFORMATION, "Employee, " + data.getEmpName() + ", " +
-							"has no modifications to add...");
-					quit.showAndWait();
-					break;
+				for (ModEmp modEmp : modEmps) {
+					ps.setInt(1, data.getModID());
+					ps.setInt(2, modEmp.getModEmpID());
+					ps.executeUpdate();
 				}
-				else {
-					for (ModEmp modEmp : modEmps) {
-						ps.setInt(1, data.getModID());
-						ps.setInt(2, modEmp.getModEmpID());
-						ps.executeUpdate();
-					}
-				}
+				data.updateData(modEmps, data.getModID(), data.getModHoursReg(), 
+						data.getModHoursOT(), data.getModRate());
 			}
 			
 			AlertMessage success = new AlertMessage(AlertType.CONFIRMATION, "Your employee modifications have been added!");

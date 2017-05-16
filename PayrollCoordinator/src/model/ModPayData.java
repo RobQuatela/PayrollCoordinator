@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 
 import javafx.beans.property.SimpleDoubleProperty;
@@ -173,6 +174,38 @@ public class ModPayData {
 			ps.setDouble(2, modData.getModHoursOT());
 			ps.setDouble(3, modData.getModRate());
 			ps.setInt(4, modData.getOriginID());
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	}
+	 
+	protected void updateData(ObservableList<ModEmp> modEmps, int modID, 
+			double hoursReg, double hoursOT, double rate) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		double gross = rate * (hoursReg + hoursOT/2);
+		
+		for(ModEmp modEmp : modEmps) {
+			gross += modEmp.getModEmpAmount();
+			hoursReg += modEmp.getModEmpHours();
+			if(hoursReg > 40) {
+				hoursOT += (hoursReg - 40) - hoursOT;
+			}		
+		}
+		
+		DecimalFormat df = new DecimalFormat("###.##");
+		rate = Double.valueOf(df.format(gross / (hoursReg + hoursOT / 2)));
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("UPDATE tbmodpaydata SET mod_hours_reg = ?, mod_hours_ot = ?, " +
+					"mod_rate = ? WHERE mod_id = ?");
+			ps.setDouble(1, hoursReg);
+			ps.setDouble(2, hoursOT);
+			ps.setDouble(3, rate);
+			ps.setInt(4, modID);
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

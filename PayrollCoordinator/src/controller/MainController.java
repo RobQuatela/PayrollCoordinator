@@ -288,6 +288,7 @@ public class MainController implements Initializable {
     public void btnExportUpdatePayroll_Clicked(ActionEvent event) {
     	ObservableList<ModPayData> modData = ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue()), dpExportDateEnding.getValue());
     	ModHistory.insert(modData, dpExportStartDate.getValue(), dpExportEndDate.getValue());
+    	setTvExportPayData(ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue()), dpExportDateEnding.getValue()));
     }
     
     private ObservableList<EmployeeOriginal> importOriginData(File file) {
