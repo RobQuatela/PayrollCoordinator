@@ -121,7 +121,7 @@ public class ModEmp {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("INSERT INTO tbmodemp (modtype_id, emp_id, modemp_date, modemp_amount, modemp_descrip) " +
+			ps = con.prepareStatement("INSERT INTO tbmodemp (modtype_id, emp_id, modemp_date, modemp_amount, modemp_hours, modemp_descrip) " +
 			"VALUES (?, ?, ?, ?, ?)");
 			for(ModEmp modEmp : modEmps) {
 				ps.setInt(1, modEmp.getModTypeID());

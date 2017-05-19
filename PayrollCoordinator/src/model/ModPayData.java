@@ -49,6 +49,14 @@ public class ModPayData {
 		modRate = new SimpleDoubleProperty(rate);
 	}
 	
+	public ModPayData(String empID, String name, double reg, double ot, double rate) {
+		this.empID = new SimpleStringProperty(empID);
+		empName = new SimpleStringProperty(name);
+		modHoursReg = new SimpleDoubleProperty(reg);
+		modHoursOT = new SimpleDoubleProperty(ot);
+		modRate = new SimpleDoubleProperty(rate);
+	}
+	
 	public ModPayData(double reg, double ot, double rate) {
 		modHoursReg = new SimpleDoubleProperty(reg);
 		modHoursOT = new SimpleDoubleProperty(ot);

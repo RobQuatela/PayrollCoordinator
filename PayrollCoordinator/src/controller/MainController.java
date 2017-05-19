@@ -3,6 +3,7 @@ package controller;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -18,6 +19,7 @@ import java.util.ResourceBundle;
 import javax.swing.JOptionPane;
 
 import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -54,6 +56,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
+import model.AlertMessage;
 import model.Company;
 import model.Employee;
 import model.EmployeeOriginal;
@@ -289,6 +292,40 @@ public class MainController implements Initializable {
     	ObservableList<ModPayData> modData = ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue()), dpExportDateEnding.getValue());
     	ModHistory.insert(modData, dpExportStartDate.getValue(), dpExportEndDate.getValue());
     	setTvExportPayData(ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue()), dpExportDateEnding.getValue()));
+    }
+    
+    public void btnExportPayroll_Clicked(ActionEvent event) {
+    	ObservableList<ModPayData> modDatas = FXCollections.observableArrayList();
+    	
+    	try {
+			CSVWriter writer = new CSVWriter(new FileWriter(System.getProperty("user.home") + "/Desktop/testfile.csv"), '\t');
+			for(int i = 0; i < tvExportPayData.getItems().size(); i++) {
+				modDatas.add(new ModPayData(
+						tvExportPayData.getItems().get(i).getEmpID(),
+						tvExportPayData.getItems().get(i).getEmpName(),
+						tvExportPayData.getItems().get(i).getModHoursReg(),
+						tvExportPayData.getItems().get(i).getModHoursOT(),
+						tvExportPayData.getItems().get(i).getModRate()
+						));
+			}
+			
+			for(ModPayData modData : modDatas ) {
+				String line = "" + modData.getEmpID() + "," + modData.getEmpName() + "," + modData.getModHoursReg() +
+						"," + modData.getModHoursOT() + "," + modData.getModRate();
+				String[] lines = line.split(",");
+				writer.writeNext(lines);
+			}
+			
+			writer.close();
+			
+			AlertMessage confirmation = new AlertMessage(AlertType.CONFIRMATION, "Your file has successfully exported to your desktop!");
+			confirmation.showAndWait();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			AlertMessage error = new AlertMessage(AlertType.ERROR, "Your file did not export successfully...");
+			error.showAndWait();
+		}
     }
     
     private ObservableList<EmployeeOriginal> importOriginData(File file) {

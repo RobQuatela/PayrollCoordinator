@@ -119,7 +119,7 @@
                                           </Label>
                                           <DatePicker fx:id="dpExportEndDate" editable="false" showWeekNumbers="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                           <Button fx:id="btnExportUpdatePayroll" mnemonicParsing="false" onAction="#btnExportUpdatePayroll_Clicked" prefHeight="38.0" prefWidth="125.0" text="Update Payroll" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                          <Button fx:id="btnExportPayroll" mnemonicParsing="false" prefHeight="38.0" prefWidth="125.0" text="Export Payroll" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                          <Button fx:id="btnExportPayroll" mnemonicParsing="false" onAction="#btnExportPayroll_Clicked" prefHeight="38.0" prefWidth="125.0" text="Export Payroll" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                        </children>
                                     </GridPane>
                                  </center>
