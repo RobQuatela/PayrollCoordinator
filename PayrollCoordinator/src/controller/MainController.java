@@ -192,6 +192,24 @@ public class MainController implements Initializable {
     private Button btnExportUpdatePayroll;
     @FXML
     private Button btnExportPayroll;
+    @FXML
+    private TableView<ModEmp> tvModDetail;
+    @FXML
+    private TableColumn<ModEmp, String> tvModDetailType;
+    @FXML
+    private TableColumn<ModEmp, Double> tvModDetailAmount;
+    @FXML
+    private TableColumn<ModEmp, Double> tvModDetailHours;
+    @FXML
+    private TableColumn<ModEmp, String> tvModDetailDescrip;
+    @FXML
+    private Label lblExpGross;
+    @FXML
+    private Label lblExpMod;
+    @FXML
+    private Label lblExpNewGross;
+    @FXML
+    private TitledPane tpModDetail;
     
     
 
@@ -215,6 +233,20 @@ public class MainController implements Initializable {
 				setTvEmployeeModDetail(ModEmp.fillByEmployee(tvEmployee.getSelectionModel().getSelectedItem().getEmpID().toString()));
 				tpAddModification.setDisable(false);
 				tpAddModification.setExpanded(true);
+			}
+			
+		});
+		
+		tvExportPayData.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				tpModDetail.setText(
+						"Modification Detail (" + tvExportPayData.getSelectionModel().getSelectedItem().getEmpName().toString() + ")");
+				setTvModDetail(
+						ModEmp.fillByEmployee(
+								tvExportPayData.getSelectionModel().getSelectedItem().getEmpID().toString(), 
+								dpExportStartDate.getValue(), dpExportEndDate.getValue()));
 			}
 			
 		});
@@ -400,6 +432,14 @@ public class MainController implements Initializable {
     	tvExportPayDataOTHours.setCellValueFactory(new PropertyValueFactory<ModPayData, Double>("modHoursOT"));
     	tvExportPayDataRate.setCellValueFactory(new PropertyValueFactory<ModPayData, Double>("modRate"));
     	tvExportPayData.setItems(modData);
+    }
+    
+    public void setTvModDetail(ObservableList<ModEmp> modEmp) {
+    	tvModDetailType.setCellValueFactory(new PropertyValueFactory<ModEmp, String>("modTypeName"));
+    	tvModDetailAmount.setCellValueFactory(new PropertyValueFactory<ModEmp, Double>("modEmpAmount"));
+    	tvModDetailHours.setCellValueFactory(new PropertyValueFactory<ModEmp, Double>("modEmpHours"));
+    	tvModDetailDescrip.setCellValueFactory(new PropertyValueFactory<ModEmp, String>("modEmpDescrip"));
+    	tvModDetail.setItems(modEmp);
     }
     
     public void comboBoxFill(ComboBox box, ObservableList list) {

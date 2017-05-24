@@ -188,6 +188,33 @@ public class ModEmp {
 		return modEmps;
 	}
 	
+	public static ObservableList<ModEmp> fillByEmployee(String empID, LocalDate start, LocalDate end) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		ObservableList<ModEmp> modEmps = FXCollections.observableArrayList();
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("SELECT * FROM tbmodemp WHERE emp_id = ? AND modemp_date >= ? AND modemp_date <= ? ORDER BY modemp_date DESC");
+			ps.setString(1, empID);
+			ps.setDate(2, Date.valueOf(start));
+			ps.setDate(3, Date.valueOf(end));
+			rs = ps.executeQuery();
+			while(rs.next()) {
+				modEmps.add(new ModEmp(rs.getInt("modemp_id"), rs.getInt("modtype_id"),
+						ModType.searchModTypeName(rs.getInt("modemp_id")), rs.getString("emp_id"),
+						rs.getDate("modemp_date").toLocalDate(), rs.getDouble("modemp_amount"),
+						rs.getDouble("modemp_hours"), rs.getString("modemp_descrip")));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return modEmps;
+	}
+	
 	public static ObservableList<ModEmp> getModEmp(String empID, LocalDate start, LocalDate end) {
 		Connection con = null;
 		PreparedStatement ps = null;
