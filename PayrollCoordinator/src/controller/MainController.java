@@ -203,7 +203,7 @@ public class MainController implements Initializable {
     @FXML
     private TableColumn<ModEmp, String> tvModDetailDescrip;
     @FXML
-    private Label lblExpGross;
+    private Label lblExpOldGross;
     @FXML
     private Label lblExpMod;
     @FXML
@@ -247,6 +247,7 @@ public class MainController implements Initializable {
 						ModEmp.fillByEmployee(
 								tvExportPayData.getSelectionModel().getSelectedItem().getEmpID().toString(), 
 								dpExportStartDate.getValue(), dpExportEndDate.getValue()));
+				setLblExpOldGross();
 			}
 			
 		});
@@ -257,6 +258,15 @@ public class MainController implements Initializable {
 		comboBoxFill(cbAddModType, ModType.fill());
 		//setTvEmpModAdd();
 		//setTvEmployeeModDetail(ModEmp.fillByEmployee(tvEmployee.getSelectionModel().getSelectedItem().getEmpName().toString()));
+	}
+	
+	public void setLblExpOldGross() {
+		OriginPayData oldData = OriginPayData.getOriginPayData(tvExportPayData.getSelectionModel().getSelectedItem().getOriginID());
+		double rate = oldData.getOriginRate();
+		double reg = oldData.getOriginHoursReg();
+		double ot = oldData.getOriginHoursOT();
+		double oldGross = rate * (reg + ot/2);
+		lblExpOldGross.setText(String.valueOf(oldGross));
 	}
     
 	public void btnSaveImport_Clicked(ActionEvent event) {

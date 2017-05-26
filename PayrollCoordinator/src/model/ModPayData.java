@@ -49,6 +49,16 @@ public class ModPayData {
 		modRate = new SimpleDoubleProperty(rate);
 	}
 	
+	public ModPayData(int id, int origin, String empID, String name, double reg, double ot, double rate) {
+		modID = new SimpleIntegerProperty(id);
+		originID = new SimpleIntegerProperty(origin);
+		this.empID = new SimpleStringProperty(empID);
+		empName = new SimpleStringProperty(name);
+		modHoursReg = new SimpleDoubleProperty(reg);
+		modHoursOT = new SimpleDoubleProperty(ot);
+		modRate = new SimpleDoubleProperty(rate);
+	}
+	
 	public ModPayData(String empID, String name, double reg, double ot, double rate) {
 		this.empID = new SimpleStringProperty(empID);
 		empName = new SimpleStringProperty(name);
@@ -193,7 +203,7 @@ public class ModPayData {
 			double hoursReg, double hoursOT, double rate) {
 		Connection con = null;
 		PreparedStatement ps = null;
-		double gross = rate * (hoursReg + hoursOT/2);
+		double gross = Calc.grossCalc7i(rate, hoursReg, hoursOT);
 		
 		for(ModEmp modEmp : modEmps) {
 			gross += modEmp.getModEmpAmount();
@@ -229,7 +239,7 @@ public class ModPayData {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("SELECT tbmodpaydata.mod_id, tboriginpaydata.emp_id, tbemployee.emp_name, tbmodpaydata.mod_hours_reg, " +
+			ps = con.prepareStatement("SELECT tbmodpaydata.mod_id, tboriginpaydata.origin_id, tboriginpaydata.emp_id, tbemployee.emp_name, tbmodpaydata.mod_hours_reg, " +
 					"tbmodpaydata.mod_hours_ot, tbmodpaydata.mod_rate FROM tbmodpaydata INNER JOIN tboriginpaydata ON tbmodpaydata.origin_id = " +
 					"tboriginpaydata.origin_id INNER JOIN tbemployee ON tboriginpaydata.emp_id = tbemployee.emp_id WHERE tboriginpaydata.co_id = ? " +
 					"AND tboriginpaydata.origin_end_date = ? ORDER BY tbemployee.emp_name");
@@ -238,8 +248,8 @@ public class ModPayData {
 			rs = ps.executeQuery();
 			while(rs.next()) {
 				modData.add(
-						new ModPayData(rs.getInt(1), rs.getString(2), rs.getString(3), 
-								rs.getDouble(4), rs.getDouble(5), rs.getDouble(6)));
+						new ModPayData(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), 
+								rs.getDouble(5), rs.getDouble(6), rs.getDouble(7)));
 			}
 			
 
