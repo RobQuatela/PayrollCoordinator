@@ -57,6 +57,7 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 import model.AlertMessage;
+import model.Calc;
 import model.Company;
 import model.Employee;
 import model.EmployeeOriginal;
@@ -71,6 +72,7 @@ public class MainController implements Initializable {
 
     private ObservableList<EmployeeOriginal> originPayData = FXCollections.observableArrayList();
     private ObservableList<String> payrollTypes = FXCollections.observableArrayList();
+    private ObservableList<String> payrollRules = FXCollections.observableArrayList("7(i) Exemption", "Traditional Overtime");
 
     @FXML
     private Button btnImportOriginData;
@@ -209,13 +211,33 @@ public class MainController implements Initializable {
     @FXML
     private Label lblExpNewGross;
     @FXML
+    private Label lblExpOriginRate;
+    @FXML
+    private Label lblExpModRate;
+    @FXML
     private TitledPane tpModDetail;
+    @FXML
+    private ComboBox cbOTRule;
+    @FXML
+    private TextField txtNewEmpID;
+    @FXML
+    private TextField txtNewEmpNameFirst;
+    @FXML
+    private TextField txtNewEmpNameLast;
+    @FXML
+    private TextField txtEditEmpID;
+    @FXML
+    private TextField txtEditEmpNameFirst;
+    @FXML
+    private TextField txtEditEmpNameLast;
+    
     
     
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		comboBoxFill(cbCompany, Company.fillCompanyName());
+		comboBoxFill(cbOTRule, payrollRules);
 		setTvEmployee(Employee.fillEmployee(Company.selectCompany(cbCompany.getValue())));
 		dpDateEndingPrev.setValue(LocalDate.of(2017, 4, 22));
 		dpExportDateEnding.setValue(LocalDate.of(2017, 4, 22));
@@ -228,11 +250,17 @@ public class MainController implements Initializable {
 
 			@Override
 			public void handle(MouseEvent arg0) {
+				String empName = tvEmployee.getSelectionModel().getSelectedItem().getEmpName().toString();
 				tpAddModification.setText(
-						"Add Modification (" + tvEmployee.getSelectionModel().getSelectedItem().getEmpName().toString() + ")");
+						"Add Modification (" + empName + ")");
 				setTvEmployeeModDetail(ModEmp.fillByEmployee(tvEmployee.getSelectionModel().getSelectedItem().getEmpID().toString()));
 				tpAddModification.setDisable(false);
 				tpAddModification.setExpanded(true);
+				for(String val : empName.split(", ")) {
+					txtEditEmpNameLast.setText(val);
+					txtEditEmpNameFirst.setText(val);
+				}
+				txtEditEmpID.setText(tvEmployee.getSelectionModel().getSelectedItem().getEmpID().toString());
 			}
 			
 		});
@@ -248,6 +276,10 @@ public class MainController implements Initializable {
 								tvExportPayData.getSelectionModel().getSelectedItem().getEmpID().toString(), 
 								dpExportStartDate.getValue(), dpExportEndDate.getValue()));
 				setLblExpOldGross();
+				setLblExpMod();
+				setLblExpNewGross();
+				setLblExpOriginRate();
+				setLblExpModRate();
 			}
 			
 		});
@@ -265,27 +297,53 @@ public class MainController implements Initializable {
 		double rate = oldData.getOriginRate();
 		double reg = oldData.getOriginHoursReg();
 		double ot = oldData.getOriginHoursOT();
-		double oldGross = rate * (reg + ot/2);
+		double oldGross = Calc.grossCalc7i(rate, reg, ot);
 		lblExpOldGross.setText(String.valueOf(oldGross));
+	}
+	
+	public void setLblExpMod() {
+		double mod = 0;
+		for(int i = 0; i < tvModDetail.getItems().size(); i++) {
+			mod += tvModDetail.getItems().get(i).getModEmpAmount();
+		}
+		lblExpMod.setText(String.valueOf(mod));
+	}
+	
+	public void setLblExpNewGross() {
+		double rate = tvExportPayData.getSelectionModel().getSelectedItem().getModRate();
+		double reg = tvExportPayData.getSelectionModel().getSelectedItem().getModHoursReg();
+		double ot = tvExportPayData.getSelectionModel().getSelectedItem().getModHoursOT();
+		double newGross = Calc.grossCalc7i(rate, reg, ot);
+		lblExpNewGross.setText(String.valueOf(newGross));
+	}
+	
+	public void setLblExpOriginRate() {
+		OriginPayData oldData = OriginPayData.getOriginPayData(tvExportPayData.getSelectionModel().getSelectedItem().getOriginID());
+		lblExpOriginRate.setText(String.valueOf(oldData.getOriginRate()));
+	}
+	
+	public void setLblExpModRate() {
+		ModPayData modData = ModPayData.getModPayData(tvExportPayData.getSelectionModel().getSelectedItem().getModID());
+		lblExpModRate.setText(String.valueOf(modData.getModRate()));
 	}
     
 	public void btnSaveImport_Clicked(ActionEvent event) {
 		Employee.Insert(originPayData, Company.selectCompany(cbCompany.getValue()));
-		//lstEmployeeFill();
 		setTvEmployee(Employee.fillEmployee(Company.selectCompany(cbCompany.getValue())));
 		ObservableList<OriginPayData> payData = FXCollections.observableArrayList();
+		Company company = Company.selectCompany(cbCompany.getValue().toString());
 		
 		for(int i = 0; i < tvOriginPayData.getItems().size(); i++) {
 			payData.add(new OriginPayData(
 					Date.valueOf(dpOriginDateEnding.getValue()),
-					1, //place holder for getCoInt method
+					company.getCoID(),
 					tvOriginPayData.getItems().get(i).getEmpID(),
 					tvOriginPayData.getItems().get(i).getOriginHoursReg(),
 					tvOriginPayData.getItems().get(i).getOriginHoursOT(),
 					tvOriginPayData.getItems().get(i).getOriginRate()
 					));
 		}
-		PayData.insertOrUpdate(payData);
+		PayData.insertOrUpdate(payData, cbOTRule.getValue().toString());
 		clearTableData(tvOriginPayData);
 		dpOriginDateEnding.setValue(null);
 	}
@@ -304,6 +362,9 @@ public class MainController implements Initializable {
     
     public void cbCompany_ValueChanged(ActionEvent event) {
     	tvEmployeeFill();
+    	setTvEmployee(Employee.fillEmployee(Company.selectCompany(cbCompany.getValue())));
+		setTvOriginPayDataPrev(OriginPayData.fillOriginPayData(Company.selectCompany(cbCompany.getValue()), dpDateEndingPrev.getValue()));
+		setTvExportPayData(ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue()), dpExportDateEnding.getValue()));
     }
     
     public void btnModInsert_Clicked(ActionEvent event) {
@@ -332,7 +393,7 @@ public class MainController implements Initializable {
     
     public void btnExportUpdatePayroll_Clicked(ActionEvent event) {
     	ObservableList<ModPayData> modData = ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue()), dpExportDateEnding.getValue());
-    	ModHistory.insert(modData, dpExportStartDate.getValue(), dpExportEndDate.getValue());
+    	ModHistory.insert(modData, dpExportStartDate.getValue(), dpExportEndDate.getValue(), cbCompany.getValue());
     	setTvExportPayData(ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue()), dpExportDateEnding.getValue()));
     }
     

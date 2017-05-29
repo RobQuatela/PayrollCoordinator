@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Iterator;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -42,7 +43,7 @@ public class ModHistory {
 		return historyID;
 	}
 	
-	public static void insert(ObservableList<ModPayData> modData, LocalDate start, LocalDate end) {
+	public static void insert(ObservableList<ModPayData> modData, LocalDate start, LocalDate end, String coName) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		ObservableList<ModEmp> modEmps = FXCollections.observableArrayList();
@@ -52,14 +53,14 @@ public class ModHistory {
 			con = DBConnect.connect();
 			ps = con.prepareStatement("INSERT INTO tbmodhistory (mod_id, modemp_id) VALUES(?, ?)");
 			for(ModPayData data : modData) {
-				modEmps = searchForDupModEmps(modData, start, end);
+				modEmps = searchForDupModEmps(data, start, end);
 				for (ModEmp modEmp : modEmps) {
 					ps.setInt(1, data.getModID());
 					ps.setInt(2, modEmp.getModEmpID());
 					ps.executeUpdate();
 				}
 				data.updateData(modEmps, data.getModID(), data.getModHoursReg(), 
-						data.getModHoursOT(), data.getModRate());
+						data.getModHoursOT(), data.getModRate(), data.getModPayrollRule());
 			}
 			
 			AlertMessage success = new AlertMessage(AlertType.CONFIRMATION, "Your employee modifications have been added!");
@@ -70,7 +71,7 @@ public class ModHistory {
 		}
 	}
 	
-	private static ObservableList<ModEmp> searchForDupModEmps(ObservableList<ModPayData> modData, LocalDate start, LocalDate end) {
+/*	private static ObservableList<ModEmp> searchForDupModEmps(ObservableList<ModPayData> modData, LocalDate start, LocalDate end) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -99,6 +100,34 @@ public class ModHistory {
 		}
 		
 		return modEmps;
+	}*/
+	
+	private static ObservableList<ModEmp> searchForDupModEmps(ModPayData modData, LocalDate start, LocalDate end) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		ObservableList<ModEmp> modEmps = FXCollections.observableArrayList();
+		ObservableList<ModEmp> newModEmps = FXCollections.observableArrayList();
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("SELECT * FROM tbmodhistory WHERE mod_id = ? AND modemp_id = ?");
+			modEmps = ModEmp.getModEmp(modData.getEmpID(), start, end);
+			for (ModEmp modEmp : modEmps) {
+				ps.setInt(1, modData.getModID());
+				ps.setInt(2, modEmp.getModEmpID());
+				rs = ps.executeQuery();
+				if (!rs.next()) {
+					// modEmps.remove(modEmp);
+					newModEmps.add(modEmp);
+				}
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return newModEmps;
 	}
 	
 	private static ObservableList<ModPayData> searchForDupModPayData(ObservableList<ModPayData> modData, LocalDate start, LocalDate end) {
@@ -106,22 +135,38 @@ public class ModHistory {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		ObservableList<ModEmp> modEmps = FXCollections.observableArrayList();
+		Iterator<ModPayData> iterModData = modData.iterator();
+		ObservableList<ModPayData> newModData = FXCollections.observableArrayList();
+		ObservableList<ModEmp> newModEmps = FXCollections.observableArrayList();
 		
 		try {
 			con = DBConnect.connect();
 			ps = con.prepareStatement("SELECT * FROM tbmodhistory WHERE mod_id = ? AND modemp_id = ?");
 			for(ModPayData data : modData) {
+			//while(iterModData.hasNext()) {
+				//ModPayData data = iterModData.next();
 				modEmps = ModEmp.getModEmp(data.getEmpID(), start, end);
+				//Iterator<ModEmp> iterModEmp = modEmps.iterator();
 				for (ModEmp modEmp : modEmps) {
+				//while(iterModEmp.hasNext()) {
+					//ModEmp modEmp = iterModEmp.next();
 					ps.setInt(1, data.getModID());
 					ps.setInt(2, modEmp.getModEmpID());
 					rs = ps.executeQuery();
-					while(rs.next()) {
-						modEmps.remove(modEmp);
+					if(!rs.next()) {
+						//modEmps.remove(modEmp);
+						newModEmps.add(modEmp);
 					}
 				}
-				if(modEmps.isEmpty()) {
-					modData.remove(data);
+				
+/*				Iterator<ModEmp> newIterModEmp = iterModEmp;
+				while(newIterModEmp.hasNext()) 
+					newModEmps.add(newIterModEmp.next());*/
+				
+				if(!newModEmps.isEmpty()) {
+					//modData.remove(data);
+					//iterModData.remove();
+					newModData.add(data);
 				}
 			}
 		} catch (SQLException e) {
@@ -129,6 +174,10 @@ public class ModHistory {
 			e.printStackTrace();
 		}
 	
-		return modData;
+/*		Iterator<ModPayData> newIterModData = iterModData;
+		while(newIterModData.hasNext())
+			newModData.add(newIterModData.next());*/
+		
+		return newModData;
 	}
 }

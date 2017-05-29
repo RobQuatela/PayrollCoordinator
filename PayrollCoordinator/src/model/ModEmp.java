@@ -168,17 +168,21 @@ public class ModEmp {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		ObservableList<ModEmp> modEmps = FXCollections.observableArrayList();
+		String sql = "SELECT tbmodemp.modemp_id, tbmodemp.modtype_id, tbmodtype.modtype_name, tbmodemp.emp_id, " +
+				"tbmodemp.modemp_date, tbmodemp.modemp_amount, tbmodemp.modemp_hours, tbmodemp.modemp_descrip " +
+				"FROM tbmodemp INNER JOIN tbmodtype ON tbmodemp.modtype_id = tbmodtype.modtype_id " +
+				"WHERE tbmodemp.emp_id = ? ORDER BY tbmodemp.modemp_date DESC";
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("SELECT * FROM tbmodemp WHERE emp_id = ? ORDER BY modemp_date DESC");
+			ps = con.prepareStatement(sql);
 			ps.setString(1, empID);
 			rs = ps.executeQuery();
 			while(rs.next()) {
-				modEmps.add(new ModEmp(rs.getInt("modemp_id"), rs.getInt("modtype_id"),
-						ModType.searchModTypeName(rs.getInt("modemp_id")), rs.getString("emp_id"),
-						rs.getDate("modemp_date").toLocalDate(), rs.getDouble("modemp_amount"),
-						rs.getDouble("modemp_hours"), rs.getString("modemp_descrip")));
+				modEmps.add(new ModEmp(rs.getInt(1), rs.getInt(2),
+						rs.getString(3), rs.getString(4),
+						rs.getDate(5).toLocalDate(), rs.getDouble(6),
+						rs.getDouble(7), rs.getString(8)));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -196,16 +200,25 @@ public class ModEmp {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("SELECT * FROM tbmodemp WHERE emp_id = ? AND modemp_date >= ? AND modemp_date <= ? ORDER BY modemp_date DESC");
+			String sql = "SELECT tbmodemp.modemp_id, tbmodemp.modtype_id, tbmodtype.modtype_name, tbmodemp.emp_id, " +
+					"tbmodemp.modemp_date, tbmodemp.modemp_amount, tbmodemp.modemp_hours, tbmodemp.modemp_descrip " +
+					"FROM tbmodemp INNER JOIN tbmodtype ON tbmodemp.modtype_id = tbmodtype.modtype_id " +
+					"WHERE tbmodemp.emp_id = ? AND tbmodemp.modemp_date >= ? AND tbmodemp.modemp_date <= ? ORDER BY tbmodemp.modemp_date DESC";
+			//ps = con.prepareStatement("SELECT * FROM tbmodemp WHERE emp_id = ? AND modemp_date >= ? AND modemp_date <= ? ORDER BY modemp_date DESC");
+			ps = con.prepareStatement(sql);
 			ps.setString(1, empID);
 			ps.setDate(2, Date.valueOf(start));
 			ps.setDate(3, Date.valueOf(end));
 			rs = ps.executeQuery();
 			while(rs.next()) {
-				modEmps.add(new ModEmp(rs.getInt("modemp_id"), rs.getInt("modtype_id"),
+/*				modEmps.add(new ModEmp(rs.getInt("modemp_id"), rs.getInt("modtype_id"),
 						ModType.searchModTypeName(rs.getInt("modemp_id")), rs.getString("emp_id"),
 						rs.getDate("modemp_date").toLocalDate(), rs.getDouble("modemp_amount"),
-						rs.getDouble("modemp_hours"), rs.getString("modemp_descrip")));
+						rs.getDouble("modemp_hours"), rs.getString("modemp_descrip")));*/
+				modEmps.add(new ModEmp(rs.getInt(1), rs.getInt(2),
+						rs.getString(3), rs.getString(4),
+						rs.getDate(5).toLocalDate(), rs.getDouble(6),
+						rs.getDouble(7), rs.getString(8)));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

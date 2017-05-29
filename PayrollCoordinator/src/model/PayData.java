@@ -10,7 +10,7 @@ import javafx.scene.control.Alert.AlertType;
 
 public interface PayData {
 	
-	public static void insertOrUpdate(ObservableList<OriginPayData> payData) {
+	public static void insertOrUpdate(ObservableList<OriginPayData> payData, String payrollRule) {
 		ObservableList<OriginPayData> dup = OriginPayData.searchForDup(payData);
 		ObservableList<OriginPayData> originUpdate = OriginPayData.searchForUpdates(dup);
 		ObservableList<ModPayData> modUpdate = FXCollections.observableArrayList();
@@ -22,7 +22,7 @@ public interface PayData {
 				OriginPayData data = OriginPayData.getOriginPayData(OriginPayData.searchLastID());
 				//need to create modpaydata objects here instead of the main controller
 				ModPayData.insert(new ModPayData(data.getOriginID(), data.getOriginHoursReg(),
-						data.getOriginHoursOT(), data.getOriginRate()));
+						data.getOriginHoursOT(), data.getOriginRate(), payrollRule));
 			}
 		}
 		else {
@@ -49,7 +49,7 @@ public interface PayData {
 						OriginPayData.insert(update);
 						OriginPayData data = OriginPayData.getOriginPayData(OriginPayData.searchLastID());
 						ModPayData.insert(new ModPayData(data.getOriginID(), data.getOriginHoursReg(),
-								data.getOriginHoursOT(), data.getOriginRate()));
+								data.getOriginHoursOT(), data.getOriginRate(), payrollRule));
 					}
 /*					for(OriginPayData data : originUpdate) {
 						modUpdate.add(new ModPayData(data.getOriginID(), 
@@ -63,7 +63,7 @@ public interface PayData {
 							OriginPayData.insert(data);
 							OriginPayData insert = OriginPayData.getOriginPayData(OriginPayData.searchLastID());
 							ModPayData.insert(new ModPayData(insert.getOriginID(), insert.getOriginHoursReg(),
-									insert.getOriginHoursOT(), insert.getOriginRate()));
+									insert.getOriginHoursOT(), insert.getOriginRate(), payrollRule));
 						}
 /*						OriginPayData.insert(payData);
 						ModPayData.insert(modData);*/
@@ -76,7 +76,7 @@ public interface PayData {
 						OriginPayData.insert(data);
 						OriginPayData insert = OriginPayData.getOriginPayData(OriginPayData.searchLastID());
 						ModPayData.insert(new ModPayData(insert.getOriginID(), insert.getOriginHoursReg(),
-								insert.getOriginHoursOT(), insert.getOriginRate()));
+								insert.getOriginHoursOT(), insert.getOriginRate(), payrollRule));
 					}
 /*					OriginPayData.insert(payData);
 					ModPayData.insert(modData);*/

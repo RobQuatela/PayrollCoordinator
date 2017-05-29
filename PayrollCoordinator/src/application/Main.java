@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 
 
@@ -16,6 +17,7 @@ public class Main extends Application {
 			Scene scene = new Scene(root);
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("QDRIVE - Payroll Coordinator");
+			primaryStage.getIcons().add(new Image("/qdlogo_C25_icon.ico"));
 			primaryStage.show();
 		} catch(Exception e) {
 			e.printStackTrace();

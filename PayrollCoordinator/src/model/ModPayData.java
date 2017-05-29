@@ -24,12 +24,14 @@ public class ModPayData {
 	private SimpleDoubleProperty modHoursReg;
 	private SimpleDoubleProperty modHoursOT;
 	private SimpleDoubleProperty modRate;
+	private SimpleStringProperty modPayrollRule;
 	
-	public ModPayData(int origin, double reg, double ot, double rate) {
+	public ModPayData(int origin, double reg, double ot, double rate, String payrollRule) {
 		originID = new SimpleIntegerProperty(origin);
 		modHoursReg = new SimpleDoubleProperty(reg);
 		modHoursOT = new SimpleDoubleProperty(ot);
 		modRate = new SimpleDoubleProperty(rate);
+		modPayrollRule = new SimpleStringProperty(payrollRule);
 	}
 	
 	public ModPayData(int id, int origin, double reg, double ot, double rate) {
@@ -49,7 +51,7 @@ public class ModPayData {
 		modRate = new SimpleDoubleProperty(rate);
 	}
 	
-	public ModPayData(int id, int origin, String empID, String name, double reg, double ot, double rate) {
+	public ModPayData(int id, int origin, String empID, String name, double reg, double ot, double rate, String rule) {
 		modID = new SimpleIntegerProperty(id);
 		originID = new SimpleIntegerProperty(origin);
 		this.empID = new SimpleStringProperty(empID);
@@ -57,6 +59,7 @@ public class ModPayData {
 		modHoursReg = new SimpleDoubleProperty(reg);
 		modHoursOT = new SimpleDoubleProperty(ot);
 		modRate = new SimpleDoubleProperty(rate);
+		modPayrollRule = new SimpleStringProperty(rule);
 	}
 	
 	public ModPayData(String empID, String name, double reg, double ot, double rate) {
@@ -117,19 +120,28 @@ public class ModPayData {
 		return modID.get();
 	}
 	
+	public String getModPayrollRule() {
+		return modPayrollRule.get();
+	}
+	
+	public void setModPayrollRule(String rule) {
+		modPayrollRule.set(rule);
+	}
+	
 	protected static void insert(ObservableList<ModPayData> modPayData) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("INSERT INTO tbmodpaydata (origin_id, mod_hours_reg, mod_hours_ot, mod_rate) "
-					+ "VALUES (?, ?, ?, ?)");
+			ps = con.prepareStatement("INSERT INTO tbmodpaydata (origin_id, mod_hours_reg, mod_hours_ot, mod_rate, mod_payroll_rule) "
+					+ "VALUES (?, ?, ?, ?, ?)");
 			for (ModPayData data : modPayData) {
 				ps.setInt(1, data.getOriginID());
 				ps.setDouble(2, data.getModHoursReg());
 				ps.setDouble(3, data.getModHoursOT());
 				ps.setDouble(4, data.getModRate());
+				ps.setString(5, data.getModPayrollRule());
 				ps.executeUpdate();
 			}
 		} catch (SQLException e) {
@@ -145,12 +157,13 @@ public class ModPayData {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("INSERT INTO tbmodpaydata (origin_id, mod_hours_reg, mod_hours_ot, mod_rate) "
-					+ "VALUES (?, ?, ?, ?)");
+			ps = con.prepareStatement("INSERT INTO tbmodpaydata (origin_id, mod_hours_reg, mod_hours_ot, mod_rate, mod_payroll_rule) "
+					+ "VALUES (?, ?, ?, ?, ?)");
 			ps.setInt(1, modPayData.getOriginID());
 			ps.setDouble(2, modPayData.getModHoursReg());
 			ps.setDouble(3, modPayData.getModHoursOT());
 			ps.setDouble(4, modPayData.getModRate());
+			ps.setString(5,  modPayData.getModPayrollRule());
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -200,10 +213,16 @@ public class ModPayData {
 	}
 	 
 	protected void updateData(ObservableList<ModEmp> modEmps, int modID, 
-			double hoursReg, double hoursOT, double rate) {
+			double hoursReg, double hoursOT, double rate, String payrollRule) {
 		Connection con = null;
 		PreparedStatement ps = null;
-		double gross = Calc.grossCalc7i(rate, hoursReg, hoursOT);
+
+		double gross = 0;
+		if(payrollRule.equals("7(i) Exemption"))
+			gross = Calc.grossCalc7i(rate, hoursReg, hoursOT);
+		else
+			gross = Calc.grossCalc(rate, hoursReg, hoursOT);
+		
 		
 		for(ModEmp modEmp : modEmps) {
 			gross += modEmp.getModEmpAmount();
@@ -213,8 +232,12 @@ public class ModPayData {
 			}		
 		}
 		
-		DecimalFormat df = new DecimalFormat("###.##");
-		rate = Double.valueOf(df.format(gross / (hoursReg + hoursOT / 2)));
+		//DecimalFormat df = new DecimalFormat("###.##");
+
+		if(payrollRule.equals("7(i) Exemption"))
+			rate = Calc.rateCalc7i(gross, hoursReg, hoursOT);
+		else
+			rate = Calc.rateCalc(gross, hoursReg);
 		
 		try {
 			con = DBConnect.connect();
@@ -240,7 +263,7 @@ public class ModPayData {
 		try {
 			con = DBConnect.connect();
 			ps = con.prepareStatement("SELECT tbmodpaydata.mod_id, tboriginpaydata.origin_id, tboriginpaydata.emp_id, tbemployee.emp_name, tbmodpaydata.mod_hours_reg, " +
-					"tbmodpaydata.mod_hours_ot, tbmodpaydata.mod_rate FROM tbmodpaydata INNER JOIN tboriginpaydata ON tbmodpaydata.origin_id = " +
+					"tbmodpaydata.mod_hours_ot, tbmodpaydata.mod_rate, tbmodpaydata.mod_payroll_rule FROM tbmodpaydata INNER JOIN tboriginpaydata ON tbmodpaydata.origin_id = " +
 					"tboriginpaydata.origin_id INNER JOIN tbemployee ON tboriginpaydata.emp_id = tbemployee.emp_id WHERE tboriginpaydata.co_id = ? " +
 					"AND tboriginpaydata.origin_end_date = ? ORDER BY tbemployee.emp_name");
 			ps.setInt(1, company.getCoID());
@@ -249,7 +272,32 @@ public class ModPayData {
 			while(rs.next()) {
 				modData.add(
 						new ModPayData(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), 
-								rs.getDouble(5), rs.getDouble(6), rs.getDouble(7)));
+								rs.getDouble(5), rs.getDouble(6), rs.getDouble(7), rs.getString(8)));
+			}
+			
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return modData;
+	}
+	
+	public static ModPayData getModPayData(int id) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		ModPayData modData = null;
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("SELECT mod_id, mod_hours_reg, mod_hours_ot, mod_rate, mod_payroll_rule  FROM tbmodpaydata WHERE mod_id = ?");
+			ps.setInt(1, id);
+			rs = ps.executeQuery();
+			while(rs.next()) {
+				modData = new ModPayData(rs.getInt(1), 
+								rs.getDouble(2), rs.getDouble(3), rs.getDouble(4), rs.getString(5));
 			}
 			
 
