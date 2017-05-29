@@ -146,17 +146,16 @@ public class ModEmp {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("INSERT INTO tbmodemp (modtype_id, emp_id, modemp_date, modemp_amount, modemp_descrip) " +
-			"VALUES (?, ?, ?, ?, ?)");
+			ps = con.prepareStatement("INSERT INTO tbmodemp (modtype_id, emp_id, modemp_date, modemp_amount, modemp_hours, modemp_descrip) " +
+			"VALUES (?, ?, ?, ?, ?, ?)");
 			ps.setInt(1, modEmp.getModTypeID());
 			ps.setString(2, modEmp.getEmpID());
 			ps.setDate(3, modEmp.getModEmpDate());
 			ps.setDouble(4, modEmp.getModEmpAmount());
-			ps.setString(5, modEmp.getModEmpDescrip());
+			ps.setDouble(5, modEmp.getModEmpHours());
+			ps.setString(6, modEmp.getModEmpDescrip());
 			ps.executeUpdate();
 			
-			AlertMessage sucess = new AlertMessage(AlertType.CONFIRMATION, "You have successfully inserted modications for employee!");
-			sucess.showAndWait();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

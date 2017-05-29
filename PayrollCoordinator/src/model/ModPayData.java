@@ -42,6 +42,15 @@ public class ModPayData {
 		modRate = new SimpleDoubleProperty(rate);
 	}
 	
+	public ModPayData(int id, int origin, double reg, double ot, double rate, String rule) {
+		modID = new SimpleIntegerProperty(id);
+		originID = new SimpleIntegerProperty(origin);
+		modHoursReg = new SimpleDoubleProperty(reg);
+		modHoursOT = new SimpleDoubleProperty(ot);
+		modRate = new SimpleDoubleProperty(rate);
+		modPayrollRule = new SimpleStringProperty(rule);
+	}
+	
 	public ModPayData(int id, String empID, String name, double reg, double ot, double rate) {
 		modID = new SimpleIntegerProperty(id);
 		this.empID = new SimpleStringProperty(empID);
@@ -199,7 +208,7 @@ public class ModPayData {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("UPDATE tbmodpaydata SET mod_hours_reg = ?, mod_hours_ot = ? " +
+			ps = con.prepareStatement("UPDATE tbmodpaydata SET mod_hours_reg = ?, mod_hours_ot = ?, " +
 					"mod_rate = ? WHERE origin_id = ?");
 			ps.setDouble(1, modData.getModHoursReg());
 			ps.setDouble(2, modData.getModHoursOT());
@@ -301,6 +310,29 @@ public class ModPayData {
 			}
 			
 
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return modData;
+	}
+	
+	public static ModPayData getModPayDataByOrigin(int origin) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		ModPayData modData = null;
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("SELECT mod_id, origin_id, mod_hours_reg, mod_hours_ot, mod_rate, mod_payroll_rule " +
+					"FROM tbmodpaydata WHERE origin_id = ?");
+			ps.setInt(1, origin);
+			rs = ps.executeQuery();
+			while(rs.next())
+				modData = new ModPayData(rs.getInt(1), rs.getInt(2), rs.getDouble(3), rs.getDouble(4), rs.getDouble(5),
+						rs.getString(6));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

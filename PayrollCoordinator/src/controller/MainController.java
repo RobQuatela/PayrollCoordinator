@@ -230,6 +230,10 @@ public class MainController implements Initializable {
     private TextField txtEditEmpNameFirst;
     @FXML
     private TextField txtEditEmpNameLast;
+    @FXML
+    private Button btnAddEmployee;
+    @FXML
+    private Button btnUpdateEmployee;
     
     
     
@@ -256,10 +260,12 @@ public class MainController implements Initializable {
 				setTvEmployeeModDetail(ModEmp.fillByEmployee(tvEmployee.getSelectionModel().getSelectedItem().getEmpID().toString()));
 				tpAddModification.setDisable(false);
 				tpAddModification.setExpanded(true);
+				ArrayList<String> name = new ArrayList<>();
 				for(String val : empName.split(", ")) {
-					txtEditEmpNameLast.setText(val);
-					txtEditEmpNameFirst.setText(val);
+					name.add(val);
 				}
+				txtEditEmpNameLast.setText(name.get(0));
+				txtEditEmpNameFirst.setText(name.get(1));
 				txtEditEmpID.setText(tvEmployee.getSelectionModel().getSelectedItem().getEmpID().toString());
 			}
 			
@@ -294,10 +300,15 @@ public class MainController implements Initializable {
 	
 	public void setLblExpOldGross() {
 		OriginPayData oldData = OriginPayData.getOriginPayData(tvExportPayData.getSelectionModel().getSelectedItem().getOriginID());
+		ModPayData modData = ModPayData.getModPayData(tvExportPayData.getSelectionModel().getSelectedItem().getModID());
 		double rate = oldData.getOriginRate();
 		double reg = oldData.getOriginHoursReg();
 		double ot = oldData.getOriginHoursOT();
-		double oldGross = Calc.grossCalc7i(rate, reg, ot);
+		double oldGross;
+		if(modData.getModPayrollRule().equals("7(i) Exemption"))
+			oldGross = Calc.grossCalc7i(rate, reg, ot);
+		else
+			oldGross = Calc.grossCalcOT(rate, reg, ot);
 		lblExpOldGross.setText(String.valueOf(oldGross));
 	}
 	
@@ -313,7 +324,14 @@ public class MainController implements Initializable {
 		double rate = tvExportPayData.getSelectionModel().getSelectedItem().getModRate();
 		double reg = tvExportPayData.getSelectionModel().getSelectedItem().getModHoursReg();
 		double ot = tvExportPayData.getSelectionModel().getSelectedItem().getModHoursOT();
-		double newGross = Calc.grossCalc7i(rate, reg, ot);
+		double newGross;
+		ModPayData modData = ModPayData.getModPayData(tvExportPayData.getSelectionModel().getSelectedItem().getModID());
+		
+		if(modData.getModPayrollRule().equals("7(i) Exemption"))
+			newGross = Calc.grossCalc7i(rate, reg, ot);
+		else
+			newGross = Calc.grossCalcOT(rate, reg, ot);
+		
 		lblExpNewGross.setText(String.valueOf(newGross));
 	}
 	
@@ -431,12 +449,35 @@ public class MainController implements Initializable {
 		}
     }
     
+    public void btnAddEmployee_Clicked(ActionEvent event) {
+    	StringBuilder name = new StringBuilder();
+    	name.append(txtNewEmpNameLast.getText() + ", " + txtNewEmpNameFirst.getText());
+    	Company company = Company.selectCompany(cbCompany.getValue().toString());
+    	Employee emp = new Employee(txtNewEmpID.getText(), name.toString(), company.getCoID());
+    	emp.insert(emp);
+    	setTvEmployee(Employee.fillEmployee(Company.selectCompany(cbCompany.getValue())));
+    	txtNewEmpNameLast.clear();
+    	txtNewEmpNameFirst.clear();
+    	txtNewEmpID.clear();
+    }
+    
+    public void btnEditEmployee_Clicked(ActionEvent event) {
+    	StringBuilder name = new StringBuilder();
+    	name.append(txtEditEmpNameLast.getText() + ", " + txtEditEmpNameFirst.getText());
+    	Company company = Company.selectCompany(cbCompany.getValue().toString());
+    	String orgEmp = tvEmployee.getSelectionModel().getSelectedItem().getEmpID().toString();
+    	Employee emp = new Employee(txtEditEmpID.getText(), name.toString(), company.getCoID());
+    	emp.update(emp, orgEmp);
+    	setTvEmployee(Employee.fillEmployee(Company.selectCompany(cbCompany.getValue())));
+    }
+    
     private ObservableList<EmployeeOriginal> importOriginData(File file) {
     	String[] nextLine;
     	try {
     		CSVReader reader = new CSVReader(new FileReader(file.getAbsolutePath()));
     		while((nextLine = reader.readNext()) != null) {
-    			originPayData.add(new EmployeeOriginal(nextLine[0], nextLine[1], 
+    			String id = nextLine[0].substring(nextLine[0].length() - 4);
+    			originPayData.add(new EmployeeOriginal(id, nextLine[1], 
     					Double.parseDouble(nextLine[2]), Double.parseDouble(nextLine[3]), 
     					Double.parseDouble(nextLine[4])));
     		}

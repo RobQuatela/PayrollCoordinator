@@ -8,6 +8,7 @@ import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -97,6 +98,101 @@ public class Employee {
 		}
 	}
 	
+	public void insert(Employee emp) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		String dup = lookForDup(emp);
+		
+		if(!dup.isEmpty()) {
+			AlertMessage dupAlert = new AlertMessage(AlertType.WARNING, "We cannot insert new employee. " +
+					dup + " already has the same employee ID no. Please choose another employee ID no.");
+			dupAlert.showAndWait();
+		}
+		else {
+			try {
+				con = DBConnect.connect();
+				ps = con.prepareStatement("INSERT INTO tbemployee (emp_id, emp_name, co_id) VALUES (?, ?, ?)");
+				ps.setString(1, emp.getEmpID());
+				ps.setString(2, emp.getEmpName());
+				ps.setInt(3, emp.getCoID());
+				ps.executeUpdate();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
+	public void update(Employee emp, String id) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		String dup = "";
+		if(!emp.getEmpID().equals(id))
+			dup = lookForDup(emp);
+		
+		if(!dup.isEmpty()) {
+			AlertMessage dupAlert = new AlertMessage(AlertType.WARNING, "We cannot insert new employee. " +
+					dup + " already has the same employee ID no. Please choose another employee ID no.");
+			dupAlert.showAndWait();
+		}
+		else {
+			try {
+				con = DBConnect.connect();
+				ps = con.prepareStatement("UPDATE tbemployee SET emp_id = ?, emp_name = ? WHERE emp_id = ?");
+				ps.setString(1, emp.getEmpID());
+				ps.setString(2, emp.getEmpName());
+				ps.setString(3, id);
+				ps.executeUpdate();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private static String lookForDup(Employee emp) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		String name = "";
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("SELECT emp_name FROM tbemployee WHERE emp_id = ?");
+			ps.setString(1, emp.getEmpID());
+			rs = ps.executeQuery();
+			if(rs.next())
+				name = rs.getString(1);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return name;
+	}
+	
+	private static String lookForDup(String emp) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		String name = "";
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("SELECT emp_name FROM tbemployee WHERE emp_id = ?");
+			ps.setString(1, emp);
+			rs = ps.executeQuery();
+			if(rs.next())
+				name = rs.getString(1);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return name;
+	}
+	
 	private static ObservableList<Employee> lookForDup(ObservableList<EmployeeOriginal> employees, Company company) {
 		Connection con = null;
 		PreparedStatement stmt = null;
@@ -175,7 +271,7 @@ public class Employee {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("SELECT * FROM tbemployee WHERE co_id = ?");
+			ps = con.prepareStatement("SELECT * FROM tbemployee WHERE co_id = ? ORDER BY emp_name ASC");
 			ps.setInt(1, company.getCoID());
 			rs = ps.executeQuery();
 			while(rs.next()) {

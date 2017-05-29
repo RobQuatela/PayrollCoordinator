@@ -180,4 +180,19 @@ public class ModHistory {
 		
 		return newModData;
 	}
+	
+	public static void delete(ModPayData modData) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("DELETE FROM tbmodhistory WHERE mod_id = ?");
+			ps.setInt(1, modData.getModID());
+			ps.execute();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

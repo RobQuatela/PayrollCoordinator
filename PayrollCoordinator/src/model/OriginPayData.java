@@ -226,11 +226,11 @@ public class OriginPayData implements PayData {
 			ps.setDouble(6, payData.getOriginRate());
 			ps.executeUpdate();
 			
-			AlertMessage newData = new AlertMessage(AlertType.CONFIRMATION, "The following new data has been inserted!");
+/*			AlertMessage newData = new AlertMessage(AlertType.CONFIRMATION, "The following new data has been inserted!");
 			newData = newData.originPayDataInfo(payData);
 			newData.getButtonTypes().remove(0,2);
 			newData.getButtonTypes().add(ButtonType.OK);
-			newData.showAndWait();
+			newData.showAndWait();*/
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

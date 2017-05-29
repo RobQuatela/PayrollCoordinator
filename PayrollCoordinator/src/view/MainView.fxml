@@ -328,7 +328,7 @@
                                     <TextField fx:id="txtEditEmpID" GridPane.columnIndex="1" />
                                     <TextField fx:id="txtEditEmpNameFirst" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                     <TextField fx:id="txtEditEmpNameLast" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                    <Button mnemonicParsing="false" text="Edit Employee" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    <Button fx:id="btnUpdateEmployee" mnemonicParsing="false" onAction="#btnEditEmployee_Clicked" text="Edit Employee" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                  </children>
                               </GridPane>
                            </content>
@@ -368,7 +368,7 @@
                                     <TextField fx:id="txtNewEmpID" GridPane.columnIndex="1" />
                                     <TextField fx:id="txtNewEmpNameFirst" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                     <TextField fx:id="txtNewEmpNameLast" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                    <Button mnemonicParsing="false" text="Add Employee" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    <Button fx:id="btnAddEmployee" mnemonicParsing="false" onAction="#btnAddEmployee_Clicked" text="Add Employee" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                  </children>
                               </GridPane>
                            </content>
