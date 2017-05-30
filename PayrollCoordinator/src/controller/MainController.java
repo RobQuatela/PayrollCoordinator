@@ -394,11 +394,17 @@ public class MainController implements Initializable {
     }
     
     public void btnAddMod_Clicked(ActionEvent event) {
+    	double hours;
+    	if(txtAddModHours.getText().isEmpty())
+    		hours = 0;
+    	else
+    		hours = Double.parseDouble(txtAddModHours.getText());
+    	
     	ModEmp.insert(new ModEmp(
     			ModType.searchModTypeID(cbAddModType.getSelectionModel().getSelectedItem().toString()),
     			tvEmployee.getItems().get(tvEmployee.getSelectionModel().getSelectedIndex()).getEmpID(),
     			dpAddModDate.getValue(),
-    			Double.parseDouble(txtAddModAmount.getText()), Double.parseDouble(txtAddModHours.getText()),
+    			Double.parseDouble(txtAddModAmount.getText()), hours,
     			taAddModDescrip.getText()
     			));
     	

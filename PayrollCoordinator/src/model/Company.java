@@ -36,7 +36,7 @@ public class Company {
 	}
 	
 	public static String selectCoName(int coID) {
-		Connection conn;
+		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		String name = null;
@@ -51,12 +51,20 @@ public class Company {
 		} catch(SQLException e) {
 			e.printStackTrace();
 		}
+		finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		return name;
 	}
 	
 	public static Company selectCompany(String coName) {
-		Connection conn;
+		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		Company company = null;
@@ -72,12 +80,20 @@ public class Company {
 		} catch(SQLException e) {
 			e.printStackTrace();
 		}
+		finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		return company;
 	}
 	
 	public static ObservableList<String> fillCompanyName() {
-		Connection conn;
+		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		ObservableList<String> companies = FXCollections.observableArrayList();
@@ -92,6 +108,14 @@ public class Company {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		return companies;

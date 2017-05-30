@@ -69,6 +69,14 @@ public class ModHistory {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		finally {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 /*	private static ObservableList<ModEmp> searchForDupModEmps(ObservableList<ModPayData> modData, LocalDate start, LocalDate end) {
@@ -126,6 +134,14 @@ public class ModHistory {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		finally {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		return newModEmps;
 	}
@@ -173,6 +189,14 @@ public class ModHistory {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		finally {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	
 /*		Iterator<ModPayData> newIterModData = iterModData;
 		while(newIterModData.hasNext())
@@ -193,6 +217,14 @@ public class ModHistory {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		finally {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 }

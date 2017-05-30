@@ -85,6 +85,14 @@ public class Employee {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				finally {
+					try {
+						con.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
 			else {
 				AlertMessage selectNo = new AlertMessage(AlertType.CONFIRMATION, "You have selected no...");
@@ -120,6 +128,14 @@ public class Employee {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			finally {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 		
 	}
@@ -148,6 +164,14 @@ public class Employee {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			finally {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	
@@ -167,6 +191,14 @@ public class Employee {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		finally {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		return name;
@@ -188,6 +220,14 @@ public class Employee {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		finally {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		return name;
@@ -214,6 +254,14 @@ public class Employee {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
+		finally {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		return emps;
 
@@ -237,6 +285,14 @@ public class Employee {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		finally {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		return empName;
 	}
@@ -259,6 +315,14 @@ public class Employee {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		finally {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		return empName;
 	}
@@ -280,6 +344,14 @@ public class Employee {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		finally {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		return employee;
