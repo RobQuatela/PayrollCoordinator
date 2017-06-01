@@ -44,6 +44,7 @@ import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
@@ -423,36 +424,43 @@ public class MainController implements Initializable {
     
     public void btnExportPayroll_Clicked(ActionEvent event) {
     	ObservableList<ModPayData> modDatas = FXCollections.observableArrayList();
+    	TextInputDialog dialog = new TextInputDialog();
+    	dialog.setHeaderText("QDRIVE - Payroll Coordinator");
+    	dialog.setContentText("What would you like to name the file?");
     	
-    	try {
-			CSVWriter writer = new CSVWriter(new FileWriter(System.getProperty("user.home") + "/Desktop/testfile.csv"), '\t');
-			for(int i = 0; i < tvExportPayData.getItems().size(); i++) {
-				modDatas.add(new ModPayData(
-						tvExportPayData.getItems().get(i).getEmpID(),
-						tvExportPayData.getItems().get(i).getEmpName(),
-						tvExportPayData.getItems().get(i).getModHoursReg(),
-						tvExportPayData.getItems().get(i).getModHoursOT(),
-						tvExportPayData.getItems().get(i).getModRate()
-						));
+    	Optional<String> result = dialog.showAndWait();
+    	if(result.isPresent()) {
+    		String fileName = result.get();
+			try {
+				CSVWriter writer = new CSVWriter(
+						new FileWriter(System.getProperty("user.home") + "/Desktop/" + fileName + ".csv"), '\t');
+				for (int i = 0; i < tvExportPayData.getItems().size(); i++) {
+					modDatas.add(new ModPayData(tvExportPayData.getItems().get(i).getEmpID(),
+							tvExportPayData.getItems().get(i).getEmpName(),
+							tvExportPayData.getItems().get(i).getModHoursReg(),
+							tvExportPayData.getItems().get(i).getModHoursOT(),
+							tvExportPayData.getItems().get(i).getModRate()));
+				}
+
+				for (ModPayData modData : modDatas) {
+					String line = "" + modData.getEmpID() + "," + modData.getEmpName() + "," + modData.getModHoursReg()
+							+ "," + modData.getModHoursOT() + "," + modData.getModRate();
+					String[] lines = line.split(",");
+					writer.writeNext(lines);
+				}
+
+				writer.close();
+
+				AlertMessage confirmation = new AlertMessage(AlertType.CONFIRMATION,
+						"Your file has successfully exported to your desktop!");
+				confirmation.showAndWait();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				AlertMessage error = new AlertMessage(AlertType.ERROR, "Your file did not export successfully...");
+				error.showAndWait();
 			}
-			
-			for(ModPayData modData : modDatas ) {
-				String line = "" + modData.getEmpID() + "," + modData.getEmpName() + "," + modData.getModHoursReg() +
-						"," + modData.getModHoursOT() + "," + modData.getModRate();
-				String[] lines = line.split(",");
-				writer.writeNext(lines);
-			}
-			
-			writer.close();
-			
-			AlertMessage confirmation = new AlertMessage(AlertType.CONFIRMATION, "Your file has successfully exported to your desktop!");
-			confirmation.showAndWait();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			AlertMessage error = new AlertMessage(AlertType.ERROR, "Your file did not export successfully...");
-			error.showAndWait();
-		}
+    	}
     }
     
     public void btnAddEmployee_Clicked(ActionEvent event) {
