@@ -12,16 +12,26 @@ import javafx.collections.ObservableList;
 
 public class ModType {
 
-	private SimpleIntegerProperty modTypeID;
+	private SimpleStringProperty modTypeID;
+	private SimpleStringProperty earningCode;
 	private SimpleStringProperty modTypeName;
 	
-	public ModType(int id, String name) {
-		modTypeID = new SimpleIntegerProperty(id);
+	public ModType(String id, String earningCode, String name) {
+		modTypeID = new SimpleStringProperty(id);
+		this.earningCode = new SimpleStringProperty(earningCode);
 		modTypeName = new SimpleStringProperty(name);
 	}
 	
 	public ModType(String name) {
 		modTypeName = new SimpleStringProperty(name);
+	}
+	
+	public String getEarningCode() {
+		return earningCode.get();
+	}
+	
+	public void setEarningCode(String earningCode) {
+		this.earningCode.set(earningCode);
 	}
 
 	public String getModTypeName() {
@@ -32,7 +42,7 @@ public class ModType {
 		this.modTypeName.set(modName);
 	}
 
-	public int getModTypeID() {
+	public String getModTypeID() {
 		return modTypeID.get();
 	}
 	
@@ -43,7 +53,8 @@ public class ModType {
 		try {
 			con = DBConnect.connect();
 			ps = con.prepareStatement("INSERT INTO tbmodtype (modtype_name) VALUES(?)");
-			ps.setString(1, mod.getModTypeName());
+			ps.setString(1, mod.getModTypeID());
+			ps.setString(2, mod.getModTypeName());
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -91,11 +102,11 @@ public class ModType {
 
 	}
 	
-	public static int searchModTypeID(String modName) {
+	public static String searchModTypeID(String modName) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		int modID = 0;
+		String modID = "";
 		
 		try {
 			con = DBConnect.connect();
@@ -103,7 +114,7 @@ public class ModType {
 			ps.setString(1, modName);
 			rs = ps.executeQuery();
 			while(rs.next()) {
-				modID = rs.getInt("modtype_id");
+				modID = rs.getString("modtype_id");
 			}
 			
 		} catch (SQLException e) {
@@ -123,7 +134,7 @@ public class ModType {
 
 	}
 	
-	public static String searchModTypeName(int modID) {
+	public static String searchModTypeName(String modID) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -132,7 +143,7 @@ public class ModType {
 		try {
 			con = DBConnect.connect();
 			ps = con.prepareStatement("SELECT modtype_name FROM tbmodtype WHERE modtype_id = ?");
-			ps.setInt(1, modID);
+			ps.setString(1, modID);
 			rs = ps.executeQuery();
 			while(rs.next()) {
 				modName = rs.getString("modtype_name");
@@ -166,7 +177,7 @@ public class ModType {
 			ps = con.prepareStatement("SELECT * FROM tbmodtype");
 			rs = ps.executeQuery();
 			while(rs.next()) {
-				mods.add(new ModType(rs.getInt(1), rs.getString(2)));
+				mods.add(new ModType(rs.getString(1), rs.getString(2), rs.getString(3)));
 			}
 			
 		} catch (SQLException e) {

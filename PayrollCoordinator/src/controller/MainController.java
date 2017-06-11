@@ -9,6 +9,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.sql.Date;
+import java.sql.Time;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -68,6 +70,7 @@ import model.ModPayData;
 import model.ModType;
 import model.OriginPayData;
 import model.PayData;
+import model.PaycomTimecard;
 
 public class MainController implements Initializable {
 
@@ -235,7 +238,38 @@ public class MainController implements Initializable {
     private Button btnAddEmployee;
     @FXML
     private Button btnUpdateEmployee;
-    
+    @FXML
+    private TableView<PaycomTimecard> tvPaycomTimecard;
+    @FXML
+    private TableColumn<PaycomTimecard, String> tvPaycomTimecardEmployee;
+    @FXML
+    private TableColumn<PaycomTimecard, String> tvPaycomTimecardDept;
+    @FXML
+    private TableColumn<PaycomTimecard, Date> tvPaycomTimecardDate;
+    @FXML
+    private TableColumn<PaycomTimecard, Time> tvPaycomTimecardPunch;
+    @FXML
+    private TableColumn<PaycomTimecard, String> tvPaycomTimecardEarning;
+    @FXML
+    private TableColumn<PaycomTimecard, String> tvPaycomTimecardTax;
+    @FXML
+    private TableColumn<PaycomTimecard, String> tvPaycomTimecardComments;
+    @FXML
+    private TableColumn<PaycomTimecard, String> tvPaycomTimecardLabor;
+    @FXML
+    private TableColumn<PaycomTimecard, Double> tvPaycomTimecardHours;
+    @FXML
+    private TableColumn<PaycomTimecard, Double> tvPaycomTimecardDollars;
+    @FXML
+    private TableColumn<PaycomTimecard, Double> tvPaycomTimecardRate;
+    @FXML
+    private TableColumn<PaycomTimecard, Double> tvPaycomTimecardUnits;
+    @FXML
+    private DatePicker dpPaycomTimecard;
+    @FXML
+    private Button btnGenerateTimecard;
+    @FXML
+    private Button btnExportPaycom;
     
     
 
@@ -246,6 +280,7 @@ public class MainController implements Initializable {
 		setTvEmployee(Employee.fillEmployee(Company.selectCompany(cbCompany.getValue())));
 		dpDateEndingPrev.setValue(LocalDate.of(2017, 4, 22));
 		dpExportDateEnding.setValue(LocalDate.of(2017, 4, 22));
+		dpPaycomTimecard.setValue(LocalDate.of(2017, 4, 29));
 		setTvOriginPayDataPrev(OriginPayData.fillOriginPayData(Company.selectCompany(cbCompany.getValue()), dpDateEndingPrev.getValue()));
 		setTvExportPayData(ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue()), dpExportDateEnding.getValue()));
     	dpExportEndDate.setValue(dpExportDateEnding.getValue());
@@ -379,6 +414,30 @@ public class MainController implements Initializable {
     	clearTableData(tvOriginPayData);
     }
     
+    public void btnGenerateTimecard_Clicked(ActionEvent event) {
+    	ObservableList<ModPayData> modData = ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue().toString()), dpPaycomTimecard.getValue());
+    	for(ModPayData data : modData) {
+    		if(data.getModHoursReg() <= 40) {
+    			PaycomTimecard.insertOrUpdate(new PaycomTimecard(data.getEmpID(), dpPaycomTimecard.getValue(), "RGT", data.getModHoursReg(), 0, data.getModRate()));
+    		}
+    		else {
+    			double newHoursReg = data.getModHoursReg() - (data.getModHoursReg() - 40);
+    			double ot = data.getModHoursReg() - 40;
+    			final DecimalFormat df = new DecimalFormat("###.##");
+    			double otRate = Double.valueOf(df.format(data.getModRate() * 1.5));
+    			PaycomTimecard.insertOrUpdate(new PaycomTimecard(data.getEmpID(), dpPaycomTimecard.getValue(), "RGT", newHoursReg, 0, data.getModRate()));
+    			PaycomTimecard.insertOrUpdate(new PaycomTimecard(data.getEmpID(), dpPaycomTimecard.getValue(), "OTT", ot, 0, otRate));
+    		}
+    		
+    	}
+    	
+    	setTvPaycomTimecard(PaycomTimecard.getPaycomTimecard(dpPaycomTimecard.getValue(), Company.selectCompany(cbCompany.getValue().toString())));
+    }
+    
+    public void dpPaycomTimecard_ValueChanged(ActionEvent event) {
+    	setTvPaycomTimecard(PaycomTimecard.getPaycomTimecard(dpPaycomTimecard.getValue(), Company.selectCompany(cbCompany.getValue().toString())));
+    }
+    
     public void cbCompany_ValueChanged(ActionEvent event) {
     	tvEmployeeFill();
     	setTvEmployee(Employee.fillEmployee(Company.selectCompany(cbCompany.getValue())));
@@ -461,6 +520,51 @@ public class MainController implements Initializable {
 				error.showAndWait();
 			}
     	}
+    }
+    
+    public void btnExportPaycom_Clicked(ActionEvent event) {
+    	ObservableList<PaycomTimecard> timecard = FXCollections.observableArrayList();
+    	String fileName = dpPaycomTimecard.getValue().toString();
+    	try {
+			CSVWriter writer = new CSVWriter(
+					new FileWriter(System.getProperty("user.home") + "/Desktop/" + fileName + ".csv"), '\t');
+			for(int i = 0; i < tvPaycomTimecard.getItems().size(); i++) {
+				timecard.add(new PaycomTimecard(
+						tvPaycomTimecard.getItems().get(i).getEmpID(),
+						tvPaycomTimecard.getItems().get(i).getDeptCode(),
+						tvPaycomTimecard.getItems().get(i).getDate().toLocalDate(),
+						tvPaycomTimecard.getItems().get(i).getPunchtime(),
+						tvPaycomTimecard.getItems().get(i).getModTypeID(),
+						tvPaycomTimecard.getItems().get(i).getTaxCode(),
+						tvPaycomTimecard.getItems().get(i).getComments(),
+						tvPaycomTimecard.getItems().get(i).getLaborAllocation(),
+						tvPaycomTimecard.getItems().get(i).getHours(),
+						tvPaycomTimecard.getItems().get(i).getDollars(),
+						tvPaycomTimecard.getItems().get(i).getTempRate(),
+						tvPaycomTimecard.getItems().get(i).getUnits()
+						));
+			}
+			
+			for (PaycomTimecard card : timecard) {
+				String line = "" + card.getEmpID() + "," + card.getDeptCode() + "," + card.getDate().toLocalDate()
+						+ "," + card.getPunchtime() + "," + card.getModTypeID() + "," + card.getTaxCode() + "," +
+						card.getComments() + "," + card.getLaborAllocation() + "," + card.getHours() + "," +
+						card.getDollars() + "," + card.getTempRate() + "," + card.getUnits();
+				String[] lines = line.split(",");
+				writer.writeNext(lines);
+			}
+			
+			writer.close();
+    		
+			AlertMessage confirmation = new AlertMessage(AlertType.CONFIRMATION,
+					"Your file has successfully exported to your desktop!");
+			confirmation.showAndWait();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			AlertMessage error = new AlertMessage(AlertType.ERROR, "Your file did not export successfully...");
+			error.showAndWait();
+		}
     }
     
     public void btnAddEmployee_Clicked(ActionEvent event) {
@@ -566,6 +670,22 @@ public class MainController implements Initializable {
     	tvModDetailHours.setCellValueFactory(new PropertyValueFactory<ModEmp, Double>("modEmpHours"));
     	tvModDetailDescrip.setCellValueFactory(new PropertyValueFactory<ModEmp, String>("modEmpDescrip"));
     	tvModDetail.setItems(modEmp);
+    }
+    
+    public void setTvPaycomTimecard(ObservableList<PaycomTimecard> timecard) {
+    	tvPaycomTimecardEmployee.setCellValueFactory(new PropertyValueFactory<PaycomTimecard, String>("empID"));
+    	tvPaycomTimecardDept.setCellValueFactory(new PropertyValueFactory<PaycomTimecard, String>("deptCode"));
+    	tvPaycomTimecardDate.setCellValueFactory(new PropertyValueFactory<PaycomTimecard, Date>("date"));
+    	tvPaycomTimecardPunch.setCellValueFactory(new PropertyValueFactory<PaycomTimecard, Time>("punchtime"));
+    	tvPaycomTimecardEarning.setCellValueFactory(new PropertyValueFactory<PaycomTimecard, String>("modTypeID"));
+    	tvPaycomTimecardTax.setCellValueFactory(new PropertyValueFactory<PaycomTimecard, String>("taxCode"));
+    	tvPaycomTimecardComments.setCellValueFactory(new PropertyValueFactory<PaycomTimecard, String>("comments"));
+    	tvPaycomTimecardLabor.setCellValueFactory(new PropertyValueFactory<PaycomTimecard, String>("laborAllocation"));
+    	tvPaycomTimecardHours.setCellValueFactory(new PropertyValueFactory<PaycomTimecard, Double>("hours"));
+    	tvPaycomTimecardDollars.setCellValueFactory(new PropertyValueFactory<PaycomTimecard, Double>("dollars"));
+    	tvPaycomTimecardRate.setCellValueFactory(new PropertyValueFactory<PaycomTimecard, Double>("tempRate"));
+    	tvPaycomTimecardUnits.setCellValueFactory(new PropertyValueFactory<PaycomTimecard, Double>("units"));
+    	tvPaycomTimecard.setItems(timecard);
     }
     
     public void comboBoxFill(ComboBox box, ObservableList list) {

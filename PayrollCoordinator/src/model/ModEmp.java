@@ -17,7 +17,7 @@ import javafx.scene.control.Alert.AlertType;
 public class ModEmp {
 
 	private SimpleIntegerProperty modEmpID;
-	private SimpleIntegerProperty modTypeID;
+	private SimpleStringProperty modTypeID;
 	private SimpleStringProperty modTypeName;
 	private SimpleStringProperty empID;
 	private Date modEmpDate;
@@ -25,9 +25,9 @@ public class ModEmp {
 	private SimpleDoubleProperty modEmpHours;
 	private SimpleStringProperty modEmpDescrip;
 	
-	public ModEmp(int id, int mod, String emp, Date date, double amount, double hours, String descrip) {
+	public ModEmp(int id, String mod, String emp, Date date, double amount, double hours, String descrip) {
 		modEmpID = new SimpleIntegerProperty(id);
-		modTypeID = new SimpleIntegerProperty(mod);
+		modTypeID = new SimpleStringProperty(mod);
 		empID = new SimpleStringProperty(emp);
 		modEmpDate = date;
 		modEmpAmount = new SimpleDoubleProperty(amount);
@@ -35,9 +35,9 @@ public class ModEmp {
 		modEmpDescrip = new SimpleStringProperty(descrip);
 	}
 	
-	public ModEmp(int id, int mod, String type, String emp, LocalDate date, double amount, double hours, String descrip) {
+	public ModEmp(int id, String mod, String type, String emp, LocalDate date, double amount, double hours, String descrip) {
 		modEmpID = new SimpleIntegerProperty(id);
-		modTypeID = new SimpleIntegerProperty(mod);
+		modTypeID = new SimpleStringProperty(mod);
 		modTypeName = new SimpleStringProperty(type);
 		empID = new SimpleStringProperty(emp);
 		modEmpDate = Date.valueOf(date);
@@ -46,8 +46,8 @@ public class ModEmp {
 		modEmpDescrip = new SimpleStringProperty(descrip);
 	}
 	
-	public ModEmp(int mod, String emp, LocalDate date, double amount, double hours, String descrip) {
-		modTypeID = new SimpleIntegerProperty(mod);
+	public ModEmp(String mod, String emp, LocalDate date, double amount, double hours, String descrip) {
+		modTypeID = new SimpleStringProperty(mod);
 		empID = new SimpleStringProperty(emp);
 		modEmpDate = Date.valueOf(date);
 		modEmpAmount = new SimpleDoubleProperty(amount);
@@ -59,11 +59,11 @@ public class ModEmp {
 		return modTypeName.get();
 	}
 	
-	public int getModTypeID() {
+	public String getModTypeID() {
 		return modTypeID.get();
 	}
 
-	public void setModTypeID(int modID) {
+	public void setModTypeID(String modID) {
 		this.modTypeID.set(modID);
 	}
 
@@ -124,7 +124,7 @@ public class ModEmp {
 			ps = con.prepareStatement("INSERT INTO tbmodemp (modtype_id, emp_id, modemp_date, modemp_amount, modemp_hours, modemp_descrip) " +
 			"VALUES (?, ?, ?, ?, ?)");
 			for(ModEmp modEmp : modEmps) {
-				ps.setInt(1, modEmp.getModTypeID());
+				ps.setString(1, modEmp.getModTypeID());
 				ps.setString(2, modEmp.getEmpID());
 				ps.setDate(3, modEmp.getModEmpDate());
 				ps.setDouble(4, modEmp.getModEmpAmount());
@@ -156,7 +156,7 @@ public class ModEmp {
 			con = DBConnect.connect();
 			ps = con.prepareStatement("INSERT INTO tbmodemp (modtype_id, emp_id, modemp_date, modemp_amount, modemp_hours, modemp_descrip) " +
 			"VALUES (?, ?, ?, ?, ?, ?)");
-			ps.setInt(1, modEmp.getModTypeID());
+			ps.setString(1, modEmp.getModTypeID());
 			ps.setString(2, modEmp.getEmpID());
 			ps.setDate(3, modEmp.getModEmpDate());
 			ps.setDouble(4, modEmp.getModEmpAmount());
@@ -194,7 +194,7 @@ public class ModEmp {
 			ps.setString(1, empID);
 			rs = ps.executeQuery();
 			while(rs.next()) {
-				modEmps.add(new ModEmp(rs.getInt(1), rs.getInt(2),
+				modEmps.add(new ModEmp(rs.getInt(1), rs.getString(2),
 						rs.getString(3), rs.getString(4),
 						rs.getDate(5).toLocalDate(), rs.getDouble(6),
 						rs.getDouble(7), rs.getString(8)));
@@ -238,7 +238,7 @@ public class ModEmp {
 						ModType.searchModTypeName(rs.getInt("modemp_id")), rs.getString("emp_id"),
 						rs.getDate("modemp_date").toLocalDate(), rs.getDouble("modemp_amount"),
 						rs.getDouble("modemp_hours"), rs.getString("modemp_descrip")));*/
-				modEmps.add(new ModEmp(rs.getInt(1), rs.getInt(2),
+				modEmps.add(new ModEmp(rs.getInt(1), rs.getString(2),
 						rs.getString(3), rs.getString(4),
 						rs.getDate(5).toLocalDate(), rs.getDouble(6),
 						rs.getDouble(7), rs.getString(8)));
@@ -274,7 +274,42 @@ public class ModEmp {
 			ps.setDate(3, Date.valueOf(end));
 			rs = ps.executeQuery();
 			while(rs.next()) {
-				modEmp.add(new ModEmp(rs.getInt(1), rs.getInt(2), rs.getString(3),
+				modEmp.add(new ModEmp(rs.getInt(1), rs.getString(2), rs.getString(3),
+						rs.getDate(4), rs.getDouble(5),
+						rs.getDouble(6), rs.getString(7)));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return modEmp;
+	}
+	
+	public static ObservableList<ModEmp> getModEmpPassive(String earnCode, LocalDate start, LocalDate end) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		ObservableList<ModEmp> modEmp = FXCollections.observableArrayList();
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("SELECT * FROM tbmodemp INNER JOIN tbmodtype ON tbmodemp.modtype_id = tbmodtype.modtype_id " +
+					"WHERE tbmodtype.earningcode_id != ? AND modemp_date >= ? AND modemp_date <= ?");
+			ps.setString(1, earnCode);
+			ps.setDate(2, Date.valueOf(start));
+			ps.setDate(3, Date.valueOf(end));
+			rs = ps.executeQuery();
+			while(rs.next()) {
+				modEmp.add(new ModEmp(rs.getInt(1), rs.getString(2), rs.getString(3),
 						rs.getDate(4), rs.getDouble(5),
 						rs.getDouble(6), rs.getString(7)));
 			}
