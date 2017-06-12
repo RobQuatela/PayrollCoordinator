@@ -19,6 +19,7 @@ public class ModEmp {
 	private SimpleIntegerProperty modEmpID;
 	private SimpleStringProperty modTypeID;
 	private SimpleStringProperty modTypeName;
+	private SimpleStringProperty earningCode;
 	private SimpleStringProperty empID;
 	private Date modEmpDate;
 	private SimpleDoubleProperty modEmpAmount;
@@ -28,6 +29,17 @@ public class ModEmp {
 	public ModEmp(int id, String mod, String emp, Date date, double amount, double hours, String descrip) {
 		modEmpID = new SimpleIntegerProperty(id);
 		modTypeID = new SimpleStringProperty(mod);
+		empID = new SimpleStringProperty(emp);
+		modEmpDate = date;
+		modEmpAmount = new SimpleDoubleProperty(amount);
+		modEmpHours = new SimpleDoubleProperty(hours);
+		modEmpDescrip = new SimpleStringProperty(descrip);
+	}
+	
+	public ModEmp(int id, String mod, String earning, String emp, Date date, double amount, double hours, String descrip) {
+		modEmpID = new SimpleIntegerProperty(id);
+		modTypeID = new SimpleStringProperty(mod);
+		earningCode = new SimpleStringProperty(earning);
 		empID = new SimpleStringProperty(emp);
 		modEmpDate = date;
 		modEmpAmount = new SimpleDoubleProperty(amount);
@@ -46,6 +58,18 @@ public class ModEmp {
 		modEmpDescrip = new SimpleStringProperty(descrip);
 	}
 	
+	public ModEmp(int id, String mod, String earn, String type, String emp, LocalDate date, double amount, double hours, String descrip) {
+		modEmpID = new SimpleIntegerProperty(id);
+		modTypeID = new SimpleStringProperty(mod);
+		earningCode = new SimpleStringProperty(earn);
+		modTypeName = new SimpleStringProperty(type);
+		empID = new SimpleStringProperty(emp);
+		modEmpDate = Date.valueOf(date);
+		modEmpAmount = new SimpleDoubleProperty(amount);
+		modEmpHours = new SimpleDoubleProperty(hours);
+		modEmpDescrip = new SimpleStringProperty(descrip);
+	}
+	
 	public ModEmp(String mod, String emp, LocalDate date, double amount, double hours, String descrip) {
 		modTypeID = new SimpleStringProperty(mod);
 		empID = new SimpleStringProperty(emp);
@@ -53,6 +77,14 @@ public class ModEmp {
 		modEmpAmount = new SimpleDoubleProperty(amount);
 		modEmpHours = new SimpleDoubleProperty(hours);
 		modEmpDescrip = new SimpleStringProperty(descrip);
+	}
+	
+	public String getEarningCode() {
+		return earningCode.get();
+	}
+	
+	public void setEarningCode(String earningCode) {
+		this.earningCode.set(earningCode);
 	}
 
 	public String getModTypeName() {
@@ -183,7 +215,7 @@ public class ModEmp {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		ObservableList<ModEmp> modEmps = FXCollections.observableArrayList();
-		String sql = "SELECT tbmodemp.modemp_id, tbmodemp.modtype_id, tbmodtype.modtype_name, tbmodemp.emp_id, " +
+		String sql = "SELECT tbmodemp.modemp_id, tbmodemp.modtype_id, tbmodtype.earningcode_id, tbmodtype.modtype_name, tbmodemp.emp_id, " +
 				"tbmodemp.modemp_date, tbmodemp.modemp_amount, tbmodemp.modemp_hours, tbmodemp.modemp_descrip " +
 				"FROM tbmodemp INNER JOIN tbmodtype ON tbmodemp.modtype_id = tbmodtype.modtype_id " +
 				"WHERE tbmodemp.emp_id = ? ORDER BY tbmodemp.modemp_date DESC";
@@ -194,10 +226,10 @@ public class ModEmp {
 			ps.setString(1, empID);
 			rs = ps.executeQuery();
 			while(rs.next()) {
-				modEmps.add(new ModEmp(rs.getInt(1), rs.getString(2),
-						rs.getString(3), rs.getString(4),
-						rs.getDate(5).toLocalDate(), rs.getDouble(6),
-						rs.getDouble(7), rs.getString(8)));
+				modEmps.add(new ModEmp(rs.getInt(1), rs.getString(2), rs.getString(3),
+						rs.getString(4), rs.getString(5),
+						rs.getDate(6).toLocalDate(), rs.getDouble(7),
+						rs.getDouble(8), rs.getString(9)));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -226,12 +258,13 @@ public class ModEmp {
 			String sql = "SELECT tbmodemp.modemp_id, tbmodemp.modtype_id, tbmodtype.modtype_name, tbmodemp.emp_id, " +
 					"tbmodemp.modemp_date, tbmodemp.modemp_amount, tbmodemp.modemp_hours, tbmodemp.modemp_descrip " +
 					"FROM tbmodemp INNER JOIN tbmodtype ON tbmodemp.modtype_id = tbmodtype.modtype_id " +
-					"WHERE tbmodemp.emp_id = ? AND tbmodemp.modemp_date >= ? AND tbmodemp.modemp_date <= ? ORDER BY tbmodemp.modemp_date DESC";
+					"WHERE tbmodemp.emp_id = ? AND tbmodemp.modemp_date >= ? AND tbmodemp.modemp_date <= ? AND tbmodtype.earningcode_id = ? ORDER BY tbmodemp.modemp_date DESC";
 			//ps = con.prepareStatement("SELECT * FROM tbmodemp WHERE emp_id = ? AND modemp_date >= ? AND modemp_date <= ? ORDER BY modemp_date DESC");
 			ps = con.prepareStatement(sql);
 			ps.setString(1, empID);
 			ps.setDate(2, Date.valueOf(start));
 			ps.setDate(3, Date.valueOf(end));
+			ps.setString(4, "MOD");
 			rs = ps.executeQuery();
 			while(rs.next()) {
 /*				modEmps.add(new ModEmp(rs.getInt("modemp_id"), rs.getInt("modtype_id"),
@@ -267,11 +300,12 @@ public class ModEmp {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("SELECT * FROM tbmodemp WHERE emp_id = ? " +
-					"AND modemp_date >= ? AND modemp_date <= ?");
+			ps = con.prepareStatement("SELECT * FROM tbmodemp INNER JOIN tbmodtype ON tbmodemp.modtype_id = tbmodtype.modtype_id WHERE emp_id = ? " +
+					"AND modemp_date >= ? AND modemp_date <= ? AND tbmodtype.earningcode_id = ?");
 			ps.setString(1, empID);
 			ps.setDate(2, Date.valueOf(start));
 			ps.setDate(3, Date.valueOf(end));
+			ps.setString(4, "MOD");
 			rs = ps.executeQuery();
 			while(rs.next()) {
 				modEmp.add(new ModEmp(rs.getInt(1), rs.getString(2), rs.getString(3),
@@ -302,16 +336,17 @@ public class ModEmp {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("SELECT * FROM tbmodemp INNER JOIN tbmodtype ON tbmodemp.modtype_id = tbmodtype.modtype_id " +
+			ps = con.prepareStatement("SELECT tbmodemp.modemp_id, tbmodemp.modtype_id, tbmodtype.earningcode_id, tbmodemp.emp_id, tbmodemp.modemp_date, " +
+					"tbmodemp.modemp_amount, tbmodemp.modemp_hours, tbmodemp.modemp_descrip FROM tbmodemp INNER JOIN tbmodtype ON tbmodemp.modtype_id = tbmodtype.modtype_id " +
 					"WHERE tbmodtype.earningcode_id != ? AND modemp_date >= ? AND modemp_date <= ?");
 			ps.setString(1, earnCode);
 			ps.setDate(2, Date.valueOf(start));
 			ps.setDate(3, Date.valueOf(end));
 			rs = ps.executeQuery();
 			while(rs.next()) {
-				modEmp.add(new ModEmp(rs.getInt(1), rs.getString(2), rs.getString(3),
-						rs.getDate(4), rs.getDouble(5),
-						rs.getDouble(6), rs.getString(7)));
+				modEmp.add(new ModEmp(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4),
+						rs.getDate(5), rs.getDouble(6),
+						rs.getDouble(7), rs.getString(8)));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

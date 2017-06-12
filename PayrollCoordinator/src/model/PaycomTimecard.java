@@ -39,6 +39,16 @@ public class PaycomTimecard {
 		this.tempRate = new SimpleDoubleProperty(tempRate);
 	}
 	
+	public PaycomTimecard(String emp_id, LocalDate date, String modType, String descrip, double hours, double dollars, double tempRate) {
+		empID = new SimpleStringProperty(emp_id);
+		this.date = Date.valueOf(date);
+		modTypeID = new SimpleStringProperty(modType);
+		comments = new SimpleStringProperty(descrip);
+		this.hours = new SimpleDoubleProperty(hours);
+		this.dollars = new SimpleDoubleProperty(dollars);
+		this.tempRate = new SimpleDoubleProperty(tempRate);
+	}
+	
 	public PaycomTimecard(String emp_id, String deptCode, LocalDate date, String punch, String modType, String taxCode, String comments,
 			String labor, double hours, double dollars, double tempRate, double unit) {
 		empID = new SimpleStringProperty(emp_id);
@@ -238,14 +248,15 @@ public class PaycomTimecard {
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("SELECT * FROM tbpaycom_timecard WHERE emp_id = ? AND timecard_date = ? AND modtype_id = ? AND (timecard_hours != ? " +
+			ps = con.prepareStatement("SELECT * FROM tbpaycom_timecard WHERE emp_id = ? AND timecard_date = ? AND modtype_id = ? AND timecard_comments = ? AND (timecard_hours != ? " +
 					"OR timecard_dollars != ? OR timecard_temprate != ?)");
 			ps.setString(1, timecard.getEmpID());
 			ps.setDate(2, timecard.getDate());
 			ps.setString(3, timecard.getModTypeID());
-			ps.setDouble(4, timecard.getHours());
-			ps.setDouble(5, timecard.getDollars());
-			ps.setDouble(6, timecard.getTempRate());
+			ps.setString(4, timecard.getComments());
+			ps.setDouble(5, timecard.getHours());
+			ps.setDouble(6, timecard.getDollars());
+			ps.setDouble(7, timecard.getTempRate());
 			rs = ps.executeQuery();
 			if(rs.next())
 				update = true;

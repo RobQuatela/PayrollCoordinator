@@ -23,7 +23,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="707.0" prefWidth="1187.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="859.0" prefWidth="1250.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
    <center>
       <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
@@ -207,12 +207,13 @@
                                  <content>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0">
                                        <children>
-                                          <TableView fx:id="tvPaycomTimecard" layoutX="14.0" layoutY="20.0" prefHeight="584.0" prefWidth="960.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="227.0" AnchorPane.topAnchor="0.0">
+                                          <TableView fx:id="tvPaycomTimecard" layoutX="14.0" layoutY="20.0" prefHeight="584.0" prefWidth="1036.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="214.0" AnchorPane.topAnchor="0.0">
                                             <columns>
                                               <TableColumn fx:id="tvPaycomTimecardEmployee" prefWidth="89.0" text="Employee No." />
-                                                <TableColumn fx:id="tvPaycomTimecardDept" prefWidth="93.0" text="Dept Code" />
-                                              <TableColumn fx:id="tvPaycomTimecardDate" prefWidth="80.00003051757812" text="Date" />
-                                                <TableColumn fx:id="tvPaycomTimecardPunch" prefWidth="75.0" text="Punch Time" />
+                                                <TableColumn fx:id="tvPaycomTimecardDept" prefWidth="76.0" text="Dept Code" />
+                                              <TableColumn fx:id="tvPaycomTimecardDate" prefWidth="83.99996948242188" text="Date" />
+                                                <TableColumn fx:id="tvPaycomTimecardPunch" prefWidth="81.0" text="Punch Time" />
+                                                <TableColumn prefWidth="83.0" text="Punch Type" />
                                                 <TableColumn fx:id="tvPaycomTimecardEarning" prefWidth="97.0" text="Earning Code" />
                                                 <TableColumn fx:id="tvPaycomTimecardTax" prefWidth="75.0" text="Tax Code" />
                                                 <TableColumn fx:id="tvPaycomTimecardComments" prefWidth="75.0" text="Comments" />
@@ -223,10 +224,10 @@
                                                 <TableColumn fx:id="tvPaycomTimecardUnits" prefWidth="75.0" text="Units" />
                                             </columns>
                                           </TableView>
-                                          <Label layoutX="966.0" layoutY="37.0" text="Date Ending:" />
-                                          <DatePicker fx:id="dpPaycomTimecard" layoutX="1042.0" layoutY="33.0" onAction="#dpPaycomTimecard_ValueChanged" prefHeight="25.0" prefWidth="138.0" showWeekNumbers="true" />
-                                          <Button fx:id="btnGenerateTimecard" layoutX="989.0" layoutY="71.0" mnemonicParsing="false" onAction="#btnGenerateTimecard_Clicked" prefHeight="41.0" prefWidth="139.0" text="Generate Timecard" />
-                                          <Button fx:id="btnExportPaycom" layoutX="989.0" layoutY="121.0" mnemonicParsing="false" onAction="#btnExportPaycom_Clicked" prefHeight="41.0" prefWidth="139.0" text="Export to Paycom" />
+                                          <Label layoutX="1039.0" layoutY="30.0" text="Date Ending:" AnchorPane.bottomAnchor="689.0" AnchorPane.rightAnchor="143.0" />
+                                          <DatePicker fx:id="dpPaycomTimecard" layoutX="1115.0" layoutY="26.0" onAction="#dpPaycomTimecard_ValueChanged" prefHeight="25.0" prefWidth="123.0" showWeekNumbers="true" AnchorPane.rightAnchor="12.0" />
+                                          <Button fx:id="btnGenerateTimecard" layoutX="1084.0" layoutY="66.0" mnemonicParsing="false" onAction="#btnGenerateTimecard_Clicked" prefHeight="41.0" prefWidth="139.0" text="Generate Timecard" AnchorPane.rightAnchor="27.0" />
+                                          <Button fx:id="btnExportPaycom" layoutX="1084.0" layoutY="116.0" mnemonicParsing="false" onAction="#btnExportPaycom_Clicked" prefHeight="41.0" prefWidth="139.0" text="Export to Paycom" AnchorPane.rightAnchor="27.0" />
                                        </children>
                                     </AnchorPane>
                                  </content>
@@ -240,15 +241,16 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="665.0" prefWidth="1129.0">
                      <children>
-                        <BorderPane layoutX="7.0" layoutY="5.0" prefHeight="607.0" prefWidth="696.0">
+                        <BorderPane layoutX="7.0" layoutY="5.0" prefHeight="607.0" prefWidth="766.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <center>
                               <TableView fx:id="tvEmployeeModDetail" prefHeight="579.0" prefWidth="244.0" BorderPane.alignment="CENTER">
                                 <columns>
-                                  <TableColumn fx:id="tvEmployeeModDetailDate" prefWidth="87.0" text="Date" />
+                                  <TableColumn fx:id="tvEmployeeModDetailDate" prefWidth="78.0" text="Date" />
+                                    <TableColumn fx:id="tvEmployeeModDetailEarn" prefWidth="84.0" text="Earn Code" />
                                   <TableColumn fx:id="tvEmployeeModDetailMod" minWidth="0.0" prefWidth="102.0" text="Modification" />
                                     <TableColumn fx:id="tvEmployeeModDetailAmount" prefWidth="95.0" text="Amount" />
-                                    <TableColumn fx:id="tvEmployeeModDetailHours" prefWidth="93.0" text="Hours" />
-                                    <TableColumn fx:id="tvEmployeeModDetailDescrip" prefWidth="182.0" text="Description" />
+                                    <TableColumn fx:id="tvEmployeeModDetailHours" prefWidth="87.0" text="Hours" />
+                                    <TableColumn fx:id="tvEmployeeModDetailDescrip" prefWidth="188.0" text="Description" />
                                 </columns>
                               </TableView>
                            </center>
@@ -258,8 +260,8 @@
                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                 </columnConstraints>
                                 <rowConstraints>
-                                  <RowConstraints maxHeight="194.0" minHeight="10.0" prefHeight="28.0" vgrow="SOMETIMES" />
-                                  <RowConstraints maxHeight="579.0" minHeight="10.0" prefHeight="579.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="194.0" minHeight="10.0" prefHeight="36.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="729.0" minHeight="10.0" prefHeight="729.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
                                     <TableView fx:id="tvEmployee" prefHeight="554.0" prefWidth="140.0" GridPane.rowIndex="1">
@@ -282,7 +284,7 @@
                               </GridPane>
                            </left>
                         </BorderPane>
-                        <TitledPane fx:id="tpAddModification" animated="false" disable="true" expanded="false" layoutX="717.0" layoutY="2.0" prefHeight="267.0" prefWidth="467.0" text="Add Modification">
+                        <TitledPane fx:id="tpAddModification" animated="false" layoutX="776.0" prefHeight="267.0" prefWidth="457.0" text="Add Modification" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -359,7 +361,7 @@
                                  </left>
                               </BorderPane>
                            </content></TitledPane>
-                        <TitledPane animated="false" layoutX="938.0" layoutY="400.0" prefHeight="184.0" prefWidth="237.0" text="Modify Employee">
+                        <TitledPane animated="false" layoutX="1010.0" layoutY="428.0" prefHeight="184.0" prefWidth="237.0" text="Modify Employee" AnchorPane.bottomAnchor="0.0">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -399,7 +401,7 @@
                               </GridPane>
                            </content>
                         </TitledPane>
-                        <TitledPane animated="false" layoutX="703.0" layoutY="400.0" prefHeight="184.0" prefWidth="235.0" text="New Employee">
+                        <TitledPane animated="false" layoutX="776.0" layoutY="428.0" prefHeight="184.0" prefWidth="235.0" text="New Employee" AnchorPane.bottomAnchor="0.0">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -439,6 +441,89 @@
                               </GridPane>
                            </content>
                         </TitledPane>
+                        <TitledPane fx:id="tpAddModification1" animated="false" layoutX="777.0" layoutY="281.0" prefHeight="275.0" prefWidth="469.0" text="Update Modification" AnchorPane.rightAnchor="0.0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <content>
+                              <BorderPane prefHeight="200.0" prefWidth="200.0">
+                                 <bottom>
+                                    <GridPane alignment="CENTER" prefHeight="221.0" prefWidth="443.0" BorderPane.alignment="CENTER">
+                                       <columnConstraints>
+                                          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="157.0" minWidth="10.0" prefWidth="17.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="323.0" minWidth="10.0" prefWidth="323.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints maxHeight="200.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="200.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="200.0" minHeight="10.0" prefHeight="27.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="200.0" minHeight="10.0" prefHeight="33.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="200.0" minHeight="4.0" prefHeight="56.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="200.0" minHeight="10.0" prefHeight="44.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <Label contentDisplay="CENTER" text="Hours:" textAlignment="RIGHT" GridPane.rowIndex="3">
+                                             <GridPane.margin>
+                                                <Insets right="5.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label contentDisplay="CENTER" text="Type:" textAlignment="RIGHT" GridPane.rowIndex="1">
+                                             <GridPane.margin>
+                                                <Insets right="5.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label contentDisplay="CENTER" text="Amount:" textAlignment="RIGHT" GridPane.rowIndex="2">
+                                             <GridPane.margin>
+                                                <Insets right="5.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label contentDisplay="CENTER" text="Description:" textAlignment="RIGHT" GridPane.rowIndex="4">
+                                             <GridPane.margin>
+                                                <Insets right="5.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <ComboBox fx:id="cbAddModType1" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                             <GridPane.margin>
+                                                <Insets bottom="5.0" />
+                                             </GridPane.margin>
+                                          </ComboBox>
+                                          <TextField fx:id="txtAddModAmount1" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                             <GridPane.margin>
+                                                <Insets bottom="5.0" right="200.0" />
+                                             </GridPane.margin>
+                                          </TextField>
+                                          <TextArea fx:id="taAddModDescrip1" prefHeight="101.0" prefWidth="181.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                             <GridPane.margin>
+                                                <Insets bottom="5.0" right="30.0" top="10.0" />
+                                             </GridPane.margin>
+                                          </TextArea>
+                                          <TextField fx:id="txtAddModHours1" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                             <GridPane.margin>
+                                                <Insets bottom="5.0" right="200.0" />
+                                             </GridPane.margin>
+                                          </TextField>
+                                          <DatePicker fx:id="dpAddModDate1" GridPane.columnIndex="1">
+                                             <GridPane.margin>
+                                                <Insets bottom="5.0" />
+                                             </GridPane.margin>
+                                          </DatePicker>
+                                          <Label contentDisplay="RIGHT" text="Date:" textAlignment="RIGHT">
+                                             <GridPane.margin>
+                                                <Insets right="5.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                                             <children>
+                                                <Button fx:id="btnAddMod1" mnemonicParsing="false" onAction="#btnAddMod_Clicked" prefHeight="33.0" prefWidth="140.0" text="Edit Modification" />
+                                                <Button fx:id="btnAddMod11" mnemonicParsing="false" onAction="#btnAddMod_Clicked" prefHeight="33.0" prefWidth="140.0" text="Remove Modification" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </GridPane>
+                                 </bottom>
+                              </BorderPane>
+                           </content>
+                        </TitledPane>
                      </children></AnchorPane>
             </content>
           </Tab>
@@ -446,14 +531,16 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TitledPane animated="false" collapsible="false" layoutX="16.0" layoutY="17.0" prefHeight="493.0" prefWidth="244.0" text="Modifications">
-                          <content>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                 <children>
-                                    <ListView fx:id="lstModType" layoutX="6.0" layoutY="14.0" prefHeight="332.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                 </children>
-                              </AnchorPane>
-                          </content>
+                        <TitledPane animated="false" collapsible="false" layoutX="16.0" layoutY="17.0" prefHeight="493.0" prefWidth="298.0" text="Modifications" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <content>
+                              <TableView prefHeight="200.0" prefWidth="200.0">
+                                <columns>
+                                  <TableColumn prefWidth="71.99996948242188" text="Mod ID" />
+                                  <TableColumn prefWidth="96.0" text="Earning Code" />
+                                    <TableColumn prefWidth="129.0" text="Mod Name" />
+                                </columns>
+                              </TableView>
+                           </content>
                         </TitledPane>
                         <TitledPane animated="false" layoutX="622.0" layoutY="18.0" prefHeight="181.0" prefWidth="336.0" text="New Modification">
                            <content>
@@ -463,18 +550,25 @@
                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                 </columnConstraints>
                                 <rowConstraints>
+                                    <RowConstraints maxHeight="110.0" minHeight="10.0" prefHeight="69.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="110.0" minHeight="10.0" prefHeight="69.0" vgrow="SOMETIMES" />
                                   <RowConstraints maxHeight="110.0" minHeight="10.0" prefHeight="69.0" vgrow="SOMETIMES" />
                                   <RowConstraints maxHeight="120.0" minHeight="0.0" prefHeight="57.0" vgrow="SOMETIMES" />
                                   <RowConstraints maxHeight="182.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <Label text="Modification Name:" />
-                                    <TextField fx:id="txtModInsert" GridPane.columnIndex="1" />
-                                    <Button fx:id="btnModInsert" mnemonicParsing="false" onAction="#btnModInsert_Clicked" text="Add Modification" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <Label text="Modification Name:" GridPane.rowIndex="2" />
+                                    <TextField fx:id="txtModInsert" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <Button fx:id="btnModInsert" mnemonicParsing="false" onAction="#btnModInsert_Clicked" text="Add Modification" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    <Label text="Modification ID:" />
+                                    <TextField fx:id="txtModInsert1" GridPane.columnIndex="1" />
+                                    <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="Earning Code:" GridPane.rowIndex="1" />
+                                    <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                  </children>
                               </GridPane>
                            </content></TitledPane>
-                        <TitledPane animated="false" layoutX="272.0" layoutY="19.0" prefHeight="321.0" prefWidth="336.0" text="Update Modification" />
+                        <TitledPane animated="false" layoutX="326.0" layoutY="17.0" prefHeight="189.0" prefWidth="278.0" text="Update Modification" />
+                        <ListView fx:id="lstModType" layoutX="931.0" layoutY="264.0" prefHeight="292.0" prefWidth="171.0" AnchorPane.bottomAnchor="57.0" AnchorPane.leftAnchor="931.0" AnchorPane.rightAnchor="85.0" AnchorPane.topAnchor="264.0" />
                      </children></AnchorPane>
                </content>
             </Tab>
@@ -497,7 +591,7 @@
                   <Insets left="10.0" right="10.0" top="10.0" />
                </VBox.margin>
             </Label>
-            <ComboBox fx:id="cbCompany" onAction="#cbCompany_ValueChanged" prefHeight="25.0" prefWidth="1190.0">
+            <ComboBox fx:id="cbCompany" onAction="#cbCompany_ValueChanged" prefHeight="25.0" prefWidth="1251.0">
                <VBox.margin>
                   <Insets />
                </VBox.margin>

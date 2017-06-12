@@ -169,6 +169,8 @@ public class MainController implements Initializable {
     @FXML
     private TableColumn<ModEmp, Date> tvEmployeeModDetailDate;
     @FXML
+    private TableColumn<ModEmp, String> tvEmployeeModDetailEarn;
+    @FXML
     private TableColumn<ModEmp, String> tvEmployeeModDetailMod;
     @FXML
     private TableColumn<ModEmp, Double> tvEmployeeModDetailAmount;
@@ -416,6 +418,8 @@ public class MainController implements Initializable {
     
     public void btnGenerateTimecard_Clicked(ActionEvent event) {
     	ObservableList<ModPayData> modData = ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue().toString()), dpPaycomTimecard.getValue());
+    	ObservableList<ModEmp> modEmps = ModEmp.getModEmpPassive("MOD", dpPaycomTimecard.getValue().minusDays(6), dpPaycomTimecard.getValue());
+    	
     	for(ModPayData data : modData) {
     		if(data.getModHoursReg() <= 40) {
     			PaycomTimecard.insertOrUpdate(new PaycomTimecard(data.getEmpID(), dpPaycomTimecard.getValue(), "RGT", data.getModHoursReg(), 0, data.getModRate()));
@@ -428,7 +432,11 @@ public class MainController implements Initializable {
     			PaycomTimecard.insertOrUpdate(new PaycomTimecard(data.getEmpID(), dpPaycomTimecard.getValue(), "RGT", newHoursReg, 0, data.getModRate()));
     			PaycomTimecard.insertOrUpdate(new PaycomTimecard(data.getEmpID(), dpPaycomTimecard.getValue(), "OTT", ot, 0, otRate));
     		}
-    		
+    	}
+    	
+    	for(ModEmp modEmp : modEmps) {
+    		PaycomTimecard.insertOrUpdate(new PaycomTimecard(modEmp.getEmpID(), dpPaycomTimecard.getValue(), modEmp.getEarningCode(), modEmp.getModEmpDescrip(), modEmp.getModEmpHours(), 
+    				modEmp.getModEmpAmount(), 0));
     	}
     	
     	setTvPaycomTimecard(PaycomTimecard.getPaycomTimecard(dpPaycomTimecard.getValue(), Company.selectCompany(cbCompany.getValue().toString())));
@@ -648,6 +656,7 @@ public class MainController implements Initializable {
     
     public void setTvEmployeeModDetail(ObservableList<ModEmp> modEmps) {
     	tvEmployeeModDetailDate.setCellValueFactory(new PropertyValueFactory<ModEmp, Date>("modEmpDate"));
+    	tvEmployeeModDetailEarn.setCellValueFactory(new PropertyValueFactory<ModEmp, String>("earningCode"));
     	tvEmployeeModDetailMod.setCellValueFactory(new PropertyValueFactory<ModEmp, String>("modTypeName"));
     	tvEmployeeModDetailAmount.setCellValueFactory(new PropertyValueFactory<ModEmp, Double>("modEmpAmount"));
     	tvEmployeeModDetailHours.setCellValueFactory(new PropertyValueFactory<ModEmp, Double>("modEmpHours"));
