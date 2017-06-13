@@ -79,6 +79,10 @@ public class ModEmp {
 		modEmpDescrip = new SimpleStringProperty(descrip);
 	}
 	
+	public ModEmp(int id) {
+		modEmpID = new SimpleIntegerProperty(id);
+	}
+	
 	public String getEarningCode() {
 		return earningCode.get();
 	}
@@ -210,6 +214,49 @@ public class ModEmp {
 		}
 	}
 	
+	public static void update(ModEmp modEmp) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("UPDATE tbmodemp SET modtype_id = ?, modemp_date = ?, modemp_amount = ?, modemp_hours = ?, modemp_descrip = ? " +
+					"WHERE modemp_id = ?");
+			ps.setString(1, modEmp.getModTypeID());
+			ps.setDate(2, modEmp.getModEmpDate());
+			ps.setDouble(3, modEmp.getModEmpAmount());
+			ps.setDouble(4, modEmp.getModEmpHours());
+			ps.setString(5, modEmp.getModEmpDescrip());
+			ps.setInt(6, modEmp.getModEmpID());
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			try {
+				con.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public static void delete(ModEmp modEmp) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("DELETE FROM tbmodemp WHERE modemp_id = ?");
+			ps.setInt(1, modEmp.getModEmpID());
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public static ObservableList<ModEmp> fillByEmployee(String empID) {
 		Connection con = null;
 		PreparedStatement ps = null;
@@ -328,7 +375,7 @@ public class ModEmp {
 		return modEmp;
 	}
 	
-	public static ObservableList<ModEmp> getModEmpPassive(String earnCode, LocalDate start, LocalDate end) {
+	public static ObservableList<ModEmp> getModEmpPassive(Company company, LocalDate start, LocalDate end) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -338,10 +385,12 @@ public class ModEmp {
 			con = DBConnect.connect();
 			ps = con.prepareStatement("SELECT tbmodemp.modemp_id, tbmodemp.modtype_id, tbmodtype.earningcode_id, tbmodemp.emp_id, tbmodemp.modemp_date, " +
 					"tbmodemp.modemp_amount, tbmodemp.modemp_hours, tbmodemp.modemp_descrip FROM tbmodemp INNER JOIN tbmodtype ON tbmodemp.modtype_id = tbmodtype.modtype_id " +
-					"WHERE tbmodtype.earningcode_id != ? AND modemp_date >= ? AND modemp_date <= ?");
-			ps.setString(1, earnCode);
+					"INNER JOIN tbemployee ON tbmodemp.emp_id = tbemployee.emp_id " +
+					"WHERE tbmodtype.earningcode_id != ? AND modemp_date >= ? AND modemp_date <= ? AND tbemployee.co_id = ?");
+			ps.setString(1, "MOD");
 			ps.setDate(2, Date.valueOf(start));
 			ps.setDate(3, Date.valueOf(end));
+			ps.setInt(4, company.getCoID());
 			rs = ps.executeQuery();
 			while(rs.next()) {
 				modEmp.add(new ModEmp(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4),

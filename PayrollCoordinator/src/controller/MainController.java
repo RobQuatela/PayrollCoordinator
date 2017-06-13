@@ -272,17 +272,33 @@ public class MainController implements Initializable {
     private Button btnGenerateTimecard;
     @FXML
     private Button btnExportPaycom;
-    
+    @FXML
+    private DatePicker dpEditModDate;
+    @FXML
+    private ComboBox<String> cbEditModType;
+    @FXML
+    private TextField txtEditModAmount;
+    @FXML
+    private TextField txtEditModHours;
+    @FXML
+    private TextArea taEditModDescrip;
+    @FXML
+    private Button btnEditMod;
+    @FXML
+    private Button btnDeleteMod;
+    @FXML
+    private TitledPane tpEditModification;
     
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		comboBoxFill(cbCompany, Company.fillCompanyName());
 		comboBoxFill(cbOTRule, payrollRules);
+		comboBoxFill(cbEditModType, ModType.fill());
 		setTvEmployee(Employee.fillEmployee(Company.selectCompany(cbCompany.getValue())));
 		dpDateEndingPrev.setValue(LocalDate.of(2017, 4, 22));
 		dpExportDateEnding.setValue(LocalDate.of(2017, 4, 22));
-		dpPaycomTimecard.setValue(LocalDate.of(2017, 4, 29));
+		//dpPaycomTimecard.setValue(LocalDate.of(2017, 4, 29));
 		setTvOriginPayDataPrev(OriginPayData.fillOriginPayData(Company.selectCompany(cbCompany.getValue()), dpDateEndingPrev.getValue()));
 		setTvExportPayData(ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue()), dpExportDateEnding.getValue()));
     	dpExportEndDate.setValue(dpExportDateEnding.getValue());
@@ -305,6 +321,7 @@ public class MainController implements Initializable {
 				txtEditEmpNameLast.setText(name.get(0));
 				txtEditEmpNameFirst.setText(name.get(1));
 				txtEditEmpID.setText(tvEmployee.getSelectionModel().getSelectedItem().getEmpID().toString());
+				clearEditModPanel();
 			}
 			
 		});
@@ -324,6 +341,21 @@ public class MainController implements Initializable {
 				setLblExpNewGross();
 				setLblExpOriginRate();
 				setLblExpModRate();
+			}
+			
+		});
+		
+		tvEmployeeModDetail.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				tpEditModification.setText(
+						"Update Modification (" + tvEmployee.getSelectionModel().getSelectedItem().getEmpName().toString() + ")");
+				dpEditModDate.setValue(tvEmployeeModDetail.getSelectionModel().getSelectedItem().getModEmpDate().toLocalDate());
+				txtEditModAmount.setText(String.valueOf(tvEmployeeModDetail.getSelectionModel().getSelectedItem().getModEmpAmount()));
+				txtEditModHours.setText(String.valueOf(tvEmployeeModDetail.getSelectionModel().getSelectedItem().getModEmpHours()));
+				taEditModDescrip.setText(String.valueOf(tvEmployeeModDetail.getSelectionModel().getSelectedItem().getModEmpDescrip()));
+				cbEditModType.setValue(String.valueOf(tvEmployeeModDetail.getSelectionModel().getSelectedItem().getModTypeName()));
 			}
 			
 		});
@@ -417,20 +449,21 @@ public class MainController implements Initializable {
     }
     
     public void btnGenerateTimecard_Clicked(ActionEvent event) {
-    	ObservableList<ModPayData> modData = ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue().toString()), dpPaycomTimecard.getValue());
-    	ObservableList<ModEmp> modEmps = ModEmp.getModEmpPassive("MOD", dpPaycomTimecard.getValue().minusDays(6), dpPaycomTimecard.getValue());
+    	Company company = Company.selectCompany(cbCompany.getValue().toString());
+    	ObservableList<ModPayData> modData = ModPayData.getModPayData(company, dpPaycomTimecard.getValue());
+    	ObservableList<ModEmp> modEmps = ModEmp.getModEmpPassive(company, dpPaycomTimecard.getValue().minusDays(6), dpPaycomTimecard.getValue());
     	
     	for(ModPayData data : modData) {
     		if(data.getModHoursReg() <= 40) {
-    			PaycomTimecard.insertOrUpdate(new PaycomTimecard(data.getEmpID(), dpPaycomTimecard.getValue(), "RGT", data.getModHoursReg(), 0, data.getModRate()));
+    			PaycomTimecard.insertOrUpdate(new PaycomTimecard(data.getEmpID(), dpPaycomTimecard.getValue(), "RGT", "", data.getModHoursReg(), 0, data.getModRate()));
     		}
     		else {
     			double newHoursReg = data.getModHoursReg() - (data.getModHoursReg() - 40);
     			double ot = data.getModHoursReg() - 40;
     			final DecimalFormat df = new DecimalFormat("###.##");
     			double otRate = Double.valueOf(df.format(data.getModRate() * 1.5));
-    			PaycomTimecard.insertOrUpdate(new PaycomTimecard(data.getEmpID(), dpPaycomTimecard.getValue(), "RGT", newHoursReg, 0, data.getModRate()));
-    			PaycomTimecard.insertOrUpdate(new PaycomTimecard(data.getEmpID(), dpPaycomTimecard.getValue(), "OTT", ot, 0, otRate));
+    			PaycomTimecard.insertOrUpdate(new PaycomTimecard(data.getEmpID(), dpPaycomTimecard.getValue(), "RGT", "", newHoursReg, 0, data.getModRate()));
+    			PaycomTimecard.insertOrUpdate(new PaycomTimecard(data.getEmpID(), dpPaycomTimecard.getValue(), "OTT", "", ot, 0, otRate));
     		}
     	}
     	
@@ -451,6 +484,9 @@ public class MainController implements Initializable {
     	setTvEmployee(Employee.fillEmployee(Company.selectCompany(cbCompany.getValue())));
 		setTvOriginPayDataPrev(OriginPayData.fillOriginPayData(Company.selectCompany(cbCompany.getValue()), dpDateEndingPrev.getValue()));
 		setTvExportPayData(ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue()), dpExportDateEnding.getValue()));
+		clearTableData(tvEmployeeModDetail);
+		clearAddModPanel();
+		clearEditModPanel();
     }
     
     public void btnModInsert_Clicked(ActionEvent event) {
@@ -597,6 +633,26 @@ public class MainController implements Initializable {
     	setTvEmployee(Employee.fillEmployee(Company.selectCompany(cbCompany.getValue())));
     }
     
+    public void btnEditMod_Clicked(ActionEvent event) {
+    	ModEmp modEmp = new ModEmp(
+    			tvEmployeeModDetail.getSelectionModel().getSelectedItem().getModEmpID(),
+    			ModType.searchModTypeID(cbEditModType.getValue().toString()),
+    			tvEmployee.getSelectionModel().getSelectedItem().getEmpID(),
+    			Date.valueOf(dpEditModDate.getValue()),
+    			Double.valueOf(txtEditModAmount.getText()),
+    			Double.valueOf(txtEditModHours.getText()),
+    			taEditModDescrip.getText()
+    			);
+    	ModEmp.update(modEmp);
+    	setTvEmployeeModDetail(ModEmp.fillByEmployee(tvEmployee.getSelectionModel().getSelectedItem().getEmpID().toString()));
+    }
+    
+    public void btnDeleteMod_Clicked(ActionEvent event) {
+    	ModEmp modEmp = new ModEmp(tvEmployeeModDetail.getSelectionModel().getSelectedItem().getModEmpID());
+    	ModEmp.delete(modEmp);
+    	setTvEmployeeModDetail(ModEmp.fillByEmployee(tvEmployee.getSelectionModel().getSelectedItem().getEmpID().toString()));
+    }
+    
     private ObservableList<EmployeeOriginal> importOriginData(File file) {
     	String[] nextLine;
     	try {
@@ -723,6 +779,19 @@ public class MainController implements Initializable {
     public void clearTableData(TableView tv) {
     	for(int i = 0; i < tv.getItems().size(); i++)
     		tv.getItems().clear();
+    }
+    
+    public void clearAddModPanel() {
+    	tpAddModification.setText("Add Modification");
+    }
+    
+    public void clearEditModPanel() {
+    	tpEditModification.setText("Update Modification");
+    	dpEditModDate.setValue(null);
+    	txtEditModAmount.clear();
+    	txtEditModHours.clear();
+    	comboBoxFill(cbEditModType, ModType.fill());
+    	taEditModDescrip.clear();
     }
 
 

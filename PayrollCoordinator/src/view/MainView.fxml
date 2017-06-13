@@ -441,7 +441,7 @@
                               </GridPane>
                            </content>
                         </TitledPane>
-                        <TitledPane fx:id="tpAddModification1" animated="false" layoutX="777.0" layoutY="281.0" prefHeight="275.0" prefWidth="469.0" text="Update Modification" AnchorPane.rightAnchor="0.0">
+                        <TitledPane fx:id="tpEditModification" animated="false" layoutX="777.0" layoutY="281.0" prefHeight="275.0" prefWidth="469.0" text="Update Modification" AnchorPane.rightAnchor="0.0">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -482,27 +482,27 @@
                                                 <Insets right="5.0" />
                                              </GridPane.margin>
                                           </Label>
-                                          <ComboBox fx:id="cbAddModType1" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                          <ComboBox fx:id="cbEditModType" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                              <GridPane.margin>
                                                 <Insets bottom="5.0" />
                                              </GridPane.margin>
                                           </ComboBox>
-                                          <TextField fx:id="txtAddModAmount1" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                          <TextField fx:id="txtEditModAmount" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                              <GridPane.margin>
                                                 <Insets bottom="5.0" right="200.0" />
                                              </GridPane.margin>
                                           </TextField>
-                                          <TextArea fx:id="taAddModDescrip1" prefHeight="101.0" prefWidth="181.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                          <TextArea fx:id="taEditModDescrip" prefHeight="101.0" prefWidth="181.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                              <GridPane.margin>
                                                 <Insets bottom="5.0" right="30.0" top="10.0" />
                                              </GridPane.margin>
                                           </TextArea>
-                                          <TextField fx:id="txtAddModHours1" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                          <TextField fx:id="txtEditModHours" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                              <GridPane.margin>
                                                 <Insets bottom="5.0" right="200.0" />
                                              </GridPane.margin>
                                           </TextField>
-                                          <DatePicker fx:id="dpAddModDate1" GridPane.columnIndex="1">
+                                          <DatePicker fx:id="dpEditModDate" GridPane.columnIndex="1">
                                              <GridPane.margin>
                                                 <Insets bottom="5.0" />
                                              </GridPane.margin>
@@ -514,8 +514,8 @@
                                           </Label>
                                           <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="CENTER">
                                              <children>
-                                                <Button fx:id="btnAddMod1" mnemonicParsing="false" onAction="#btnAddMod_Clicked" prefHeight="33.0" prefWidth="140.0" text="Edit Modification" />
-                                                <Button fx:id="btnAddMod11" mnemonicParsing="false" onAction="#btnAddMod_Clicked" prefHeight="33.0" prefWidth="140.0" text="Remove Modification" />
+                                                <Button fx:id="btnEditMod" mnemonicParsing="false" onAction="#btnEditMod_Clicked" prefHeight="33.0" prefWidth="140.0" text="Edit Modification" />
+                                                <Button fx:id="btnDeleteMod" mnemonicParsing="false" onAction="#btnDeleteMod_Clicked" prefHeight="33.0" prefWidth="140.0" text="Remove Modification" />
                                              </children>
                                           </HBox>
                                        </children>
