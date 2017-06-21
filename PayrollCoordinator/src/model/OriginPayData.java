@@ -213,13 +213,14 @@ public class OriginPayData implements PayData {
 			ps = con.prepareStatement("INSERT INTO tboriginpaydata (origin_end_date, co_id, emp_id, " +
 			"origin_hours_reg, origin_hours_ot, origin_rate) VALUES (?, ?, ?, ?, ?, ?)");
 			for(OriginPayData data : payData) {
-				ps.setDate(1, data.getOriginEndDate());
+/*				ps.setDate(1, data.getOriginEndDate());
 				ps.setInt(2, data.getCoID());
 				ps.setString(3, data.getEmpID());
 				ps.setDouble(4, data.getOriginHoursReg());
 				ps.setDouble(5, data.getOriginHoursOT());
 				ps.setDouble(6, data.getOriginRate());
-				ps.executeUpdate();
+				ps.executeUpdate();*/
+				OriginPayData.insert(data);
 			}
 			
 			AlertMessage newData = new AlertMessage(AlertType.CONFIRMATION, "The following new data has been inserted!");
@@ -245,24 +246,53 @@ public class OriginPayData implements PayData {
 	protected static void insert(OriginPayData payData) {
 		Connection con = null;
 		PreparedStatement ps = null;
+		String sqlFull = "INSERT INTO tboriginpaydata (origin_end_date, co_id, emp_id, " +
+				"origin_hours_reg, origin_hours_ot, origin_rate) VALUES (?, ?, ?, ?, ?, ?)";
+		String sqlRate = "INSERT INTO tboriginpaydata (origin_end_date, co_id, emp_id, " +
+				"origin_hours_reg, origin_hours_ot) VALUES (?, ?, ?, ?, ?)";
+		String sqlRateOT = "INSERT INTO tboriginpaydata (origin_end_date, co_id, emp_id, " +
+				"origin_hours_reg) VALUES (?, ?, ?, ?)";
+		String sqlOT = "INSERT INTO tboriginpaydata (origin_end_date, co_id, emp_id, " +
+				"origin_hours_reg, origin_rate) VALUES (?, ?, ?, ?, ?)";
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("INSERT INTO tboriginpaydata (origin_end_date, co_id, emp_id, " +
-			"origin_hours_reg, origin_hours_ot, origin_rate) VALUES (?, ?, ?, ?, ?, ?)");
-			ps.setDate(1, payData.getOriginEndDate());
-			ps.setInt(2, payData.getCoID());
-			ps.setString(3, payData.getEmpID());
-			ps.setDouble(4, payData.getOriginHoursReg());
-			ps.setDouble(5, payData.getOriginHoursOT());
-			ps.setDouble(6, payData.getOriginRate());
-			ps.executeUpdate();
-			
-/*			AlertMessage newData = new AlertMessage(AlertType.CONFIRMATION, "The following new data has been inserted!");
-			newData = newData.originPayDataInfo(payData);
-			newData.getButtonTypes().remove(0,2);
-			newData.getButtonTypes().add(ButtonType.OK);
-			newData.showAndWait();*/
+			if(payData.getOriginRate() == 0 && payData.getOriginHoursOT() != 0) {
+				ps = con.prepareStatement(sqlRate);
+				ps.setDate(1, payData.getOriginEndDate());
+				ps.setInt(2, payData.getCoID());
+				ps.setString(3, payData.getEmpID());
+				ps.setDouble(4, payData.getOriginHoursReg());
+				ps.setDouble(5, payData.getOriginHoursOT());
+				ps.executeUpdate();
+			}
+			else if(payData.getOriginRate() != 0 && payData.getOriginHoursOT() == 0) {
+				ps = con.prepareStatement(sqlOT);
+				ps.setDate(1, payData.getOriginEndDate());
+				ps.setInt(2, payData.getCoID());
+				ps.setString(3, payData.getEmpID());
+				ps.setDouble(4, payData.getOriginHoursReg());
+				ps.setDouble(5, payData.getOriginRate());
+				ps.executeUpdate();
+			}
+			else if(payData.getOriginRate() == 0 && payData.getOriginHoursOT() == 0) {
+				ps = con.prepareStatement(sqlRateOT);
+				ps.setDate(1, payData.getOriginEndDate());
+				ps.setInt(2, payData.getCoID());
+				ps.setString(3, payData.getEmpID());
+				ps.setDouble(4, payData.getOriginHoursReg());
+				ps.executeUpdate();
+			}
+			else {
+				ps = con.prepareStatement(sqlFull);
+				ps.setDate(1, payData.getOriginEndDate());
+				ps.setInt(2, payData.getCoID());
+				ps.setString(3, payData.getEmpID());
+				ps.setDouble(4, payData.getOriginHoursReg());
+				ps.setDouble(5, payData.getOriginHoursOT());
+				ps.setDouble(6, payData.getOriginRate());
+				ps.executeUpdate();
+			}
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

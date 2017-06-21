@@ -146,12 +146,13 @@ public class ModPayData {
 			ps = con.prepareStatement("INSERT INTO tbmodpaydata (origin_id, mod_hours_reg, mod_hours_ot, mod_rate, mod_payroll_rule) "
 					+ "VALUES (?, ?, ?, ?, ?)");
 			for (ModPayData data : modPayData) {
-				ps.setInt(1, data.getOriginID());
+/*				ps.setInt(1, data.getOriginID());
 				ps.setDouble(2, data.getModHoursReg());
 				ps.setDouble(3, data.getModHoursOT());
 				ps.setDouble(4, data.getModRate());
 				ps.setString(5, data.getModPayrollRule());
-				ps.executeUpdate();
+				ps.executeUpdate();*/
+				ModPayData.insert(data);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -171,17 +172,49 @@ public class ModPayData {
 	protected static void insert(ModPayData modPayData) {
 		Connection con = null;
 		PreparedStatement ps = null;
+		String sqlFull = "INSERT INTO tbmodpaydata (origin_id, mod_hours_reg, mod_hours_ot, mod_rate, mod_payroll_rule) "
+				+ "VALUES (?, ?, ?, ?, ?)";
+		String sqlRate = "INSERT INTO tbmodpaydata (origin_id, mod_hours_reg, mod_hours_ot, mod_payroll_rule) "
+				+ "VALUES (?, ?, ?, ?)";
+		String sqlOT = "INSERT INTO tbmodpaydata (origin_id, mod_hours_reg, mod_rate, mod_payroll_rule) "
+				+ "VALUES (?, ?, ?, ?)";
+		String sqlRateOT = "INSERT INTO tbmodpaydata (origin_id, mod_hours_reg, mod_payroll_rule) "
+				+ "VALUES (?, ?, ?)";
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("INSERT INTO tbmodpaydata (origin_id, mod_hours_reg, mod_hours_ot, mod_rate, mod_payroll_rule) "
-					+ "VALUES (?, ?, ?, ?, ?)");
-			ps.setInt(1, modPayData.getOriginID());
-			ps.setDouble(2, modPayData.getModHoursReg());
-			ps.setDouble(3, modPayData.getModHoursOT());
-			ps.setDouble(4, modPayData.getModRate());
-			ps.setString(5,  modPayData.getModPayrollRule());
-			ps.executeUpdate();
+			if(modPayData.getModRate() == 0 && modPayData.getModHoursOT() != 0) {
+				ps = con.prepareStatement(sqlRate);
+				ps.setInt(1, modPayData.getOriginID());
+				ps.setDouble(2, modPayData.getModHoursReg());
+				ps.setDouble(3, modPayData.getModHoursOT());
+				ps.setString(4,  modPayData.getModPayrollRule());
+				ps.executeUpdate();
+			}
+			else if(modPayData.getModRate() != 0 && modPayData.getModHoursOT() == 0) {
+				ps = con.prepareStatement(sqlOT);
+				ps.setInt(1, modPayData.getOriginID());
+				ps.setDouble(2, modPayData.getModHoursReg());
+				ps.setDouble(3, modPayData.getModRate());
+				ps.setString(4,  modPayData.getModPayrollRule());
+				ps.executeUpdate();
+			}
+			else if(modPayData.getModRate() == 0 && modPayData.getModHoursOT() == 0) {
+				ps = con.prepareStatement(sqlRateOT);
+				ps.setInt(1, modPayData.getOriginID());
+				ps.setDouble(2, modPayData.getModHoursReg());
+				ps.setString(3,  modPayData.getModPayrollRule());
+				ps.executeUpdate();
+			}
+			else {
+				ps = con.prepareStatement(sqlFull);
+				ps.setInt(1, modPayData.getOriginID());
+				ps.setDouble(2, modPayData.getModHoursReg());
+				ps.setDouble(3, modPayData.getModHoursOT());
+				ps.setDouble(4, modPayData.getModRate());
+				ps.setString(5, modPayData.getModPayrollRule());
+				ps.executeUpdate();
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

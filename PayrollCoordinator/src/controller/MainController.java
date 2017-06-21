@@ -76,7 +76,7 @@ public class MainController implements Initializable {
 
     private ObservableList<EmployeeOriginal> originPayData = FXCollections.observableArrayList();
     private ObservableList<String> payrollTypes = FXCollections.observableArrayList();
-    private ObservableList<String> payrollRules = FXCollections.observableArrayList("7(i) Exemption", "Traditional Overtime");
+    private ObservableList<String> payrollRules = FXCollections.observableArrayList("7(i) Exemption", "Commission Overtime", "Traditional Overtime");
 
     @FXML
     private Button btnImportOriginData;
@@ -422,13 +422,26 @@ public class MainController implements Initializable {
 		Company company = Company.selectCompany(cbCompany.getValue().toString());
 		
 		for(int i = 0; i < tvOriginPayData.getItems().size(); i++) {
+			double rate;
+			try {
+				rate = tvOriginPayData.getItems().get(i).getOriginRate();
+			} catch(Exception e) {
+				rate = 0;
+			}
+			double ot;
+			try {
+				ot = tvOriginPayData.getItems().get(i).getOriginHoursOT();
+			} catch(Exception e) {
+				ot = 0;
+			}
+			
 			payData.add(new OriginPayData(
 					Date.valueOf(dpOriginDateEnding.getValue()),
 					company.getCoID(),
 					tvOriginPayData.getItems().get(i).getEmpID(),
 					tvOriginPayData.getItems().get(i).getOriginHoursReg(),
-					tvOriginPayData.getItems().get(i).getOriginHoursOT(),
-					tvOriginPayData.getItems().get(i).getOriginRate()
+					ot,
+					rate
 					));
 		}
 		PayData.insertOrUpdate(payData, cbOTRule.getValue().toString());
@@ -659,9 +672,13 @@ public class MainController implements Initializable {
     		CSVReader reader = new CSVReader(new FileReader(file.getAbsolutePath()));
     		while((nextLine = reader.readNext()) != null) {
     			String id = nextLine[0].substring(nextLine[0].length() - 4);
-    			originPayData.add(new EmployeeOriginal(id, nextLine[1], 
-    					Double.parseDouble(nextLine[2]), Double.parseDouble(nextLine[3]), 
-    					Double.parseDouble(nextLine[4])));
+    			if(nextLine.length == 5)
+    				originPayData.add(new EmployeeOriginal(id, nextLine[1], 
+    						Double.parseDouble(nextLine[2]), Double.parseDouble(nextLine[3]), 
+    						Double.parseDouble(nextLine[4])));
+    			if(nextLine.length == 4)
+    				originPayData.add(new EmployeeOriginal(id, nextLine[1], 
+        					Double.parseDouble(nextLine[2]), Double.parseDouble(nextLine[3])));
     		}
     	}catch(FileNotFoundException e) {
     		e.printStackTrace();
@@ -689,7 +706,15 @@ public class MainController implements Initializable {
     	tvOriginPayDataCOLname.setCellValueFactory(new PropertyValueFactory<EmployeeOriginal, String>("empName"));
     	tvOriginPayDataCOLregHours.setCellValueFactory(new PropertyValueFactory<EmployeeOriginal, Double>("originHoursReg"));
     	tvOriginPayDataCOLotHours.setCellValueFactory(new PropertyValueFactory<EmployeeOriginal, Double>("originHoursOT"));
-    	tvOriginPayDataCOLrate.setCellValueFactory(new PropertyValueFactory<EmployeeOriginal, Double>("originRate"));
+    	Object test;
+    	//test = Calc.testObj((Object)imports.get(0).getOriginRate());
+    	try {
+    		test = Calc.testObj((Object)imports.get(0).getOriginRate());
+    	} catch(NullPointerException e) {
+    		test = null;
+    	}
+    	if(test != null )
+    		tvOriginPayDataCOLrate.setCellValueFactory(new PropertyValueFactory<EmployeeOriginal, Double>("originRate"));
     	tvOriginPayData.setItems(imports);
     }
     

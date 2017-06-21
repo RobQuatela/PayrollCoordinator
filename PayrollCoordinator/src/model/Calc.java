@@ -25,4 +25,15 @@ public class Calc {
 	public static double rateCalc(double gross, double reg) {
 		return Double.valueOf(df.format(gross / reg));
 	}
+	
+	public static Object testObj(Object o) throws NullPointerException {
+		Object t;
+		try {
+			t = o;
+		} catch(Exception e) {
+			t = null;
+		}
+		
+		return t;
+	}
 }

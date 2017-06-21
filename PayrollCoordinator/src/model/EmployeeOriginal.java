@@ -22,6 +22,13 @@ public class EmployeeOriginal {
 		originRate = new SimpleDoubleProperty(rate);
 	}
 	
+	public EmployeeOriginal(String id, String name, double reg, double ot) {
+		empID = new SimpleStringProperty(id);
+		empName = new SimpleStringProperty(name);
+		originHoursReg = new SimpleDoubleProperty(reg);
+		originHoursOT = new SimpleDoubleProperty(ot);
+	}
+	
 	public String getEmpID() {
 		return empID.get();
 	}
