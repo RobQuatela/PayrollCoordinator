@@ -21,6 +21,7 @@ public class PaycomTimecard {
 	private SimpleStringProperty deptCode;
 	private Date date;
 	private SimpleStringProperty punchtime;
+	private SimpleStringProperty punchtype;
 	private SimpleStringProperty modTypeID;
 	private SimpleStringProperty taxCode;
 	private SimpleStringProperty comments;
@@ -39,6 +40,13 @@ public class PaycomTimecard {
 		this.tempRate = new SimpleDoubleProperty(tempRate);
 	}
 	
+	public PaycomTimecard(String emp_id, LocalDate date, String modType, double hours) {
+		empID = new SimpleStringProperty(emp_id);
+		this.date = Date.valueOf(date);
+		modTypeID = new SimpleStringProperty(modType);
+		this.hours = new SimpleDoubleProperty(hours);
+	}
+	
 	public PaycomTimecard(String emp_id, LocalDate date, String modType, String descrip, double hours, double dollars, double tempRate) {
 		empID = new SimpleStringProperty(emp_id);
 		this.date = Date.valueOf(date);
@@ -49,12 +57,13 @@ public class PaycomTimecard {
 		this.tempRate = new SimpleDoubleProperty(tempRate);
 	}
 	
-	public PaycomTimecard(String emp_id, String deptCode, LocalDate date, String punch, String modType, String taxCode, String comments,
+	public PaycomTimecard(String emp_id, String deptCode, LocalDate date, String punch, String punchtype, String modType, String taxCode, String comments,
 			String labor, double hours, double dollars, double tempRate, double unit) {
 		empID = new SimpleStringProperty(emp_id);
 		this.deptCode = new SimpleStringProperty(deptCode);
 		this.date = Date.valueOf(date);
 		punchtime = new SimpleStringProperty(punch);
+		this.punchtype = new SimpleStringProperty(punchtype);
 		modTypeID = new SimpleStringProperty(modType);
 		this.taxCode = new SimpleStringProperty(taxCode);
 		this.comments = new SimpleStringProperty(comments);
@@ -95,6 +104,14 @@ public class PaycomTimecard {
 
 	public void setPunchtime(String punchtime) {
 		this.punchtime.set(punchtime);
+	}
+	
+	public String getPunchtype() {
+		return punchtype.get();
+	}
+	
+	public void setPunchtype(String type) {
+		punchtype.set(type);
 	}
 
 	public String getModTypeID() {
@@ -168,25 +185,62 @@ public class PaycomTimecard {
 	protected void insert(PaycomTimecard timecard) {
 		Connection con = null;
 		PreparedStatement ps = null;
+		String sqlFull = "INSERT INTO tbpaycom_timecard (emp_id, timecard_deptcode, timecard_date, timecard_punchtime, modtype_id, " +
+				"timecard_taxcode, timecard_comments, timecard_laborallocation, timecard_hours, timecard_dollars, timecard_temprate, timecard_units) " +
+				"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		String sqlTempRate = "INSERT INTO tbpaycom_timecard (emp_id, timecard_date, modtype_id, " +
+				"timecard_hours, timecard_temprate) VALUES (?, ?, ?, ?, ?)";
+		String sqlAdds = "INSERT INTO tbpaycom_timecard (emp_id, timecard_date, modtype_id, " +
+				"timecard_dollars) VALUES (?, ?, ?, ?)";
+		String sqlFixedRate = "INSERT INTO tbpaycom_timecard (emp_id, timecard_date, modtype_id, " +
+				"timecard_hours) VALUES (?, ?, ?, ?)";
+		double hours = timecard.getHours();
+		double dollars = timecard.getDollars();
+		double rate = timecard.getTempRate();
 		
 		try {
 			con = DBConnect.connect();
-			ps = con.prepareStatement("INSERT INTO tbpaycom_timecard (emp_id, timecard_deptcode, timecard_date, timecard_punchtime, modtype_id, " +
-					"timecard_taxcode, timecard_comments, timecard_laborallocation, timecard_hours, timecard_dollars, timecard_temprate, timecard_units) " +
-					"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-			ps.setString(1, timecard.getEmpID());
-			ps.setString(2, " ");
-			ps.setDate(3, timecard.getDate());
-			ps.setString(4, " ");
-			ps.setString(5, timecard.getModTypeID());
-			ps.setString(6, " ");
-			ps.setString(7, " ");
-			ps.setString(8, " ");
-			ps.setDouble(9, timecard.getHours());
-			ps.setDouble(10, timecard.getDollars());
-			ps.setDouble(11, timecard.getTempRate());
-			ps.setDouble(12, 0);
-			ps.executeUpdate();
+			if(hours == 0 && dollars != 0 && rate == 0) {
+				ps = con.prepareStatement(sqlAdds);
+				ps.setString(1, timecard.getEmpID());
+				ps.setDate(2, timecard.getDate());
+				ps.setString(3, timecard.getModTypeID());
+				ps.setDouble(4, dollars);
+				ps.executeUpdate();
+			}
+			else if(hours != 0 && dollars == 0 && rate != 0) {
+				ps = con.prepareStatement(sqlTempRate);
+				ps.setString(1, timecard.getEmpID());
+				ps.setDate(2, timecard.getDate());
+				ps.setString(3, timecard.getModTypeID());
+				ps.setDouble(4, hours);
+				ps.setDouble(5, rate);
+				ps.executeUpdate();
+			}
+			else if(hours != 0 && dollars == 0 && rate == 0) {
+				ps = con.prepareStatement(sqlFixedRate);
+				ps.setString(1, timecard.getEmpID());
+				ps.setDate(2, timecard.getDate());
+				ps.setString(3, timecard.getModTypeID());
+				ps.setDouble(4, hours);
+				ps.executeUpdate();
+			}
+			else {
+				ps = con.prepareStatement(sqlFull);
+				ps.setString(1, timecard.getEmpID());
+				ps.setString(2, " ");
+				ps.setDate(3, timecard.getDate());
+				ps.setString(4, " ");
+				ps.setString(5, timecard.getModTypeID());
+				ps.setString(6, " ");
+				ps.setString(7, " ");
+				ps.setString(8, " ");
+				ps.setDouble(9, timecard.getHours());
+				ps.setDouble(10, timecard.getDollars());
+				ps.setDouble(11, timecard.getTempRate());
+				ps.setDouble(12, 0);
+				ps.executeUpdate();
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -326,7 +380,7 @@ public class PaycomTimecard {
 			rs = ps.executeQuery();
 			while(rs.next()) {
 				timecard.add(new PaycomTimecard(rs.getString("emp_id"), rs.getString("timecard_deptcode"), rs.getDate("timecard_date").toLocalDate(), 
-						rs.getString("timecard_punchtime"), rs.getString("modtype_id"), rs.getString("timecard_taxcode"),
+						rs.getString("timecard_punchtime"), rs.getString("timecard_punchtype"), rs.getString("modtype_id"), rs.getString("timecard_taxcode"),
 						rs.getString("timecard_comments"), rs.getString("timecard_laborallocation"), rs.getDouble("timecard_hours"), 
 						rs.getDouble("timecard_dollars"), rs.getDouble("timecard_temprate"), rs.getDouble("timecard_units")));
 			}

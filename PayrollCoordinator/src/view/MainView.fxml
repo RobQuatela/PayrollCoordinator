@@ -62,7 +62,7 @@
                                  <content>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0">
                                        <children>
-                                          <TableView fx:id="tvOriginPayDataPrev" prefHeight="578.0" prefWidth="742.0">
+                                          <TableView fx:id="tvOriginPayDataPrev" prefHeight="578.0" prefWidth="742.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <columns>
                                                 <TableColumn fx:id="tvOriginPayDataPrevId" prefWidth="105.0" text="Emp ID" />
                                                 <TableColumn fx:id="tvOriginPayDataPrevName" prefWidth="297.0" text="Name" />
@@ -155,13 +155,13 @@
                                                                   <Insets right="5.0" />
                                                                </GridPane.margin>
                                                             </Label>
-                                                            <DatePicker fx:id="dpExportStartDate" onAction="#dpDateEndingPrev_ValueChanged" showWeekNumbers="true" GridPane.columnIndex="1" />
+                                                            <DatePicker fx:id="dpExportStartDate" disable="true" onAction="#dpDateEndingPrev_ValueChanged" showWeekNumbers="true" GridPane.columnIndex="1" />
                                                             <Label text="End Date:" GridPane.rowIndex="1">
                                                                <GridPane.margin>
                                                                   <Insets right="5.0" />
                                                                </GridPane.margin>
                                                             </Label>
-                                                            <DatePicker fx:id="dpExportEndDate" editable="false" showWeekNumbers="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                            <DatePicker fx:id="dpExportEndDate" disable="true" editable="false" showWeekNumbers="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                                             <Button fx:id="btnExportUpdatePayroll" mnemonicParsing="false" onAction="#btnExportUpdatePayroll_Clicked" prefHeight="38.0" prefWidth="125.0" text="Update Payroll" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                                             <Button fx:id="btnExportPayroll" mnemonicParsing="false" onAction="#btnExportPayroll_Clicked" prefHeight="38.0" prefWidth="161.0" text="Export Payroll (Paycom)" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                                          </children>
@@ -174,12 +174,6 @@
                                             <content>
                                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="235.0" prefWidth="346.0">
                                                    <children>
-                                                      <Label layoutX="47.0" layoutY="14.0" text="Gross:" />
-                                                      <Label fx:id="lblExpOldGross" layoutX="93.0" layoutY="14.0" text="gross" />
-                                                      <Label layoutX="50.0" layoutY="36.0" text="Mod:" />
-                                                      <Label fx:id="lblExpMod" layoutX="93.0" layoutY="36.0" text="mod" />
-                                                      <Label layoutX="17.0" layoutY="64.0" text="New Gross:" />
-                                                      <Label fx:id="lblExpNewGross" layoutX="93.0" layoutY="64.0" text="newgross" />
                                                       <TableView fx:id="tvModDetail" layoutX="1.0" layoutY="96.0" prefHeight="175.0" prefWidth="377.0">
                                                         <columns>
                                                           <TableColumn fx:id="tvModDetailType" prefWidth="62.0" text="Type" />
@@ -188,10 +182,51 @@
                                                             <TableColumn fx:id="tvModDetailDescrip" prefWidth="145.0" text="Description" />
                                                         </columns>
                                                       </TableView>
-                                                      <Label layoutX="173.0" layoutY="14.0" text="Original Rate:" />
-                                                      <Label layoutX="173.0" layoutY="36.0" text="Modified Rate:" />
-                                                      <Label fx:id="lblExpOriginRate" layoutX="251.0" layoutY="14.0" text="orate" />
-                                                      <Label fx:id="lblExpModRate" layoutX="265.0" layoutY="36.0" text="mrate" />
+                                                      <GridPane layoutX="14.0" layoutY="14.0" prefHeight="64.0" prefWidth="316.0">
+                                                        <columnConstraints>
+                                                          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="160.0" minWidth="10.0" prefWidth="90.0" />
+                                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="147.0" minWidth="10.0" prefWidth="73.0" />
+                                                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="156.0" minWidth="10.0" prefWidth="99.0" />
+                                                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="142.0" minWidth="10.0" prefWidth="49.0" />
+                                                        </columnConstraints>
+                                                        <rowConstraints>
+                                                          <RowConstraints maxHeight="25.0" minHeight="10.0" prefHeight="21.0" vgrow="SOMETIMES" />
+                                                          <RowConstraints maxHeight="43.0" minHeight="10.0" prefHeight="28.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
+                                                        </rowConstraints>
+                                                         <children>
+                                                            <Label text="Gross:" />
+                                                            <Label fx:id="lblExpOldGross" text="gross" GridPane.columnIndex="1">
+                                                               <GridPane.margin>
+                                                                  <Insets left="5.0" />
+                                                               </GridPane.margin>
+                                                            </Label>
+                                                            <Label prefHeight="16.0" prefWidth="28.0" text="Mod:" GridPane.rowIndex="1" />
+                                                            <Label fx:id="lblExpMod" text="mod" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                               <GridPane.margin>
+                                                                  <Insets left="5.0" />
+                                                               </GridPane.margin>
+                                                            </Label>
+                                                            <Label text="New Gross:" GridPane.rowIndex="2" />
+                                                            <Label fx:id="lblExpNewGross" text="newgross" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                               <GridPane.margin>
+                                                                  <Insets left="5.0" />
+                                                               </GridPane.margin>
+                                                            </Label>
+                                                            <Label text="Original Rate:" GridPane.columnIndex="2" />
+                                                            <Label fx:id="lblExpOriginRate" text="orate" GridPane.columnIndex="3">
+                                                               <GridPane.margin>
+                                                                  <Insets left="5.0" />
+                                                               </GridPane.margin>
+                                                            </Label>
+                                                            <Label text="Modified Rate:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                                            <Label fx:id="lblExpModRate" text="mrate" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                                               <GridPane.margin>
+                                                                  <Insets left="5.0" />
+                                                               </GridPane.margin>
+                                                            </Label>
+                                                         </children>
+                                                      </GridPane>
                                                    </children>
                                                 </AnchorPane>
                                             </content>
@@ -213,7 +248,7 @@
                                                 <TableColumn fx:id="tvPaycomTimecardDept" prefWidth="76.0" text="Dept Code" />
                                               <TableColumn fx:id="tvPaycomTimecardDate" prefWidth="83.99996948242188" text="Date" />
                                                 <TableColumn fx:id="tvPaycomTimecardPunch" prefWidth="81.0" text="Punch Time" />
-                                                <TableColumn prefWidth="83.0" text="Punch Type" />
+                                                <TableColumn fx:id="tvPaycomTimecardType" prefWidth="83.0" text="Punch Type" />
                                                 <TableColumn fx:id="tvPaycomTimecardEarning" prefWidth="97.0" text="Earning Code" />
                                                 <TableColumn fx:id="tvPaycomTimecardTax" prefWidth="75.0" text="Tax Code" />
                                                 <TableColumn fx:id="tvPaycomTimecardComments" prefWidth="75.0" text="Comments" />
@@ -224,7 +259,7 @@
                                                 <TableColumn fx:id="tvPaycomTimecardUnits" prefWidth="75.0" text="Units" />
                                             </columns>
                                           </TableView>
-                                          <Label layoutX="1039.0" layoutY="30.0" text="Date Ending:" AnchorPane.bottomAnchor="689.0" AnchorPane.rightAnchor="143.0" />
+                                          <Label layoutX="1039.0" layoutY="30.0" text="Date Ending:" AnchorPane.rightAnchor="143.0" />
                                           <DatePicker fx:id="dpPaycomTimecard" layoutX="1115.0" layoutY="26.0" onAction="#dpPaycomTimecard_ValueChanged" prefHeight="25.0" prefWidth="123.0" showWeekNumbers="true" AnchorPane.rightAnchor="12.0" />
                                           <Button fx:id="btnGenerateTimecard" layoutX="1084.0" layoutY="66.0" mnemonicParsing="false" onAction="#btnGenerateTimecard_Clicked" prefHeight="41.0" prefWidth="139.0" text="Generate Timecard" AnchorPane.rightAnchor="27.0" />
                                           <Button fx:id="btnExportPaycom" layoutX="1084.0" layoutY="116.0" mnemonicParsing="false" onAction="#btnExportPaycom_Clicked" prefHeight="41.0" prefWidth="139.0" text="Export to Paycom" AnchorPane.rightAnchor="27.0" />
@@ -260,11 +295,11 @@
                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                 </columnConstraints>
                                 <rowConstraints>
-                                  <RowConstraints maxHeight="194.0" minHeight="10.0" prefHeight="36.0" vgrow="SOMETIMES" />
-                                  <RowConstraints maxHeight="729.0" minHeight="10.0" prefHeight="729.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="194.0" minHeight="10.0" prefHeight="36.0" vgrow="NEVER" />
+                                  <RowConstraints maxHeight="729.0" minHeight="10.0" prefHeight="729.0" vgrow="ALWAYS" />
                                 </rowConstraints>
                                  <children>
-                                    <TableView fx:id="tvEmployee" prefHeight="554.0" prefWidth="140.0" GridPane.rowIndex="1">
+                                    <TableView fx:id="tvEmployee" onKeyReleased="#tvEmployeeToggle" onMouseClicked="#tvEmployeeToggle" prefHeight="554.0" prefWidth="140.0" GridPane.rowIndex="1">
                                       <columns>
                                         <TableColumn fx:id="tvEmployeeID" prefWidth="70.0" text="ID" visible="false" />
                                         <TableColumn fx:id="tvEmployeeName" maxWidth="500.0" prefWidth="138.0" text="Employees" />

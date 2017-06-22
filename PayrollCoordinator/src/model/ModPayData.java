@@ -347,9 +347,10 @@ public class ModPayData {
 			ps = con.prepareStatement("SELECT tbmodpaydata.mod_id, tboriginpaydata.origin_id, tboriginpaydata.emp_id, tbemployee.emp_name, tbmodpaydata.mod_hours_reg, " +
 					"tbmodpaydata.mod_hours_ot, tbmodpaydata.mod_rate, tbmodpaydata.mod_payroll_rule FROM tbmodpaydata INNER JOIN tboriginpaydata ON tbmodpaydata.origin_id = " +
 					"tboriginpaydata.origin_id INNER JOIN tbemployee ON tboriginpaydata.emp_id = tbemployee.emp_id WHERE tboriginpaydata.co_id = ? " +
-					"AND tboriginpaydata.origin_end_date = ? ORDER BY tbemployee.emp_name");
+					"AND tboriginpaydata.origin_end_date = ? AND tbmodpaydata.mod_payroll_rule != ? ORDER BY tbemployee.emp_name");
 			ps.setInt(1, company.getCoID());
 			ps.setDate(2, Date.valueOf(date));
+			ps.setString(3, "Traditional Overtime");
 			rs = ps.executeQuery();
 			while(rs.next()) {
 				modData.add(

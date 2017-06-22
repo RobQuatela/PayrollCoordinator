@@ -53,6 +53,7 @@ import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -251,6 +252,8 @@ public class MainController implements Initializable {
     @FXML
     private TableColumn<PaycomTimecard, Time> tvPaycomTimecardPunch;
     @FXML
+    private TableColumn<PaycomTimecard, String> tvPaycomTimecardType;
+    @FXML
     private TableColumn<PaycomTimecard, String> tvPaycomTimecardEarning;
     @FXML
     private TableColumn<PaycomTimecard, String> tvPaycomTimecardTax;
@@ -308,20 +311,15 @@ public class MainController implements Initializable {
 
 			@Override
 			public void handle(MouseEvent arg0) {
-				String empName = tvEmployee.getSelectionModel().getSelectedItem().getEmpName().toString();
-				tpAddModification.setText(
-						"Add Modification (" + empName + ")");
-				setTvEmployeeModDetail(ModEmp.fillByEmployee(tvEmployee.getSelectionModel().getSelectedItem().getEmpID().toString()));
-				tpAddModification.setDisable(false);
-				tpAddModification.setExpanded(true);
-				ArrayList<String> name = new ArrayList<>();
-				for(String val : empName.split(", ")) {
-					name.add(val);
-				}
-				txtEditEmpNameLast.setText(name.get(0));
-				txtEditEmpNameFirst.setText(name.get(1));
-				txtEditEmpID.setText(tvEmployee.getSelectionModel().getSelectedItem().getEmpID().toString());
-				clearEditModPanel();
+				tvEmployeeToggle();
+			}
+			
+		});
+		tvEmployee.setOnKeyReleased(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent arg0) {
+				tvEmployeeToggle();
 			}
 			
 		});
@@ -330,17 +328,15 @@ public class MainController implements Initializable {
 
 			@Override
 			public void handle(MouseEvent event) {
-				tpModDetail.setText(
-						"Modification Detail (" + tvExportPayData.getSelectionModel().getSelectedItem().getEmpName().toString() + ")");
-				setTvModDetail(
-						ModEmp.fillByEmployee(
-								tvExportPayData.getSelectionModel().getSelectedItem().getEmpID().toString(), 
-								dpExportStartDate.getValue(), dpExportEndDate.getValue()));
-				setLblExpOldGross();
-				setLblExpMod();
-				setLblExpNewGross();
-				setLblExpOriginRate();
-				setLblExpModRate();
+				tvExportPayDataToggle();
+			}
+			
+		});
+		tvExportPayData.setOnKeyReleased(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				tvExportPayDataToggle();
 			}
 			
 		});
@@ -349,13 +345,15 @@ public class MainController implements Initializable {
 
 			@Override
 			public void handle(MouseEvent event) {
-				tpEditModification.setText(
-						"Update Modification (" + tvEmployee.getSelectionModel().getSelectedItem().getEmpName().toString() + ")");
-				dpEditModDate.setValue(tvEmployeeModDetail.getSelectionModel().getSelectedItem().getModEmpDate().toLocalDate());
-				txtEditModAmount.setText(String.valueOf(tvEmployeeModDetail.getSelectionModel().getSelectedItem().getModEmpAmount()));
-				txtEditModHours.setText(String.valueOf(tvEmployeeModDetail.getSelectionModel().getSelectedItem().getModEmpHours()));
-				taEditModDescrip.setText(String.valueOf(tvEmployeeModDetail.getSelectionModel().getSelectedItem().getModEmpDescrip()));
-				cbEditModType.setValue(String.valueOf(tvEmployeeModDetail.getSelectionModel().getSelectedItem().getModTypeName()));
+				tvEmployeeModDetailToggle();
+			}
+			
+		});
+		tvEmployeeModDetail.setOnKeyReleased(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				tvEmployeeModDetailToggle();
 			}
 			
 		});
@@ -465,18 +463,35 @@ public class MainController implements Initializable {
     	Company company = Company.selectCompany(cbCompany.getValue().toString());
     	ObservableList<ModPayData> modData = ModPayData.getModPayData(company, dpPaycomTimecard.getValue());
     	ObservableList<ModEmp> modEmps = ModEmp.getModEmpPassive(company, dpPaycomTimecard.getValue().minusDays(6), dpPaycomTimecard.getValue());
+    	final DecimalFormat df = new DecimalFormat("###.##");
     	
     	for(ModPayData data : modData) {
-    		if(data.getModHoursReg() <= 40) {
-    			PaycomTimecard.insertOrUpdate(new PaycomTimecard(data.getEmpID(), dpPaycomTimecard.getValue(), "RGT", "", data.getModHoursReg(), 0, data.getModRate()));
+    		if(data.getModPayrollRule().contentEquals("Traditional Overtime")) {
+    			if(data.getModHoursReg() <= 40) {
+    				PaycomTimecard.insertOrUpdate(new PaycomTimecard(data.getEmpID(), dpPaycomTimecard.getValue(),
+    						"R", "", data.getModHoursReg(), 0, 0));
+    			}
+    			else {
+    				PaycomTimecard.insertOrUpdate(new PaycomTimecard(data.getEmpID(), dpPaycomTimecard.getValue(),
+    						"R", "", data.getModHoursReg(), 0, 0));
+    				PaycomTimecard.insertOrUpdate(new PaycomTimecard(data.getEmpID(), dpPaycomTimecard.getValue(),
+    						"O", "", data.getModHoursOT(), 0, 0));
+    			}
     		}
     		else {
-    			double newHoursReg = data.getModHoursReg() - (data.getModHoursReg() - 40);
-    			double ot = data.getModHoursReg() - 40;
-    			final DecimalFormat df = new DecimalFormat("###.##");
-    			double otRate = Double.valueOf(df.format(data.getModRate() * 1.5));
-    			PaycomTimecard.insertOrUpdate(new PaycomTimecard(data.getEmpID(), dpPaycomTimecard.getValue(), "RGT", "", newHoursReg, 0, data.getModRate()));
-    			PaycomTimecard.insertOrUpdate(new PaycomTimecard(data.getEmpID(), dpPaycomTimecard.getValue(), "OTT", "", ot, 0, otRate));
+				if (data.getModHoursReg() <= 40) {
+					PaycomTimecard.insertOrUpdate(new PaycomTimecard(data.getEmpID(), dpPaycomTimecard.getValue(),
+							"RGT", "", data.getModHoursReg(), 0, data.getModRate()));
+				} 
+				else {
+					double newHoursReg = data.getModHoursReg() - (data.getModHoursReg() - 40);
+					double ot = data.getModHoursReg() - 40;
+					double otRate = Double.valueOf(df.format(data.getModRate() * 0.5));
+					PaycomTimecard.insertOrUpdate(new PaycomTimecard(data.getEmpID(), dpPaycomTimecard.getValue(),
+							"RGT", "", data.getModHoursReg(), 0, data.getModRate()));
+					PaycomTimecard.insertOrUpdate(
+							new PaycomTimecard(data.getEmpID(), dpPaycomTimecard.getValue(), "OTT", "", ot, 0, otRate));
+				}
     		}
     	}
     	
@@ -536,6 +551,7 @@ public class MainController implements Initializable {
     	ObservableList<ModPayData> modData = ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue()), dpExportDateEnding.getValue());
     	ModHistory.insert(modData, dpExportStartDate.getValue(), dpExportEndDate.getValue(), cbCompany.getValue());
     	setTvExportPayData(ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue()), dpExportDateEnding.getValue()));
+    	//tvExportPayDataToggle();
     }
     
     public void btnExportPayroll_Clicked(ActionEvent event) {
@@ -581,47 +597,68 @@ public class MainController implements Initializable {
     
     public void btnExportPaycom_Clicked(ActionEvent event) {
     	ObservableList<PaycomTimecard> timecard = FXCollections.observableArrayList();
-    	String fileName = dpPaycomTimecard.getValue().toString();
-    	try {
-			CSVWriter writer = new CSVWriter(
-					new FileWriter(System.getProperty("user.home") + "/Desktop/" + fileName + ".csv"), '\t');
-			for(int i = 0; i < tvPaycomTimecard.getItems().size(); i++) {
-				timecard.add(new PaycomTimecard(
-						tvPaycomTimecard.getItems().get(i).getEmpID(),
-						tvPaycomTimecard.getItems().get(i).getDeptCode(),
-						tvPaycomTimecard.getItems().get(i).getDate().toLocalDate(),
-						tvPaycomTimecard.getItems().get(i).getPunchtime(),
-						tvPaycomTimecard.getItems().get(i).getModTypeID(),
-						tvPaycomTimecard.getItems().get(i).getTaxCode(),
-						tvPaycomTimecard.getItems().get(i).getComments(),
-						tvPaycomTimecard.getItems().get(i).getLaborAllocation(),
-						tvPaycomTimecard.getItems().get(i).getHours(),
-						tvPaycomTimecard.getItems().get(i).getDollars(),
-						tvPaycomTimecard.getItems().get(i).getTempRate(),
-						tvPaycomTimecard.getItems().get(i).getUnits()
-						));
+    	//String fileName = dpPaycomTimecard.getValue().toString();
+    	TextInputDialog dialog = new TextInputDialog();
+    	dialog.setHeaderText("QDRIVE - Payroll Coordinator");
+    	dialog.setContentText("What would you like to name the file?");
+    	
+    	Optional<String> result = dialog.showAndWait();
+    	if(result.isPresent()) {
+			try {
+				String fileName = result.get();
+				CSVWriter writer = new CSVWriter(
+						new FileWriter(System.getProperty("user.home") + "/Desktop/" + fileName + ".csv"), '\t');
+				for (int i = 0; i < tvPaycomTimecard.getItems().size(); i++) {
+					timecard.add(new PaycomTimecard(tvPaycomTimecard.getItems().get(i).getEmpID(),
+							tvPaycomTimecard.getItems().get(i).getDeptCode(),
+							tvPaycomTimecard.getItems().get(i).getDate().toLocalDate(),
+							tvPaycomTimecard.getItems().get(i).getPunchtime(),
+							tvPaycomTimecard.getItems().get(i).getPunchtype(),
+							tvPaycomTimecard.getItems().get(i).getModTypeID(),
+							tvPaycomTimecard.getItems().get(i).getTaxCode(),
+							tvPaycomTimecard.getItems().get(i).getComments(),
+							tvPaycomTimecard.getItems().get(i).getLaborAllocation(),
+							tvPaycomTimecard.getItems().get(i).getHours(),
+							tvPaycomTimecard.getItems().get(i).getDollars(),
+							tvPaycomTimecard.getItems().get(i).getTempRate(),
+							tvPaycomTimecard.getItems().get(i).getUnits()));
+				}
+
+				for (PaycomTimecard card : timecard) {
+					String hours, dollars, rate;
+					if (card.getHours() == 0)
+						hours = "";
+					else
+						hours = String.valueOf(card.getHours());
+					if (card.getDollars() == 0)
+						dollars = "";
+					else
+						dollars = String.valueOf(card.getDollars());
+					if (card.getTempRate() == 0)
+						rate = "";
+					else
+						rate = String.valueOf(card.getTempRate());
+
+					String line = "" + card.getEmpID() + "," + card.getDeptCode() + "," + card.getDate().toLocalDate()
+							+ "," + card.getPunchtime() + "," + card.getPunchtype() + "," + card.getModTypeID() + ","
+							+ card.getTaxCode() + "," + card.getComments() + "," + card.getLaborAllocation() + ","
+							+ hours + "," + dollars + "," + rate + "," + "";
+					String[] lines = line.split(",");
+					writer.writeNext(lines);
+				}
+
+				writer.close();
+
+				AlertMessage confirmation = new AlertMessage(AlertType.CONFIRMATION,
+						"Your file has successfully exported to your desktop!");
+				confirmation.showAndWait();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				AlertMessage error = new AlertMessage(AlertType.ERROR, "Your file did not export successfully...");
+				error.showAndWait();
 			}
-			
-			for (PaycomTimecard card : timecard) {
-				String line = "" + card.getEmpID() + "," + card.getDeptCode() + "," + card.getDate().toLocalDate()
-						+ "," + card.getPunchtime() + "," + card.getModTypeID() + "," + card.getTaxCode() + "," +
-						card.getComments() + "," + card.getLaborAllocation() + "," + card.getHours() + "," +
-						card.getDollars() + "," + card.getTempRate() + "," + card.getUnits();
-				String[] lines = line.split(",");
-				writer.writeNext(lines);
-			}
-			
-			writer.close();
-    		
-			AlertMessage confirmation = new AlertMessage(AlertType.CONFIRMATION,
-					"Your file has successfully exported to your desktop!");
-			confirmation.showAndWait();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			AlertMessage error = new AlertMessage(AlertType.ERROR, "Your file did not export successfully...");
-			error.showAndWait();
-		}
+    	}
     }
     
     public void btnAddEmployee_Clicked(ActionEvent event) {
@@ -776,6 +813,47 @@ public class MainController implements Initializable {
     	tvPaycomTimecardRate.setCellValueFactory(new PropertyValueFactory<PaycomTimecard, Double>("tempRate"));
     	tvPaycomTimecardUnits.setCellValueFactory(new PropertyValueFactory<PaycomTimecard, Double>("units"));
     	tvPaycomTimecard.setItems(timecard);
+    }
+    
+    public void tvEmployeeToggle() {
+		String empName = tvEmployee.getSelectionModel().getSelectedItem().getEmpName().toString();
+		tpAddModification.setText(
+				"Add Modification (" + empName + ")");
+		setTvEmployeeModDetail(ModEmp.fillByEmployee(tvEmployee.getSelectionModel().getSelectedItem().getEmpID().toString()));
+		tpAddModification.setDisable(false);
+		tpAddModification.setExpanded(true);
+		ArrayList<String> name = new ArrayList<>();
+		for(String val : empName.split(", ")) {
+			name.add(val);
+		}
+		txtEditEmpNameLast.setText(name.get(0));
+		txtEditEmpNameFirst.setText(name.get(1));
+		txtEditEmpID.setText(tvEmployee.getSelectionModel().getSelectedItem().getEmpID().toString());
+		clearEditModPanel();
+    }
+    
+    public void tvExportPayDataToggle() {
+		tpModDetail.setText(
+				"Modification Detail (" + tvExportPayData.getSelectionModel().getSelectedItem().getEmpName().toString() + ")");
+		setTvModDetail(
+				ModEmp.fillByEmployee(
+						tvExportPayData.getSelectionModel().getSelectedItem().getEmpID().toString(), 
+						dpExportStartDate.getValue(), dpExportEndDate.getValue()));
+		setLblExpOldGross();
+		setLblExpMod();
+		setLblExpNewGross();
+		setLblExpOriginRate();
+		setLblExpModRate();
+    }
+    
+    public void tvEmployeeModDetailToggle() {
+		tpEditModification.setText(
+				"Update Modification (" + tvEmployee.getSelectionModel().getSelectedItem().getEmpName().toString() + ")");
+		dpEditModDate.setValue(tvEmployeeModDetail.getSelectionModel().getSelectedItem().getModEmpDate().toLocalDate());
+		txtEditModAmount.setText(String.valueOf(tvEmployeeModDetail.getSelectionModel().getSelectedItem().getModEmpAmount()));
+		txtEditModHours.setText(String.valueOf(tvEmployeeModDetail.getSelectionModel().getSelectedItem().getModEmpHours()));
+		taEditModDescrip.setText(String.valueOf(tvEmployeeModDetail.getSelectionModel().getSelectedItem().getModEmpDescrip()));
+		cbEditModType.setValue(String.valueOf(tvEmployeeModDetail.getSelectionModel().getSelectedItem().getModTypeName()));
     }
     
     public void comboBoxFill(ComboBox box, ObservableList list) {
