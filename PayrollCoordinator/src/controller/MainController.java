@@ -299,9 +299,9 @@ public class MainController implements Initializable {
 		comboBoxFill(cbOTRule, payrollRules);
 		comboBoxFill(cbEditModType, ModType.fill());
 		setTvEmployee(Employee.fillEmployee(Company.selectCompany(cbCompany.getValue())));
-		dpDateEndingPrev.setValue(LocalDate.of(2017, 4, 22));
-		dpExportDateEnding.setValue(LocalDate.of(2017, 4, 22));
-		//dpPaycomTimecard.setValue(LocalDate.of(2017, 4, 29));
+		dpDateEndingPrev.setValue(LocalDate.now());
+		dpExportDateEnding.setValue(LocalDate.now());
+		dpPaycomTimecard.setValue(LocalDate.now());
 		setTvOriginPayDataPrev(OriginPayData.fillOriginPayData(Company.selectCompany(cbCompany.getValue()), dpDateEndingPrev.getValue()));
 		setTvExportPayData(ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue()), dpExportDateEnding.getValue()));
     	dpExportEndDate.setValue(dpExportDateEnding.getValue());
@@ -461,12 +461,12 @@ public class MainController implements Initializable {
     
     public void btnGenerateTimecard_Clicked(ActionEvent event) {
     	Company company = Company.selectCompany(cbCompany.getValue().toString());
-    	ObservableList<ModPayData> modData = ModPayData.getModPayData(company, dpPaycomTimecard.getValue());
+    	ObservableList<ModPayData> modData = ModPayData.getModPayDataAll(company, dpPaycomTimecard.getValue());
     	ObservableList<ModEmp> modEmps = ModEmp.getModEmpPassive(company, dpPaycomTimecard.getValue().minusDays(6), dpPaycomTimecard.getValue());
     	final DecimalFormat df = new DecimalFormat("###.##");
     	
     	for(ModPayData data : modData) {
-    		if(data.getModPayrollRule().contentEquals("Traditional Overtime")) {
+    		if(data.getModPayrollRule().equals("Traditional Overtime")) {
     			if(data.getModHoursReg() <= 40) {
     				PaycomTimecard.insertOrUpdate(new PaycomTimecard(data.getEmpID(), dpPaycomTimecard.getValue(),
     						"R", "", data.getModHoursReg(), 0, 0));
@@ -639,7 +639,7 @@ public class MainController implements Initializable {
 					else
 						rate = String.valueOf(card.getTempRate());
 
-					String line = "" + card.getEmpID() + "," + card.getDeptCode() + "," + card.getDate().toLocalDate()
+					String line = "" + card.getEmpID().toString() + "," + card.getDeptCode() + "," + card.getDate().toLocalDate()
 							+ "," + card.getPunchtime() + "," + card.getPunchtype() + "," + card.getModTypeID() + ","
 							+ card.getTaxCode() + "," + card.getComments() + "," + card.getLaborAllocation() + ","
 							+ hours + "," + dollars + "," + rate + "," + "";

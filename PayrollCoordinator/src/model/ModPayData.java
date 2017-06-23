@@ -375,6 +375,44 @@ public class ModPayData {
 		return modData;
 	}
 	
+	public static ObservableList<ModPayData> getModPayDataAll(Company company, LocalDate date) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		ObservableList<ModPayData> modData = FXCollections.observableArrayList();
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("SELECT tbmodpaydata.mod_id, tboriginpaydata.origin_id, tboriginpaydata.emp_id, tbemployee.emp_name, tbmodpaydata.mod_hours_reg, " +
+					"tbmodpaydata.mod_hours_ot, tbmodpaydata.mod_rate, tbmodpaydata.mod_payroll_rule FROM tbmodpaydata INNER JOIN tboriginpaydata ON tbmodpaydata.origin_id = " +
+					"tboriginpaydata.origin_id INNER JOIN tbemployee ON tboriginpaydata.emp_id = tbemployee.emp_id WHERE tboriginpaydata.co_id = ? " +
+					"AND tboriginpaydata.origin_end_date = ? ORDER BY tbemployee.emp_name");
+			ps.setInt(1, company.getCoID());
+			ps.setDate(2, Date.valueOf(date));
+			rs = ps.executeQuery();
+			while(rs.next()) {
+				modData.add(
+						new ModPayData(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), 
+								rs.getDouble(5), rs.getDouble(6), rs.getDouble(7), rs.getString(8)));
+			}
+			
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return modData;
+	}
+	
 	public static ModPayData getModPayData(int id) {
 		Connection con = null;
 		PreparedStatement ps = null;

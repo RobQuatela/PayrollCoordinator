@@ -188,12 +188,12 @@ public class PaycomTimecard {
 		String sqlFull = "INSERT INTO tbpaycom_timecard (emp_id, timecard_deptcode, timecard_date, timecard_punchtime, modtype_id, " +
 				"timecard_taxcode, timecard_comments, timecard_laborallocation, timecard_hours, timecard_dollars, timecard_temprate, timecard_units) " +
 				"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-		String sqlTempRate = "INSERT INTO tbpaycom_timecard (emp_id, timecard_date, modtype_id, " +
-				"timecard_hours, timecard_temprate) VALUES (?, ?, ?, ?, ?)";
-		String sqlAdds = "INSERT INTO tbpaycom_timecard (emp_id, timecard_date, modtype_id, " +
-				"timecard_dollars) VALUES (?, ?, ?, ?)";
-		String sqlFixedRate = "INSERT INTO tbpaycom_timecard (emp_id, timecard_date, modtype_id, " +
-				"timecard_hours) VALUES (?, ?, ?, ?)";
+		String sqlTempRate = "INSERT INTO tbpaycom_timecard (emp_id, timecard_date, modtype_id, timecard_comments, " +
+				"timecard_hours, timecard_temprate) VALUES (?, ?, ?, ?, ?, ?)";
+		String sqlAdds = "INSERT INTO tbpaycom_timecard (emp_id, timecard_date, modtype_id, timecard_comments, " +
+				"timecard_dollars) VALUES (?, ?, ?, ?, ?)";
+		String sqlFixedRate = "INSERT INTO tbpaycom_timecard (emp_id, timecard_date, modtype_id, timecard_comments, " +
+				"timecard_hours) VALUES (?, ?, ?, ?, ?)";
 		double hours = timecard.getHours();
 		double dollars = timecard.getDollars();
 		double rate = timecard.getTempRate();
@@ -205,7 +205,8 @@ public class PaycomTimecard {
 				ps.setString(1, timecard.getEmpID());
 				ps.setDate(2, timecard.getDate());
 				ps.setString(3, timecard.getModTypeID());
-				ps.setDouble(4, dollars);
+				ps.setString(4, timecard.getComments());
+				ps.setDouble(5, dollars);
 				ps.executeUpdate();
 			}
 			else if(hours != 0 && dollars == 0 && rate != 0) {
@@ -213,8 +214,9 @@ public class PaycomTimecard {
 				ps.setString(1, timecard.getEmpID());
 				ps.setDate(2, timecard.getDate());
 				ps.setString(3, timecard.getModTypeID());
-				ps.setDouble(4, hours);
-				ps.setDouble(5, rate);
+				ps.setString(4, timecard.getComments());
+				ps.setDouble(5, hours);
+				ps.setDouble(6, rate);
 				ps.executeUpdate();
 			}
 			else if(hours != 0 && dollars == 0 && rate == 0) {
@@ -222,7 +224,8 @@ public class PaycomTimecard {
 				ps.setString(1, timecard.getEmpID());
 				ps.setDate(2, timecard.getDate());
 				ps.setString(3, timecard.getModTypeID());
-				ps.setDouble(4, hours);
+				ps.setString(4, timecard.getComments());
+				ps.setDouble(5, hours);
 				ps.executeUpdate();
 			}
 			else {
@@ -262,13 +265,14 @@ public class PaycomTimecard {
 		try {
 			con = DBConnect.connect();
 			ps = con.prepareStatement("UPDATE tbpaycom_timecard SET timecard_hours = ?, timecard_dollars = ?, timecard_temprate = ? WHERE emp_id = ? AND " +
-					"timecard_date = ? AND modtype_id = ?");
+					"timecard_date = ? AND modtype_id = ? AND timecard_comments = ?");
 			ps.setDouble(1, timecard.getHours());
 			ps.setDouble(2, timecard.getDollars());
 			ps.setDouble(3, timecard.getTempRate());
 			ps.setString(4, timecard.getEmpID());
 			ps.setDate(5, timecard.getDate());
 			ps.setString(6, timecard.getModTypeID());
+			ps.setString(6, timecard.getComments());
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -339,13 +343,14 @@ public class PaycomTimecard {
 		try {
 			con = DBConnect.connect();
 			ps = con.prepareStatement("SELECT * FROM tbpaycom_timecard WHERE emp_id = ? AND timecard_date = ? AND modtype_id = ? AND timecard_hours = ? " +
-					"AND timecard_dollars = ? AND timecard_temprate = ?");
+					"AND timecard_comments = ? AND timecard_dollars = ? AND timecard_temprate = ?");
 			ps.setString(1, timecard.getEmpID());
 			ps.setDate(2, timecard.getDate());
 			ps.setString(3, timecard.getModTypeID());
 			ps.setDouble(4, timecard.getHours());
-			ps.setDouble(5, timecard.getDollars());
-			ps.setDouble(6, timecard.getTempRate());
+			ps.setString(5, timecard.getComments());
+			ps.setDouble(6, timecard.getDollars());
+			ps.setDouble(7, timecard.getTempRate());
 			rs = ps.executeQuery();
 			if(rs.next())
 				duplicate = true;

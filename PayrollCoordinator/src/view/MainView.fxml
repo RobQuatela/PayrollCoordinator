@@ -592,13 +592,22 @@
                                   <RowConstraints maxHeight="182.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <Label text="Modification Name:" GridPane.rowIndex="2" />
-                                    <TextField fx:id="txtModInsert" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <Label text="Modification Name:" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+                                    <TextField fx:id="txtModInsert" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                       <GridPane.margin>
+                                          <Insets left="5.0" />
+                                       </GridPane.margin></TextField>
                                     <Button fx:id="btnModInsert" mnemonicParsing="false" onAction="#btnModInsert_Clicked" text="Add Modification" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                    <Label text="Modification ID:" />
-                                    <TextField fx:id="txtModInsert1" GridPane.columnIndex="1" />
-                                    <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="Earning Code:" GridPane.rowIndex="1" />
-                                    <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <Label text="Modification ID:" GridPane.halignment="RIGHT" />
+                                    <TextField fx:id="txtModInsert1" GridPane.columnIndex="1">
+                                       <GridPane.margin>
+                                          <Insets left="5.0" />
+                                       </GridPane.margin></TextField>
+                                    <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="Earning Code (Paycom):" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                                    <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <GridPane.margin>
+                                          <Insets left="5.0" />
+                                       </GridPane.margin></ComboBox>
                                  </children>
                               </GridPane>
                            </content></TitledPane>
