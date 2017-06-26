@@ -14,6 +14,7 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -25,6 +26,7 @@ import com.opencsv.CSVWriter;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableSet;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -34,6 +36,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -78,6 +81,7 @@ public class MainController implements Initializable {
     private ObservableList<EmployeeOriginal> originPayData = FXCollections.observableArrayList();
     private ObservableList<String> payrollTypes = FXCollections.observableArrayList();
     private ObservableList<String> payrollRules = FXCollections.observableArrayList("7(i) Exemption", "Commission Overtime", "Traditional Overtime");
+    private ObservableList<String> addToPayTypes = FXCollections.observableArrayList("<All>", "Commission Modifications", "Separate Modifications");
 
     @FXML
     private Button btnImportOriginData;
@@ -291,6 +295,20 @@ public class MainController implements Initializable {
     private Button btnDeleteMod;
     @FXML
     private TitledPane tpEditModification;
+    @FXML
+    private TableView<ModType> tvModTypes;
+    @FXML
+    private TableColumn<ModType, String> tvModTypesID;
+    @FXML
+    private TableColumn<ModType, String> tvModTypesEarningCode;
+    @FXML
+    private TableColumn<ModType, String> tvModTypesName;
+    @FXML
+    private ComboBox<String> cbAddPayType;
+    @FXML
+    private CheckBox ckAddModRate;
+    @FXML
+    private CheckBox ckEditModRate;
     
 
 	@Override
@@ -298,6 +316,8 @@ public class MainController implements Initializable {
 		comboBoxFill(cbCompany, Company.fillCompanyName());
 		comboBoxFill(cbOTRule, payrollRules);
 		comboBoxFill(cbEditModType, ModType.fill());
+		comboBoxFill(cbAddPayType, addToPayTypes);
+		setTvModType(ModType.fillModTypes());
 		setTvEmployee(Employee.fillEmployee(Company.selectCompany(cbCompany.getValue())));
 		dpDateEndingPrev.setValue(LocalDate.now());
 		dpExportDateEnding.setValue(LocalDate.now());
@@ -306,7 +326,6 @@ public class MainController implements Initializable {
 		setTvExportPayData(ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue()), dpExportDateEnding.getValue()));
     	dpExportEndDate.setValue(dpExportDateEnding.getValue());
     	dpExportStartDate.setValue(dpExportDateEnding.getValue().minusDays(6));
-		listViewFill(lstModType, ModType.fill());
 		tvEmployee.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
@@ -505,6 +524,10 @@ public class MainController implements Initializable {
     
     public void dpPaycomTimecard_ValueChanged(ActionEvent event) {
     	setTvPaycomTimecard(PaycomTimecard.getPaycomTimecard(dpPaycomTimecard.getValue(), Company.selectCompany(cbCompany.getValue().toString())));
+    }
+    
+    public void cbAddPayType_ValueChanged(ActionEvent event) {
+    	setTvModType(ModType.fillModTypes(cbAddPayType.getValue().toString()));
     }
     
     public void cbCompany_ValueChanged(ActionEvent event) {
@@ -738,6 +761,34 @@ public class MainController implements Initializable {
     	dpExportStartDate.setValue(dpExportDateEnding.getValue().minusDays(6));
     }
     
+    public void ckAddModRate_isChecked(ActionEvent event) {
+    	boolean checked = modRateChanged(ckAddModRate);
+    	ObservableList<ModType> modTypes = FXCollections.observableArrayList();
+    	ObservableList<String> modTypeStrings = FXCollections.observableArrayList();
+    	if(checked)
+    		modTypes = ModType.fillModTypes("Commission Modifications");
+    	else 
+    		modTypes = ModType.fillModTypes("Separate Modifications");
+    	
+		for(ModType modType : modTypes)
+			modTypeStrings.add(modType.getModTypeName());
+		comboBoxFill(cbAddModType, modTypeStrings);
+    }
+    
+    public void ckEditModRate_isChecked(ActionEvent event) {
+    	boolean checked = modRateChanged(ckEditModRate);
+    	ObservableList<ModType> modTypes = FXCollections.observableArrayList();
+    	ObservableList<String> modTypeStrings = FXCollections.observableArrayList();
+    	if(checked)
+    		modTypes = ModType.fillModTypes("Commission Modifications");
+    	else 
+    		modTypes = ModType.fillModTypes("Separate Modifications");
+    	
+		for(ModType modType : modTypes)
+			modTypeStrings.add(modType.getModTypeName());
+		comboBoxFill(cbEditModType, modTypeStrings);
+    }
+    
     public void setValues(ObservableList<EmployeeOriginal> imports) {
     	tvOriginPayDataCOLid.setCellValueFactory(new PropertyValueFactory<EmployeeOriginal, String>("empID"));
     	tvOriginPayDataCOLname.setCellValueFactory(new PropertyValueFactory<EmployeeOriginal, String>("empName"));
@@ -815,6 +866,13 @@ public class MainController implements Initializable {
     	tvPaycomTimecard.setItems(timecard);
     }
     
+    public void setTvModType(ObservableList<ModType> modTypes) {
+    	tvModTypesID.setCellValueFactory(new PropertyValueFactory<ModType, String>("modTypeID"));
+    	tvModTypesEarningCode.setCellValueFactory(new PropertyValueFactory<ModType, String>("earningCode"));
+    	tvModTypesName.setCellValueFactory(new PropertyValueFactory<ModType, String>("modTypeName"));
+    	tvModTypes.setItems(modTypes);
+    }
+    
     public void tvEmployeeToggle() {
 		String empName = tvEmployee.getSelectionModel().getSelectedItem().getEmpName().toString();
 		tpAddModification.setText(
@@ -877,6 +935,13 @@ public class MainController implements Initializable {
     public void lstModTypeFill() {
     	lstModType.setItems(ModType.fill());
     	listViewFill(lstModType, ModType.fill());
+    }
+    
+    public boolean modRateChanged(CheckBox ckbox) {
+    	if(ckbox.isSelected())
+    		return true;
+    	else
+    		return false;
     }
     
     public void clearTableData(TableView tv) {

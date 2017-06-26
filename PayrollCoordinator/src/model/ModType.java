@@ -9,6 +9,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableSet;
 
 public class ModType {
 
@@ -175,6 +176,45 @@ public class ModType {
 		try {
 			con = DBConnect.connect();
 			ps = con.prepareStatement("SELECT * FROM tbmodtype");
+			rs = ps.executeQuery();
+			while(rs.next()) {
+				mods.add(new ModType(rs.getString(1), rs.getString(2), rs.getString(3)));
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return mods;
+
+	}
+	
+	public static ObservableList<ModType> fillModTypes(String type) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		ObservableList<ModType> mods = FXCollections.observableArrayList();
+		String sqlMOD = "SELECT * FROM tbmodtype WHERE earningcode_id = 'MOD'";
+		String sqlNoMOD = "SELECT * FROM tbmodtype WHERE earningcode_id != 'MOD'";
+		String sqlALL = "SELECT * FROM tbmodtype";
+		
+		try {
+			con = DBConnect.connect();
+			if(type == "Commission Modifications")
+				ps = con.prepareStatement(sqlMOD);
+			else if(type == "Separate Modifications")
+				ps = con.prepareStatement(sqlNoMOD);
+			else
+				ps = con.prepareStatement(sqlALL);
 			rs = ps.executeQuery();
 			while(rs.next()) {
 				mods.add(new ModType(rs.getString(1), rs.getString(2), rs.getString(3)));
