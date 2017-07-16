@@ -17,7 +17,9 @@ public class Main extends Application {
 			Scene scene = new Scene(root);
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("QDRIVE - Payroll Coordinator");
-			primaryStage.getIcons().add(new Image("/qdlogo_C25_icon.ico"));
+			Image icon = new Image("/icons8_payroll_50_ZRn_icon.ico");
+			primaryStage.getIcons().add(icon);
+			primaryStage.setMaximized(true);
 			primaryStage.show();
 		} catch(Exception e) {
 			e.printStackTrace();

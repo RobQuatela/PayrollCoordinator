@@ -43,11 +43,70 @@ public class ModHistory {
 		return historyID;
 	}
 	
-	public static void insert(ObservableList<ModPayData> modData, LocalDate start, LocalDate end, String coName) {
+	public static void insertOrUpdate(ObservableList<ModPayData> modData, LocalDate start, LocalDate end, String coName) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("SELECT * FROM tbmodhistory WHERE mod_id = ? AND modemp_id = ?");
+
+			for(ModPayData data : modData) {
+				ObservableList<ModEmp> modEmps = ModEmp.getModEmp(data.getEmpID(), start, end);
+				for(ModEmp modEmp : modEmps) {
+					ps.setInt(1, data.getModID());
+					ps.setInt(2, modEmp.getModEmpID());
+					rs = ps.executeQuery();
+					if(rs.next()) {
+
+					}
+					else
+						insert(data, modEmp);
+				}
+				
+				OriginPayData origin = OriginPayData.getOriginPayData(data.getOriginID());
+				data.updateData(modEmps, data, origin);
+			}
+			
+			AlertMessage success = new AlertMessage(AlertType.CONFIRMATION, "Your employee modifications have been added!");
+			success.showAndWait();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private static void insert(ModPayData modData, ModEmp modEmp) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("INSERT INTO tbmodhistory (mod_id, modemp_id) VALUES (?, ?)");
+			ps.setInt(1, modData.getModID());
+			ps.setInt(2, modEmp.getModEmpID());
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+/*	public static void insert(ObservableList<ModPayData> modData, LocalDate start, LocalDate end, String coName) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		ObservableList<ModEmp> modEmps = FXCollections.observableArrayList();
-		modData = searchForDupModPayData(modData, start, end);
+		//modData = searchForDupModPayData(modData, start, end);
 		
 		try {
 			con = DBConnect.connect();
@@ -59,8 +118,10 @@ public class ModHistory {
 					ps.setInt(2, modEmp.getModEmpID());
 					ps.executeUpdate();
 				}
-				data.updateData(modEmps, data.getModID(), data.getModHoursReg(), 
-						data.getModHoursOT(), data.getModRate(), data.getModPayrollRule());
+				OriginPayData origin = OriginPayData.getOriginPayData(data.getModID());
+				//data.updateData(modEmps, data.getModID(), data.getModHoursReg(), 
+				//		data.getModHoursOT(), data.getModRate(), data.getModPayrollRule());
+				data.updateData(modEmps, data, origin);
 			}
 			
 			AlertMessage success = new AlertMessage(AlertType.CONFIRMATION, "Your employee modifications have been added!");
@@ -77,7 +138,7 @@ public class ModHistory {
 				e.printStackTrace();
 			}
 		}
-	}
+	}*/
 	
 /*	private static ObservableList<ModEmp> searchForDupModEmps(ObservableList<ModPayData> modData, LocalDate start, LocalDate end) {
 		Connection con = null;
@@ -213,6 +274,29 @@ public class ModHistory {
 			con = DBConnect.connect();
 			ps = con.prepareStatement("DELETE FROM tbmodhistory WHERE mod_id = ?");
 			ps.setInt(1, modData.getModID());
+			ps.execute();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public static void delete(ModEmp modEmp) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("DELETE FROM tbmodhistory WHERE modemp_id = ?");
+			ps.setInt(1, modEmp.getModEmpID());
 			ps.execute();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

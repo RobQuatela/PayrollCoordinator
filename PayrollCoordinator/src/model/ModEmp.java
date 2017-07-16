@@ -242,15 +242,17 @@ public class ModEmp {
 		}
 	}
 	
-	public static void delete(ModEmp modEmp) {
+	public void delete() {
 		Connection con = null;
 		PreparedStatement ps = null;
 		
 		try {
 			con = DBConnect.connect();
 			ps = con.prepareStatement("DELETE FROM tbmodemp WHERE modemp_id = ?");
-			ps.setInt(1, modEmp.getModEmpID());
+			ps.setInt(1, this.getModEmpID());
 			ps.executeUpdate();
+			//delete from mod history for recalculation of mod pay data
+			//ModHistory.delete(modEmp);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

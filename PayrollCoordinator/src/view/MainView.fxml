@@ -23,7 +23,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="859.0" prefWidth="1250.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="859.0" prefWidth="1326.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
    <center>
       <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
@@ -147,7 +147,6 @@
                                                           <RowConstraints maxHeight="33.0" minHeight="10.0" prefHeight="33.0" vgrow="SOMETIMES" />
                                                           <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
                                                           <RowConstraints maxHeight="81.0" minHeight="10.0" prefHeight="46.0" vgrow="SOMETIMES" />
-                                                            <RowConstraints maxHeight="81.0" minHeight="10.0" prefHeight="47.0" vgrow="SOMETIMES" />
                                                         </rowConstraints>
                                                          <children>
                                                             <Label text="Start Date:">
@@ -163,7 +162,6 @@
                                                             </Label>
                                                             <DatePicker fx:id="dpExportEndDate" disable="true" editable="false" showWeekNumbers="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                                             <Button fx:id="btnExportUpdatePayroll" mnemonicParsing="false" onAction="#btnExportUpdatePayroll_Clicked" prefHeight="38.0" prefWidth="125.0" text="Update Payroll" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                                            <Button fx:id="btnExportPayroll" mnemonicParsing="false" onAction="#btnExportPayroll_Clicked" prefHeight="38.0" prefWidth="161.0" text="Export Payroll (Paycom)" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                                          </children>
                                                       </GridPane>
                                                    </center>
@@ -195,19 +193,19 @@
                                                             <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
                                                         </rowConstraints>
                                                          <children>
-                                                            <Label text="Gross:" />
+                                                            <Label text="Original:" />
                                                             <Label fx:id="lblExpOldGross" text="gross" GridPane.columnIndex="1">
                                                                <GridPane.margin>
                                                                   <Insets left="5.0" />
                                                                </GridPane.margin>
                                                             </Label>
-                                                            <Label prefHeight="16.0" prefWidth="28.0" text="Mod:" GridPane.rowIndex="1" />
+                                                            <Label prefHeight="17.0" prefWidth="88.0" text="Modification(s):" GridPane.rowIndex="1" />
                                                             <Label fx:id="lblExpMod" text="mod" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                                <GridPane.margin>
                                                                   <Insets left="5.0" />
                                                                </GridPane.margin>
                                                             </Label>
-                                                            <Label text="New Gross:" GridPane.rowIndex="2" />
+                                                            <Label text="Modified Gross:" GridPane.rowIndex="2" />
                                                             <Label fx:id="lblExpNewGross" text="newgross" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                                                <GridPane.margin>
                                                                   <Insets left="5.0" />
@@ -263,6 +261,7 @@
                                           <DatePicker fx:id="dpPaycomTimecard" layoutX="1115.0" layoutY="26.0" onAction="#dpPaycomTimecard_ValueChanged" prefHeight="25.0" prefWidth="123.0" showWeekNumbers="true" AnchorPane.rightAnchor="12.0" />
                                           <Button fx:id="btnGenerateTimecard" layoutX="1084.0" layoutY="66.0" mnemonicParsing="false" onAction="#btnGenerateTimecard_Clicked" prefHeight="41.0" prefWidth="139.0" text="Generate Timecard" AnchorPane.rightAnchor="27.0" />
                                           <Button fx:id="btnExportPaycom" layoutX="1084.0" layoutY="116.0" mnemonicParsing="false" onAction="#btnExportPaycom_Clicked" prefHeight="41.0" prefWidth="139.0" text="Export to Paycom" AnchorPane.rightAnchor="27.0" />
+                                          <Button fx:id="btnDeleteTimecard" layoutX="1160.0" layoutY="170.0" mnemonicParsing="false" onAction="#btnDeleteTimecard_Clicked" prefHeight="41.0" prefWidth="139.0" text="Remove Selected Row" AnchorPane.rightAnchor="27.0" />
                                        </children>
                                     </AnchorPane>
                                  </content>
@@ -276,7 +275,7 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="665.0" prefWidth="1129.0">
                      <children>
-                        <BorderPane layoutX="7.0" layoutY="5.0" prefHeight="607.0" prefWidth="766.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <BorderPane layoutX="7.0" layoutY="5.0" prefHeight="765.0" prefWidth="840.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <center>
                               <TableView fx:id="tvEmployeeModDetail" prefHeight="579.0" prefWidth="244.0" BorderPane.alignment="CENTER">
                                 <columns>
@@ -290,7 +289,7 @@
                               </TableView>
                            </center>
                            <left>
-                              <GridPane gridLinesVisible="true" prefHeight="611.0" prefWidth="140.0" BorderPane.alignment="CENTER">
+                              <GridPane gridLinesVisible="true" prefHeight="765.0" prefWidth="203.0" BorderPane.alignment="CENTER">
                                 <columnConstraints>
                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                 </columnConstraints>
@@ -301,20 +300,27 @@
                                  <children>
                                     <TableView fx:id="tvEmployee" onKeyReleased="#tvEmployeeToggle" onMouseClicked="#tvEmployeeToggle" prefHeight="554.0" prefWidth="140.0" GridPane.rowIndex="1">
                                       <columns>
-                                        <TableColumn fx:id="tvEmployeeID" prefWidth="70.0" text="ID" visible="false" />
+                                        <TableColumn fx:id="tvEmployeeID" prefWidth="70.0" text="ID" />
                                         <TableColumn fx:id="tvEmployeeName" maxWidth="500.0" prefWidth="138.0" text="Employees" />
                                       </columns>
                                     </TableView>
-                                    <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                                    <GridPane>
+                                      <columnConstraints>
+                                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="97.0" minWidth="10.0" prefWidth="60.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="143.0" minWidth="10.0" prefWidth="143.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
                                        <children>
-                                          <Label text="Search:" />
-                                          <TextField prefHeight="25.0" prefWidth="96.0">
-                                             <HBox.margin>
-                                                <Insets left="5.0" />
-                                             </HBox.margin>
-                                          </TextField>
+                                          <TextField fx:id="txtSearchEmployee" prefHeight="25.0" prefWidth="96.0" GridPane.columnIndex="1" />
+                                          <Label prefHeight="17.0" prefWidth="48.0" text="Search:">
+                                             <GridPane.margin>
+                                                <Insets right="5.0" />
+                                             </GridPane.margin>
+                                          </Label>
                                        </children>
-                                    </HBox>
+                                    </GridPane>
                                  </children>
                               </GridPane>
                            </left>
@@ -398,7 +404,7 @@
                                  </left>
                               </BorderPane>
                            </content></TitledPane>
-                        <TitledPane animated="false" layoutX="1010.0" layoutY="428.0" prefHeight="184.0" prefWidth="237.0" text="Modify Employee" AnchorPane.bottomAnchor="0.0">
+                        <TitledPane animated="false" layoutX="1010.0" layoutY="428.0" prefHeight="184.0" prefWidth="237.0" text="Modify Employee" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -438,7 +444,7 @@
                               </GridPane>
                            </content>
                         </TitledPane>
-                        <TitledPane animated="false" layoutX="776.0" layoutY="428.0" prefHeight="184.0" prefWidth="235.0" text="New Employee" AnchorPane.bottomAnchor="0.0">
+                        <TitledPane animated="false" layoutX="854.0" layoutY="581.0" prefHeight="184.0" prefWidth="235.0" text="New Employee" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="240.0">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -664,7 +670,7 @@
                   <Insets left="10.0" right="10.0" top="10.0" />
                </VBox.margin>
             </Label>
-            <ComboBox fx:id="cbCompany" onAction="#cbCompany_ValueChanged" prefHeight="25.0" prefWidth="1251.0">
+            <ComboBox fx:id="cbCompany" onAction="#cbCompany_ValueChanged" prefHeight="25.0" prefWidth="1340.0">
                <VBox.margin>
                   <Insets />
                </VBox.margin>

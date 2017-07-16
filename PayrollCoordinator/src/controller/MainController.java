@@ -27,11 +27,16 @@ import com.opencsv.CSVWriter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -62,6 +67,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import model.AlertMessage;
 import model.Calc;
@@ -309,7 +315,10 @@ public class MainController implements Initializable {
     private CheckBox ckAddModRate;
     @FXML
     private CheckBox ckEditModRate;
-    
+    @FXML
+    private Button btnDeleteTimecard;
+    @FXML
+    private TextField txtSearchEmployee;
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -472,6 +481,19 @@ public class MainController implements Initializable {
     	if(selectedFile != null) {
     		setValues(importOriginData(selectedFile));
     	}
+    	
+    	
+/*    	try {
+			Parent parent = FXMLLoader.load(getClass().getResource("/view/AddEmployee.fxml"));
+			Scene scene = new Scene(parent);
+			Stage stage = new Stage();
+			stage.setScene(scene);
+			stage.setTitle("Add Employee(s)");
+			stage.show();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
     }
     
     public void btnClearOriginPayData_Clicked(ActionEvent event) {
@@ -503,7 +525,7 @@ public class MainController implements Initializable {
 							"RGT", "", data.getModHoursReg(), 0, data.getModRate()));
 				} 
 				else {
-					double newHoursReg = data.getModHoursReg() - (data.getModHoursReg() - 40);
+					//double newHoursReg = data.getModHoursReg() - (data.getModHoursReg() - 40);
 					double ot = data.getModHoursReg() - 40;
 					double otRate = Double.valueOf(df.format(data.getModRate() * 0.5));
 					PaycomTimecard.insertOrUpdate(new PaycomTimecard(data.getEmpID(), dpPaycomTimecard.getValue(),
@@ -515,10 +537,17 @@ public class MainController implements Initializable {
     	}
     	
     	for(ModEmp modEmp : modEmps) {
-    		PaycomTimecard.insertOrUpdate(new PaycomTimecard(modEmp.getEmpID(), dpPaycomTimecard.getValue(), modEmp.getEarningCode(), modEmp.getModEmpDescrip(), modEmp.getModEmpHours(), 
+    		PaycomTimecard.insertOrUpdate(new PaycomTimecard(modEmp.getEmpID(), modEmp.getModEmpDate().toLocalDate(), modEmp.getEarningCode(), modEmp.getModEmpDescrip(), modEmp.getModEmpHours(), 
     				modEmp.getModEmpAmount(), 0));
     	}
     	
+    	setTvPaycomTimecard(PaycomTimecard.getPaycomTimecard(dpPaycomTimecard.getValue(), Company.selectCompany(cbCompany.getValue().toString())));
+    }
+    
+    public void btnDeleteTimecard_Clicked(ActionEvent event) {
+    	PaycomTimecard timecard = new PaycomTimecard(
+    			tvPaycomTimecard.getSelectionModel().getSelectedItem().getTimecardID());
+    	timecard.delete();
     	setTvPaycomTimecard(PaycomTimecard.getPaycomTimecard(dpPaycomTimecard.getValue(), Company.selectCompany(cbCompany.getValue().toString())));
     }
     
@@ -531,10 +560,18 @@ public class MainController implements Initializable {
     }
     
     public void cbCompany_ValueChanged(ActionEvent event) {
+    	txtEditModAmount.clear();
+    	txtEditModHours.clear();
+    	taEditModDescrip.clear();
+    	txtEditEmpID.clear();
+    	txtEditEmpNameFirst.clear();
+    	txtEditEmpNameLast.clear();
+    	
     	tvEmployeeFill();
     	setTvEmployee(Employee.fillEmployee(Company.selectCompany(cbCompany.getValue())));
 		setTvOriginPayDataPrev(OriginPayData.fillOriginPayData(Company.selectCompany(cbCompany.getValue()), dpDateEndingPrev.getValue()));
 		setTvExportPayData(ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue()), dpExportDateEnding.getValue()));
+		setTvPaycomTimecard(PaycomTimecard.getPaycomTimecard(dpPaycomTimecard.getValue(), Company.selectCompany(cbCompany.getValue().toString())));
 		clearTableData(tvEmployeeModDetail);
 		clearAddModPanel();
 		clearEditModPanel();
@@ -572,12 +609,11 @@ public class MainController implements Initializable {
     
     public void btnExportUpdatePayroll_Clicked(ActionEvent event) {
     	ObservableList<ModPayData> modData = ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue()), dpExportDateEnding.getValue());
-    	ModHistory.insert(modData, dpExportStartDate.getValue(), dpExportEndDate.getValue(), cbCompany.getValue());
+    	ModHistory.insertOrUpdate(modData, dpExportStartDate.getValue(), dpExportEndDate.getValue(), cbCompany.getValue());
     	setTvExportPayData(ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue()), dpExportDateEnding.getValue()));
-    	//tvExportPayDataToggle();
     }
     
-    public void btnExportPayroll_Clicked(ActionEvent event) {
+/*    public void btnExportPayroll_Clicked(ActionEvent event) {
     	ObservableList<ModPayData> modDatas = FXCollections.observableArrayList();
     	TextInputDialog dialog = new TextInputDialog();
     	dialog.setHeaderText("QDRIVE - Payroll Coordinator");
@@ -616,7 +652,7 @@ public class MainController implements Initializable {
 				error.showAndWait();
 			}
     	}
-    }
+    }*/
     
     public void btnExportPaycom_Clicked(ActionEvent event) {
     	ObservableList<PaycomTimecard> timecard = FXCollections.observableArrayList();
@@ -705,7 +741,7 @@ public class MainController implements Initializable {
     	emp.update(emp, orgEmp);
     	setTvEmployee(Employee.fillEmployee(Company.selectCompany(cbCompany.getValue())));
     }
-    
+
     public void btnEditMod_Clicked(ActionEvent event) {
     	ModEmp modEmp = new ModEmp(
     			tvEmployeeModDetail.getSelectionModel().getSelectedItem().getModEmpID(),
@@ -722,7 +758,10 @@ public class MainController implements Initializable {
     
     public void btnDeleteMod_Clicked(ActionEvent event) {
     	ModEmp modEmp = new ModEmp(tvEmployeeModDetail.getSelectionModel().getSelectedItem().getModEmpID());
-    	ModEmp.delete(modEmp);
+    	modEmp.delete();
+    	txtEditModAmount.clear();
+    	txtEditModHours.clear();
+    	taEditModDescrip.clear();
     	setTvEmployeeModDetail(ModEmp.fillByEmployee(tvEmployee.getSelectionModel().getSelectedItem().getEmpID().toString()));
     }
     
@@ -820,7 +859,30 @@ public class MainController implements Initializable {
     public void setTvEmployee(ObservableList<Employee> employees) {
     	tvEmployeeID.setCellValueFactory(new PropertyValueFactory<Employee, String>("empID"));
     	tvEmployeeName.setCellValueFactory(new PropertyValueFactory<Employee, String>("empName"));
-    	tvEmployee.setItems(employees);
+    	FilteredList<Employee> filterEmployees = new FilteredList<>(employees, p -> true);
+    	txtSearchEmployee.textProperty().addListener((observable, oldValue, newValue) -> {
+    		filterEmployees.setPredicate(employee -> {
+    			//if filter is empty, display all
+    			if(newValue == null || newValue.isEmpty()) {
+    				return true;
+    			}
+    			
+    			String lowerCaseFilter = newValue.toLowerCase();
+    			
+    			if(employee.getEmpName().toLowerCase().contains(lowerCaseFilter)) {
+    				return true;
+    			}
+    			else if(employee.getEmpID().toLowerCase().contains(lowerCaseFilter)) {
+    				return true;
+    			}
+    			
+    			return false;
+    		});
+    	});
+    	
+    	SortedList<Employee> sortedEmployees = new SortedList<>(filterEmployees);
+    	sortedEmployees.comparatorProperty().bind(tvEmployee.comparatorProperty());
+    	tvEmployee.setItems(sortedEmployees);
     }
     
     public void setTvEmployeeModDetail(ObservableList<ModEmp> modEmps) {

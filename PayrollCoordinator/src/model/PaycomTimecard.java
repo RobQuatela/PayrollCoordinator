@@ -31,6 +31,10 @@ public class PaycomTimecard {
 	private SimpleDoubleProperty tempRate;
 	private SimpleDoubleProperty units;
 	
+	public PaycomTimecard(int id) {
+		timecardID = new SimpleIntegerProperty(id);
+	}
+	
 	public PaycomTimecard(String emp_id, LocalDate date, String modType, double hours, double dollars, double tempRate) {
 		empID = new SimpleStringProperty(emp_id);
 		this.date = Date.valueOf(date);
@@ -59,6 +63,24 @@ public class PaycomTimecard {
 	
 	public PaycomTimecard(String emp_id, String deptCode, LocalDate date, String punch, String punchtype, String modType, String taxCode, String comments,
 			String labor, double hours, double dollars, double tempRate, double unit) {
+		empID = new SimpleStringProperty(emp_id);
+		this.deptCode = new SimpleStringProperty(deptCode);
+		this.date = Date.valueOf(date);
+		punchtime = new SimpleStringProperty(punch);
+		this.punchtype = new SimpleStringProperty(punchtype);
+		modTypeID = new SimpleStringProperty(modType);
+		this.taxCode = new SimpleStringProperty(taxCode);
+		this.comments = new SimpleStringProperty(comments);
+		this.laborAllocation = new SimpleStringProperty(labor);
+		this.hours = new SimpleDoubleProperty(hours);
+		this.dollars = new SimpleDoubleProperty(dollars);
+		this.tempRate = new SimpleDoubleProperty(tempRate);
+		this.units = new SimpleDoubleProperty(unit);
+	}
+	
+	public PaycomTimecard(int id, String emp_id, String deptCode, LocalDate date, String punch, String punchtype, String modType, String taxCode, String comments,
+			String labor, double hours, double dollars, double tempRate, double unit) {
+		timecardID = new SimpleIntegerProperty(id);
 		empID = new SimpleStringProperty(emp_id);
 		this.deptCode = new SimpleStringProperty(deptCode);
 		this.date = Date.valueOf(date);
@@ -200,7 +222,7 @@ public class PaycomTimecard {
 		
 		try {
 			con = DBConnect.connect();
-			if(hours == 0 && dollars != 0 && rate == 0) {
+/*			if(hours == 0 && dollars != 0 && rate == 0) {
 				ps = con.prepareStatement(sqlAdds);
 				ps.setString(1, timecard.getEmpID());
 				ps.setDate(2, timecard.getDate());
@@ -228,22 +250,22 @@ public class PaycomTimecard {
 				ps.setDouble(5, hours);
 				ps.executeUpdate();
 			}
-			else {
+			else {*/
 				ps = con.prepareStatement(sqlFull);
 				ps.setString(1, timecard.getEmpID());
-				ps.setString(2, " ");
+				ps.setString(2, "");
 				ps.setDate(3, timecard.getDate());
-				ps.setString(4, " ");
+				ps.setString(4, "");
 				ps.setString(5, timecard.getModTypeID());
-				ps.setString(6, " ");
-				ps.setString(7, " ");
-				ps.setString(8, " ");
+				ps.setString(6, "");
+				ps.setString(7, timecard.getComments());
+				ps.setString(8, "");
 				ps.setDouble(9, timecard.getHours());
 				ps.setDouble(10, timecard.getDollars());
 				ps.setDouble(11, timecard.getTempRate());
 				ps.setDouble(12, 0);
 				ps.executeUpdate();
-			}
+			//}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -384,7 +406,7 @@ public class PaycomTimecard {
 			ps.setInt(2, company.getCoID());
 			rs = ps.executeQuery();
 			while(rs.next()) {
-				timecard.add(new PaycomTimecard(rs.getString("emp_id"), rs.getString("timecard_deptcode"), rs.getDate("timecard_date").toLocalDate(), 
+				timecard.add(new PaycomTimecard(rs.getInt("timecard_id"), rs.getString("emp_id"), rs.getString("timecard_deptcode"), rs.getDate("timecard_date").toLocalDate(), 
 						rs.getString("timecard_punchtime"), rs.getString("timecard_punchtype"), rs.getString("modtype_id"), rs.getString("timecard_taxcode"),
 						rs.getString("timecard_comments"), rs.getString("timecard_laborallocation"), rs.getDouble("timecard_hours"), 
 						rs.getDouble("timecard_dollars"), rs.getDouble("timecard_temprate"), rs.getDouble("timecard_units")));
@@ -403,6 +425,21 @@ public class PaycomTimecard {
 		}
 		
 		return timecard;
+	}
+	
+	public void delete() {
+		Connection con = null;
+		PreparedStatement ps = null;
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("DELETE FROM tbpaycom_timecard WHERE timecard_id = ?");
+			ps.setInt(1, this.getTimecardID());
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }

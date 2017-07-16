@@ -18,6 +18,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
@@ -30,11 +31,32 @@ public class Employee {
 	private SimpleStringProperty empID;
 	private SimpleStringProperty empName;
 	private SimpleIntegerProperty coID;
+	private SimpleIntegerProperty isActive;
 	
 	public Employee(String empID, String name, int coid) {
 		this.empID = new SimpleStringProperty(empID);
 		empName = new SimpleStringProperty(name);
 		coID = new SimpleIntegerProperty(coid);
+	}
+	
+	public Employee(String empID, String name) {
+		this.empID = new SimpleStringProperty(empID);
+		empName = new SimpleStringProperty(name);
+	}
+	
+	public Employee(String empID, String name, int coid, int active) {
+		this.empID = new SimpleStringProperty(empID);
+		empName = new SimpleStringProperty(name);
+		coID = new SimpleIntegerProperty(coid);
+		isActive = new SimpleIntegerProperty(active);
+	}
+	
+	public int getIsActive() {
+		return isActive.get();
+	}
+	
+	public void setIsActive(int active) {
+		isActive.set(active);
 	}
 	
 	public int getCoID() {
@@ -204,7 +226,7 @@ public class Employee {
 		return name;
 	}
 	
-	private static String lookForDup(String emp) {
+/*	private static String lookForDup(String emp) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -231,7 +253,7 @@ public class Employee {
 		}
 		
 		return name;
-	}
+	}*/
 	
 	private static ObservableList<Employee> lookForDup(ObservableList<EmployeeOriginal> employees, Company company) {
 		Connection con = null;

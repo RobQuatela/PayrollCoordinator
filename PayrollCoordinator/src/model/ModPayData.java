@@ -285,17 +285,22 @@ public class ModPayData {
 			}
 		}
 	}
+	
+	
 	 
-	protected void updateData(ObservableList<ModEmp> modEmps, int modID, 
-			double hoursReg, double hoursOT, double rate, String payrollRule) {
+	protected void updateData(ObservableList<ModEmp> modEmps, ModPayData mod, OriginPayData origin) {
 		Connection con = null;
 		PreparedStatement ps = null;
 
 		double gross = 0;
-		if(payrollRule.equals("7(i) Exemption"))
-			gross = Calc.grossCalc7i(rate, hoursReg, hoursOT);
+		double hoursReg = origin.getOriginHoursReg();
+		double hoursOT = origin.getOriginHoursOT();
+		double modRate = mod.getModRate();
+		
+		if(mod.getModPayrollRule().equals("7(i) Exemption"))
+			gross = Calc.grossCalc7i(origin.getOriginRate(), origin.getOriginHoursReg(), origin.getOriginHoursOT());
 		else
-			gross = Calc.grossCalc(rate, hoursReg, hoursOT);
+			gross = Calc.grossCalc(origin.getOriginRate(), origin.getOriginHoursReg(), origin.getOriginHoursOT());
 		
 		
 		for(ModEmp modEmp : modEmps) {
@@ -305,13 +310,11 @@ public class ModPayData {
 				hoursOT += (hoursReg - 40) - hoursOT;
 			}		
 		}
-		
-		//DecimalFormat df = new DecimalFormat("###.##");
 
-		if(payrollRule.equals("7(i) Exemption"))
-			rate = Calc.rateCalc7i(gross, hoursReg, hoursOT);
+		if(mod.getModPayrollRule().equals("7(i) Exemption"))
+			modRate = Calc.rateCalc7i(gross, hoursReg, hoursOT);
 		else
-			rate = Calc.rateCalc(gross, hoursReg);
+			modRate = Calc.rateCalc(gross, hoursReg);
 		
 		try {
 			con = DBConnect.connect();
@@ -319,8 +322,8 @@ public class ModPayData {
 					"mod_rate = ? WHERE mod_id = ?");
 			ps.setDouble(1, hoursReg);
 			ps.setDouble(2, hoursOT);
-			ps.setDouble(3, rate);
-			ps.setInt(4, modID);
+			ps.setDouble(3, modRate);
+			ps.setInt(4, mod.getModID());
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
