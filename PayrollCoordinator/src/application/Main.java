@@ -16,7 +16,7 @@ public class Main extends Application {
 			Parent root = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
 			Scene scene = new Scene(root);
 			primaryStage.setScene(scene);
-			primaryStage.setTitle("QDRIVE - Payroll Coordinator");
+			primaryStage.setTitle("PAYQ - Payroll Data Input/Output & Modification");
 			Image icon = new Image("/icons8_payroll_50_ZRn_icon.ico");
 			primaryStage.getIcons().add(icon);
 			primaryStage.setMaximized(true);
