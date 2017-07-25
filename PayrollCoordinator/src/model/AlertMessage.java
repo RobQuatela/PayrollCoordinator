@@ -2,6 +2,16 @@ package model;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
@@ -55,6 +65,63 @@ public class AlertMessage extends Alert {
 		ButtonType yes = new ButtonType("Yes");
 		ButtonType no = new ButtonType("No");
 		this.getButtonTypes().setAll(yes, no);
+		
+		return this;
+	}
+	
+	public AlertMessage underPerformance(LocalDate date) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		String sql = "SELECT emp_name, modemp_amount " +
+				"FROM tbmodemp INNER JOIN tbemployee " +
+				"ON tbmodemp.emp_id = tbemployee.emp_id " +
+				"WHERE tbmodemp.modemp_date = ? " +
+				"AND tbmodemp.modtype_id = 'UNP'";
+		Map<String, Double> mapUnderPerform = new HashMap<>();
+		
+	try {
+		con = DBConnect.connect();
+		ps = con.prepareStatement(sql);
+		ps.setDate(1, Date.valueOf(date));
+		rs = ps.executeQuery();
+		while (rs.next()) {
+			mapUnderPerform.put(rs.getString(1), rs.getDouble(2));
+		}
+	} catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} finally {
+		try {
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+		
+		for(Map.Entry<String, Double> entry : mapUnderPerform.entrySet()) {
+			pw.println(entry.getKey() + ": " + entry.getValue());
+			pw.println();
+		}
+		
+		TextArea ta = new TextArea(sw.toString());
+		ta.setWrapText(true);
+		ta.setEditable(false);
+		ta.setMaxWidth(Double.MAX_VALUE);
+		ta.setMaxHeight(Double.MAX_VALUE);
+		
+		GridPane.setVgrow(ta, Priority.ALWAYS);
+		GridPane.setHgrow(ta, Priority.ALWAYS);
+		GridPane expContent = new GridPane();
+		expContent.add(ta, 0, 0);
+		this.setHeaderText("The following employees were supplemented for under performance:");
+		this.getDialogPane().setContent(expContent);
+/*		ButtonType yes = new ButtonType("Yes");
+		ButtonType no = new ButtonType("No");
+		this.getButtonTypes().setAll(yes, no);*/
 		
 		return this;
 	}

@@ -310,6 +310,23 @@ public class ModPayData {
 				hoursOT += (hoursReg - 40) - hoursOT;
 			}		
 		}
+		
+		//code for determining if employee is under-performed for that period revised: 7/25/17
+		double minWage = 7.25;
+		double gross7i = minWage * 1.5 * hoursReg;
+		if(mod.getModPayrollRule().equals("7(i) Exemption")) {
+			if (hoursReg > 40) {
+				if (gross < gross7i) {
+					double underPerformance = gross7i - gross;
+					ModEmp.insert(new ModEmp("UNP", origin.getEmpID(), origin.getOriginEndDate().toLocalDate(),
+							underPerformance, 0.0,
+							"Under Performance for week: " + origin.getOriginEndDate().toString() + ""));
+					ModEmp modEmp = ModEmp.getLastModEmp(origin.getEmpID());
+					ModHistory.insert(mod, modEmp);
+					gross += underPerformance;
+				}
+			}
+		}
 
 		if(mod.getModPayrollRule().equals("7(i) Exemption"))
 			modRate = Calc.rateCalc7i(gross, hoursReg, hoursOT);

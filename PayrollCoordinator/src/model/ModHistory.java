@@ -79,7 +79,7 @@ public class ModHistory {
 		}
 	}
 	
-	private static void insert(ModPayData modData, ModEmp modEmp) {
+	protected static void insert(ModPayData modData, ModEmp modEmp) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		

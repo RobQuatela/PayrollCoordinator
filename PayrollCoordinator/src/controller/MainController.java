@@ -319,6 +319,8 @@ public class MainController implements Initializable {
     private Button btnDeleteTimecard;
     @FXML
     private TextField txtSearchEmployee;
+    @FXML
+    private CheckBox ckbxActive;
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -611,6 +613,9 @@ public class MainController implements Initializable {
     	ObservableList<ModPayData> modData = ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue()), dpExportDateEnding.getValue());
     	ModHistory.insertOrUpdate(modData, dpExportStartDate.getValue(), dpExportEndDate.getValue(), cbCompany.getValue());
     	setTvExportPayData(ModPayData.getModPayData(Company.selectCompany(cbCompany.getValue()), dpExportDateEnding.getValue()));
+    	AlertMessage up = new AlertMessage(AlertType.CONFIRMATION);
+    	up.underPerformance(dpExportDateEnding.getValue());
+    	up.showAndWait();
     }
     
 /*    public void btnExportPayroll_Clicked(ActionEvent event) {

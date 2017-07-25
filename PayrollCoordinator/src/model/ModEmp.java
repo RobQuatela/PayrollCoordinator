@@ -414,4 +414,34 @@ public class ModEmp {
 		
 		return modEmp;
 	}
+	
+	public static ModEmp getLastModEmp(String empID) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		ModEmp modEmp = null;
+		
+		try {
+			con = DBConnect.connect();
+			ps = con.prepareStatement("SELECT MAX(modemp_id) FROM tbmodemp WHERE emp_id = ?");
+			ps.setString(1, empID);
+			rs = ps.executeQuery();
+			if(rs.next()) {
+				modEmp = new ModEmp(rs.getInt(1));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return modEmp;
+	}
 }
